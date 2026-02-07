@@ -88,27 +88,31 @@ The **Playground Booking Management System** is a full-stack web application des
 
 <div align="center">
 
-### Homepage
-![Homepage](screenshots/homepage.png)
+### 🏠 Homepage
+![Homepage](screenshots/home%20page%20.png)
 
-### User Dashboard
-![User Dashboard](screenshots/user-dashboard.png)
+### 👤 User Dashboard
+![User Dashboard](screenshots/user%20dashboard.png)
 
-### Owner Dashboard
-![Owner Dashboard](screenshots/owner-dashboard.png)
+### 🏢 Owner Dashboard
+![Owner Dashboard](screenshots/owner%20dashboard.png)
 
-### Admin Panel
-![Admin Panel](screenshots/admin-panel.png)
+### 🛡️ Admin Panel
+![Admin Panel](screenshots/admin%20panel.png)
 
-### Playground Details
-![Playground Details](screenshots/playground-details.png)
+### 🔍 Browse Playgrounds
+![Browse Playgrounds](screenshots/browse%20playground.png)
 
-### Booking Flow
-![Booking Flow](screenshots/booking-flow.png)
+### ➕ Register Playground
+![Register Playground](screenshots/register%20playground.png)
+
+### ℹ️ About Page
+![About Page](screenshots/about.png)
+
+### 👥 User Profile
+![User Profile](screenshots/user.png)
 
 </div>
-
-> 📁 Add your screenshots to the `screenshots/` folder
 
 ---
 

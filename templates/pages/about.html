@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Playground Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1f2937 0%, #374151 25%, #4b5563 50%, #374151 75%, #1f2937 100%);
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23374151" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.1;
+    }
+    
+    .feature-card {
+        background: linear-gradient(145deg, rgba(55, 65, 81, 0.3), rgba(75, 85, 99, 0.3));
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(156, 163, 175, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+        border-color: rgba(16, 185, 129, 0.4);
+    }
+    
+    /* CEO Image with Glowing Circle */
+    .founder-image-container {
+        width: 300px !important;
+        height: 300px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .founder-image-wrapper {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%) !important;
+        padding: 5px !important;
+        box-shadow: 
+            0 0 18px rgba(16, 185, 129, 0.45),
+            0 0 36px rgba(59, 130, 246, 0.25),
+            0 0 54px rgba(16, 185, 129, 0.15),
+            0 10px 20px rgba(0, 0, 0, 0.18) !important;
+        animation: glowPulse 3s ease-in-out infinite !important;
+    }
+    
+    @keyframes glowPulse {
+        0%, 100% {
+            box-shadow: 
+                0 0 18px rgba(16, 185, 129, 0.45),
+                0 0 36px rgba(59, 130, 246, 0.25),
+                0 0 54px rgba(16, 185, 129, 0.15),
+                0 10px 20px rgba(0, 0, 0, 0.18);
+            transform: scale(1);
+        }
+        50% {
+            box-shadow: 
+                0 0 28px rgba(16, 185, 129, 0.55),
+                0 0 56px rgba(59, 130, 246, 0.35),
+                0 0 84px rgba(16, 185, 129, 0.22),
+                0 12px 24px rgba(0, 0, 0, 0.22);
+            transform: scale(1.05);
+        }
+    }
+    
+    .founder-image-inner {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        background: #1e293b !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .founder-image {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 20% !important;
+        display: block !important;
+        border-radius: 50% !important;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #111827 0%, #1f2937 25%, #374151 50%, #1f2937 75%, #111827 100%);
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl lg:text-6xl font-bold text-white mb-6">
+                About <span class="text-emerald-400">Playground Booking</span>
+            </h1>
+            <p class="text-xl text-gray-300 leading-relaxed">
+                Revolutionizing how sports facilities connect with players and communities. 
+                We bridge the gap between playground owners and sports enthusiasts, creating seamless booking experiences.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-16 bg-gray-800">
+    <div class="container mx-auto px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl p-8 text-white flex flex-col justify-between h-full">
+                    <h2 class="text-4xl font-bold mb-6">Our Mission</h2>
+                    <div class="flex-1">
+                        <p class="text-lg leading-relaxed mb-4">
+                            To democratize access to sports facilities and empower playground owners with technology that simplifies management while maximizing their revenue potential.
+                        </p>
+                        <p class="text-lg leading-relaxed">
+                            We eliminate barriers, reduce administrative overhead, and create meaningful connections between facility owners and sports communities.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl p-8 text-white flex flex-col justify-between h-full">
+                    <h3 class="text-4xl font-bold mb-6">Our Vision</h3>
+                    <div class="flex-1">
+                        <p class="text-lg leading-relaxed mb-6">
+                            To become the world's leading platform for sports facility management, fostering healthier communities through accessible sports experiences.
+                        </p>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-3xl font-bold">10K+</div>
+                                <div class="text-sm opacity-90">Users</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold">500+</div>
+                                <div class="text-sm opacity-90">Venues</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold">24/7</div>
+                                <div class="text-sm opacity-90">Support</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Founder Section -->
+<section class="py-16 bg-gray-900">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-white mb-4">Meet Our Founder</h2>
+                <p class="text-xl text-gray-300">The visionary behind Playground Booking</p>
+            </div>
+            
+            <div class="feature-card rounded-3xl p-10 text-center">
+                <div style="width: 300px; height: 300px; margin: 0 auto 2rem auto; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; position: relative; background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); padding: 5px; box-shadow: 0 0 18px rgba(16, 185, 129, 0.45), 0 0 36px rgba(59, 130, 246, 0.25), 0 0 54px rgba(16, 185, 129, 0.15), 0 10px 20px rgba(0, 0, 0, 0.18) !important; animation: glowPulse 3s ease-in-out infinite;">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #1e293b; display: flex; align-items: center; justify-content: center;">
+                            <img src="/media/CEO%20image/ceo%20image.png?v=2" alt="Mostafa Anwar - Founder & CEO" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; border-radius: 50%;">
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-2">MOSTAFA ANWAR</h3>
+                <p class="text-emerald-400 text-lg font-semibold mb-6">Founder & CEO</p>
+                
+                <div class="max-w-2xl mx-auto text-gray-300 leading-relaxed space-y-4">
+                    <p class="text-lg">
+                        Mostafa Anwar is a passionate entrepreneur and sports enthusiast who founded Playground Booking 
+                        with a vision to transform how people access and manage sports facilities. With a background in 
+                        technology and a deep understanding of the sports industry, Mostafa recognized the need for a 
+                        comprehensive platform that benefits both facility owners and players.
+                    </p>
+                    <p class="text-lg">
+                        "I believe sports bring communities together and create lasting positive impact. My goal with 
+                        Playground Booking is to make quality sports facilities accessible to everyone while empowering 
+                        owners with the tools they need to succeed," says Mostafa.
+                    </p>
+                    <p class="text-lg">
+                        Under his leadership, Playground Booking has grown to serve thousands of users across multiple 
+                        countries, connecting sports communities and helping facility owners maximize their potential.
+                    </p>
+                </div>
+                
+                <div class="flex justify-center gap-4 mt-8">
+                    <div class="bg-emerald-500/20 text-emerald-300 px-6 py-3 rounded-full">
+                        <i class="fas fa-trophy mr-2"></i>Sports Advocate
+                    </div>
+                    <div class="bg-blue-500/20 text-blue-300 px-6 py-3 rounded-full">
+                        <i class="fas fa-lightbulb mr-2"></i>Innovator
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values Section -->
+<section class="py-16 bg-gray-800">
+    <div class="container mx-auto px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-4xl font-bold text-gray-100 mb-12">Our Core Values</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-handshake text-emerald-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-100 mb-3">Trust & Transparency</h3>
+                    <p class="text-gray-300">
+                        We build trust through transparent communication, fair pricing, and reliable service.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-rocket text-blue-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-100 mb-3">Innovation</h3>
+                    <p class="text-gray-300">
+                        We constantly evolve our platform with cutting-edge technology and user feedback.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-heart text-purple-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-100 mb-3">Community First</h3>
+                    <p class="text-gray-300">
+                        Every decision we make prioritizes the needs and success of our community.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-20 bg-gradient-to-r from-emerald-600 to-blue-600">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-4xl font-bold text-white mb-6">Ready to Join Our Community?</h2>
+        <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Whether you're a playground owner looking to maximize revenue or a player seeking the perfect venue, 
+            we're here to help you succeed.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'accounts:become_partner' %}" class="bg-white text-emerald-600 hover:bg-gray-100 font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-store mr-2"></i>List Your Playground
+            </a>
+            <a href="{% url 'playgrounds:playground_search' %}" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-emerald-600 font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-search mr-2"></i>Find Playgrounds
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "admin/change_list.html" %}
+{% load admin_urls static admin_list %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .booking-stats {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid #e3e6f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 150px;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2e7d32;
+            display: block;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .revenue-highlight {
+            color: #1976d2 !important;
+        }
+        .pending-highlight {
+            color: #f57c00 !important;
+        }
+        .confirmed-highlight {
+            color: #388e3c !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="booking-stats">
+        <h2 style="margin-bottom: 20px; color: #333;">📊 Booking System Overview</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">{{ total_bookings|default:0 }}</span>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-number revenue-highlight">${{ total_revenue|floatformat:2|default:"0.00" }}</span>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-number pending-highlight">{{ pending_bookings|default:0 }}</span>
+                <div class="stat-label">Pending Bookings</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-number confirmed-highlight">{{ confirmed_bookings|default:0 }}</span>
+                <div class="stat-label">Confirmed Bookings</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px;">
+            <p style="color: #666; font-style: italic;">
+                💡 Use filters and search to find specific bookings. 
+                Click on booking counts in user/playground lists to view related bookings.
+            </p>
+        </div>
+    </div>
+    
+    {{ block.super }}
+{% endblock %}

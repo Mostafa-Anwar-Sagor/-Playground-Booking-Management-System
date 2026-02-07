@@ -1,0 +1,821 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register Your Playground | PlayGround Booking{% endblock %}
+
+{% block body_class %}bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 min-h-screen{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Professional Partner Registration Styling */
+    .partner-background {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #374151 50%, #1e293b 75%, #0f172a 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 25s ease infinite;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .partner-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .partner-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .partner-card {
+        background: rgba(30, 41, 59, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 32px;
+        padding: 4rem;
+        box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 800px;
+        animation: slideUp 1s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .partner-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6, #f59e0b);
+        background-size: 400% 100%;
+        animation: gradientMove 5s ease infinite;
+    }
+    
+    @keyframes gradientMove {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    .partner-header {
+        text-align: center;
+        margin-bottom: 3.5rem;
+    }
+    
+    .partner-title {
+        color: #f8fafc;
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #60a5fa, #22c55e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .partner-subtitle {
+        color: #cbd5e1;
+        font-size: 1.25rem;
+        font-weight: 500;
+        line-height: 1.7;
+    }
+    
+    .form-section {
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: rgba(55, 65, 81, 0.3);
+        border-radius: 20px;
+        border: 1px solid rgba(75, 85, 99, 0.3);
+    }
+    
+    .section-title {
+        color: #f1f5f9;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        color: #e2e8f0;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        background: rgba(55, 65, 81, 0.4);
+        border: 2px solid rgba(75, 85, 99, 0.4);
+        border-radius: 16px;
+        color: #f8fafc;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #22c55e;
+        background: rgba(55, 65, 81, 0.6);
+        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .form-input::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+    }
+    
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .file-upload {
+        border: 2px dashed rgba(34, 197, 94, 0.4);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        background: rgba(55, 65, 81, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .file-upload:hover {
+        border-color: #22c55e;
+        background: rgba(34, 197, 94, 0.1);
+    }
+    
+    .file-upload.dragover {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+    }
+    
+    .file-upload-icon {
+        font-size: 3rem;
+        color: #9ca3af;
+        margin-bottom: 1rem;
+    }
+    
+    .file-upload-text {
+        color: #cbd5e1;
+        font-size: 1.125rem;
+        font-weight: 500;
+    }
+    
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .amenity-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: rgba(55, 65, 81, 0.4);
+        border: 2px solid rgba(75, 85, 99, 0.4);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .amenity-item:hover {
+        border-color: #22c55e;
+        background: rgba(34, 197, 94, 0.1);
+    }
+    
+    .amenity-item.selected {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.2);
+    }
+    
+    .amenity-checkbox {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(75, 85, 99, 0.4);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .amenity-checkbox.checked {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 15px 30px rgba(34, 197, 94, 0.4);
+        position: relative;
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+    
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .submit-btn:hover::before {
+        left: 100%;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(34, 197, 94, 0.5);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .partner-card {
+            padding: 2.5rem 2rem;
+            margin: 1rem;
+            border-radius: 24px;
+        }
+        
+        .partner-title {
+            font-size: 2.25rem;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .amenities-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-input {
+            padding: 1rem 1.25rem;
+        }
+        
+        .submit-btn {
+            padding: 1.25rem;
+            font-size: 1.125rem;
+        }
+    }
+    
+    /* Loading State */
+    .loading {
+        position: relative;
+    }
+    
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 28px;
+        height: 28px;
+        margin: -14px 0 0 -14px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Form Progress */
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        border-radius: 8px;
+        transition: width 0.6s ease;
+    }
+    
+    /* Form styling */
+    .partner-register-form input,
+    .partner-register-form textarea,
+    .partner-register-form select {
+        transition: border-color 0.2s;
+    }
+    .partner-register-form input:focus,
+    .partner-register-form textarea:focus,
+    .partner-register-form select:focus {
+        border-color: #10b981;
+        outline: none;
+    }
+    .partner-register-form .form-section-title {
+        font-size: 1.18rem;
+        font-weight: 800;
+        color: #10b981;
+        margin-top: 1.7rem;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.01em;
+    }
+    .partner-register-form .form-actions {
+        text-align: center;
+        margin-top: 2.2rem;
+    }
+    .partner-register-form button {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.13rem;
+        padding: 1rem 2.2rem;
+        border-radius: 0.7rem;
+        box-shadow: 0 4px 24px #2563eb55, 0 2px 8px #10b98133;
+        border: none;
+        transition: background 0.3s, transform 0.2s;
+        letter-spacing: 0.5px;
+    }
+    .partner-register-form button:hover {
+        background: linear-gradient(135deg, #2563eb, #10b981);
+        transform: translateY(-2px) scale(1.04);
+        color: #fff;
+    }
+    @media (max-width: 600px) {
+        .partner-register-container {
+            padding: 1.2rem 0.5rem;
+        }
+        .partner-register-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="partner-background">
+    <div class="partner-container">
+        <div class="partner-card">
+            <!-- Header -->
+            <div class="partner-header">
+                <h1 class="partner-title">Register Your Playground</h1>
+                <p class="partner-subtitle">Join our network and start earning from your playground today</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 25%"></div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                <div style="margin-bottom: 2rem;">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" style="background: linear-gradient(135deg, #10b981, #3b82f6); color: white; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 600; margin-bottom: 1rem; text-align: center; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Status Messages -->
+            {% if partner_app_status == 'pending' %}
+                <div class="alert alert-info" style="background: linear-gradient(135deg, #f59e0b, #3b82f6); color: white; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 600; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);">
+                    <i class="fas fa-clock mr-2"></i>Your application is <strong>pending</strong> admin approval. You cannot submit again until a decision is made.
+                </div>
+            {% elif partner_app_status == 'approved' %}
+                <div class="alert alert-success" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 600; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);">
+                    <i class="fas fa-check-circle mr-2"></i>Congratulations! Your application has been <strong>approved</strong>. You are now a partner.
+                </div>
+            {% elif partner_app_status == 'rejected' %}
+                <div class="alert alert-danger" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 600; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);">
+                    <i class="fas fa-times-circle mr-2"></i>Sorry, your application was <strong>rejected</strong>. Please review admin comments and resubmit.
+                    {% if partner_app and partner_app.admin_comments %}
+                        <br><span style="margin-top: 0.5rem; display: block; font-weight: 500;">Admin comments: {{ partner_app.admin_comments }}</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Registration Form -->
+            <form method="post" enctype="multipart/form-data" id="partnerForm" {% if partner_app_status == 'pending' %}onsubmit="return false;"{% endif %}>
+                {% csrf_token %}
+                
+                <!-- Owner Details Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        Owner Information
+                    </h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="owner_name" class="form-label">Full Name</label>
+                            <input type="text" id="owner_name" name="owner_name" class="form-input" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="owner_phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="owner_phone" name="owner_phone" class="form-input" placeholder="Enter your phone number" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="owner_email" class="form-label">Email Address</label>
+                        <input type="email" id="owner_email" name="owner_email" class="form-input" placeholder="Enter your email address" required>
+                    </div>
+                </div>
+
+                <!-- Playground Details Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                        Playground Information
+                    </h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="playground_name" class="form-label">Playground Name</label>
+                            <input type="text" id="playground_name" name="playground_name" class="form-input" placeholder="Enter playground name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="playground_type" class="form-label">Playground Type</label>
+                            <select id="playground_type" name="playground_type" class="form-input" required>
+                                <option value="">Select type</option>
+                                <option value="indoor">Indoor</option>
+                                <option value="outdoor">Outdoor</option>
+                                <option value="hybrid">Indoor/Outdoor</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sport_types" class="form-label">Sport Types</label>
+                        <input type="text" id="sport_types" name="sport_types" class="form-input" placeholder="e.g. Football, Cricket, Tennis, Basketball" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" class="form-input form-textarea" placeholder="Describe your playground, facilities, and what makes it special..." rows="4"></textarea>
+                    </div>
+                </div>
+
+                <!-- Location Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        Location Details
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="address" class="form-label">Complete Address</label>
+                        <textarea id="address" name="address" class="form-input form-textarea" placeholder="Enter complete playground address" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="country" class="form-label">Country</label>
+                            <select id="country" name="country" class="form-input" required>
+                                <option value="">Select country</option>
+                                {% for country in countries %}
+                                    <option value="{{ country.id }}">{{ country.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="state" class="form-label">State</label>
+                            <select id="state" name="state" class="form-input" required>
+                                <option value="">Select state</option>
+                                {% for state in states %}
+                                    <option value="{{ state.id }}" data-country="{{ state.country.id }}">{{ state.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city" class="form-label">City</label>
+                            <select id="city" name="city" class="form-input" required>
+                                <option value="">Select city</option>
+                                {% for city in cities %}
+                                    <option value="{{ city.id }}" data-state="{{ city.state.id }}">{{ city.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pincode" class="form-label">PIN Code</label>
+                            <input type="text" id="pincode" name="pincode" class="form-input" placeholder="Enter PIN code" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="google_map" class="form-label">Google Maps Link</label>
+                        <input type="url" id="google_map" name="google_map" class="form-input" placeholder="Paste Google Maps link here">
+                    </div>
+                </div>
+
+                <!-- Amenities Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        Amenities & Facilities
+                    </h2>
+                    
+                    <div class="amenities-grid">
+                        <div class="amenity-item" onclick="toggleAmenity('parking')">
+                            <div class="amenity-checkbox" id="parking-check"></div>
+                            <span>Parking Available</span>
+                            <input type="checkbox" name="amenities" value="parking" id="parking" style="display: none;">
+                        </div>
+                        
+                        <div class="amenity-item" onclick="toggleAmenity('restroom')">
+                            <div class="amenity-checkbox" id="restroom-check"></div>
+                            <span>Restrooms</span>
+                            <input type="checkbox" name="amenities" value="restroom" id="restroom" style="display: none;">
+                        </div>
+                        
+                        <div class="amenity-item" onclick="toggleAmenity('changing_room')">
+                            <div class="amenity-checkbox" id="changing_room-check"></div>
+                            <span>Changing Rooms</span>
+                            <input type="checkbox" name="amenities" value="changing_room" id="changing_room" style="display: none;">
+                        </div>
+                        
+                        <div class="amenity-item" onclick="toggleAmenity('lighting')">
+                            <div class="amenity-checkbox" id="lighting-check"></div>
+                            <span>Lighting</span>
+                            <input type="checkbox" name="amenities" value="lighting" id="lighting" style="display: none;">
+                        </div>
+                        
+                        <div class="amenity-item" onclick="toggleAmenity('water')">
+                            <div class="amenity-checkbox" id="water-check"></div>
+                            <span>Drinking Water</span>
+                            <input type="checkbox" name="amenities" value="water" id="water" style="display: none;">
+                        </div>
+                        
+                        <div class="amenity-item" onclick="toggleAmenity('seating')">
+                            <div class="amenity-checkbox" id="seating-check"></div>
+                            <span>Seating Area</span>
+                            <input type="checkbox" name="amenities" value="seating" id="seating" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        Documents & Media
+                    </h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="playground_images" class="form-label">Playground Images</label>
+                            <div class="file-upload" onclick="document.getElementById('playground_images').click()">
+                                <i class="fas fa-camera file-upload-icon"></i>
+                                <div class="file-upload-text">Upload playground photos</div>
+                                <input type="file" id="playground_images" name="playground_images" multiple accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ownership_documents" class="form-label">Ownership Documents</label>
+                            <div class="file-upload" onclick="document.getElementById('ownership_documents').click()">
+                                <i class="fas fa-file-alt file-upload-icon"></i>
+                                <div class="file-upload-text">Upload ownership proof</div>
+                                <input type="file" id="ownership_documents" name="ownership_documents" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submitBtn" {% if partner_app_status == 'pending' %}disabled{% endif %}>
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Amenity toggle functionality
+    function toggleAmenity(amenityId) {
+        const checkbox = document.getElementById(amenityId);
+        const checkmark = document.getElementById(amenityId + '-check');
+        const item = checkbox.closest('.amenity-item');
+        
+        checkbox.checked = !checkbox.checked;
+        
+        if (checkbox.checked) {
+            checkmark.classList.add('checked');
+            checkmark.innerHTML = '✓';
+            item.classList.add('selected');
+        } else {
+            checkmark.classList.remove('checked');
+            checkmark.innerHTML = '';
+            item.classList.remove('selected');
+        }
+        
+        updateProgress();
+    }
+    
+    // Progress bar update
+    function updateProgress() {
+        const totalFields = document.querySelectorAll('input[required], select[required], textarea[required]').length;
+        const filledFields = Array.from(document.querySelectorAll('input[required], select[required], textarea[required]'))
+            .filter(field => field.value.trim() !== '').length;
+        
+        const progressPercent = Math.min((filledFields / totalFields) * 100, 100);
+        document.querySelector('.progress-fill').style.width = progressPercent + '%';
+    }
+    
+    // Form submission with loading state
+    document.getElementById('partnerForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.classList.add('loading');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting Application...';
+        submitBtn.disabled = true;
+    });
+    
+    // File upload handling
+    document.getElementById('playground_images').addEventListener('change', function() {
+        const fileCount = this.files.length;
+        const uploadDiv = this.parentElement;
+        if (fileCount > 0) {
+            uploadDiv.querySelector('.file-upload-text').textContent = `${fileCount} image(s) selected`;
+            uploadDiv.style.borderColor = '#10b981';
+            uploadDiv.style.background = '#f0fdf4';
+        }
+    });
+    
+    document.getElementById('ownership_documents').addEventListener('change', function() {
+        const fileCount = this.files.length;
+        const uploadDiv = this.parentElement;
+        if (fileCount > 0) {
+            uploadDiv.querySelector('.file-upload-text').textContent = `${fileCount} document(s) selected`;
+            uploadDiv.style.borderColor = '#10b981';
+            uploadDiv.style.background = '#f0fdf4';
+        }
+    });
+    
+    // Store original options for filtering
+    const originalStateOptions = Array.from(document.getElementById('state').querySelectorAll('option[data-country]'));
+    const originalCityOptions = Array.from(document.getElementById('city').querySelectorAll('option[data-state]'));
+    
+    // Location dropdown cascading using pre-loaded data
+    document.getElementById('country').addEventListener('change', function() {
+        const countryId = this.value;
+        const stateSelect = document.getElementById('state');
+        const citySelect = document.getElementById('city');
+        
+        // Reset dependent dropdowns
+        stateSelect.innerHTML = '<option value="">Select state</option>';
+        citySelect.innerHTML = '<option value="">Select city</option>';
+        
+        if (countryId) {
+            // Filter and show states for selected country
+            originalStateOptions.forEach(option => {
+                if (option.getAttribute('data-country') === countryId) {
+                    stateSelect.appendChild(option.cloneNode(true));
+                }
+            });
+        }
+        updateProgress();
+    });
+    
+    document.getElementById('state').addEventListener('change', function() {
+        const stateId = this.value;
+        const citySelect = document.getElementById('city');
+        
+        // Reset city dropdown
+        citySelect.innerHTML = '<option value="">Select city</option>';
+        
+        if (stateId) {
+            // Filter and show cities for selected state
+            originalCityOptions.forEach(option => {
+                if (option.getAttribute('data-state') === stateId) {
+                    citySelect.appendChild(option.cloneNode(true));
+                }
+            });
+        }
+        updateProgress();
+    });
+    
+    // Real-time progress tracking
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', updateProgress);
+        field.addEventListener('change', updateProgress);
+    });
+    
+    // Initial progress calculation
+    updateProgress();
+    
+    // Smooth animations on load
+    window.addEventListener('load', function() {
+        document.querySelector('.partner-card').style.opacity = '1';
+        document.querySelector('.partner-card').style.transform = 'translateY(0)';
+    });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'partner_register.js' %}"></script>
+{% endblock %}

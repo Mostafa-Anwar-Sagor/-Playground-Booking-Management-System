@@ -1,0 +1,1049 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book Playground - {{ playground.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Modern Booking Form Styling */
+.booking-container {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.booking-form-card {
+    background: rgba(30, 41, 59, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.playground-header {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    padding: 2rem;
+    color: white;
+}
+
+.form-section {
+    padding: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: rgba(15, 23, 42, 0.8);
+}
+
+.form-input::placeholder {
+    color: #64748b;
+}
+
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.time-slot {
+    padding: 0.75rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 0.875rem;
+}
+
+.time-slot:hover {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.time-slot.selected {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-color: #3b82f6;
+    color: white;
+}
+
+.time-slot.unavailable {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    cursor: not-allowed;
+}
+
+.pricing-info {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.pricing-row {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pricing-row:last-child {
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-primary:not(:disabled) {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+.alert-warning {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: #fcd34d;
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ffffff40;
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.availability-info {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.step::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 50%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+}
+
+.step:last-child::after {
+    display: none;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+    margin-right: 1rem;
+}
+
+.step.active .step-circle {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.step.completed .step-circle {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+<div class="booking-container">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="bg-red-600 text-white p-6 rounded-lg text-center">
+            <h2 class="text-2xl font-bold mb-4">Login Required</h2>
+            <p class="mb-4">You need to be logged in to make a booking.</p>
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login Now</a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="booking-container">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- Back Button -->
+        <div class="mb-6 fade-in-up">
+            <a href="{% url 'playgrounds:playground_detail' playground.id %}" class="btn-secondary inline-flex">
+                <i class="fas fa-arrow-left"></i>
+                Back to Playground
+            </a>
+        </div>
+
+        <!-- Booking Form Card -->
+        <div class="booking-form-card fade-in-up">
+            <!-- Playground Header -->
+            <div class="playground-header">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">{{ playground.name }}</h1>
+                        <div class="flex items-center gap-4 text-blue-100">
+                            <span><i class="fas fa-map-marker-alt mr-1"></i>{{ playground.city.name }}, {{ playground.city.state.name }}</span>
+                            <span><i class="fas fa-futbol mr-1"></i>{{ playground.get_playground_type_display }}</span>
+                            {% if playground.rating %}
+                            <span><i class="fas fa-star mr-1"></i>{{ playground.rating }} ({{ playground.total_reviews }})</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold">₹{{ playground.hourly_rate }}/hour</p>
+                        <p class="text-blue-100 text-sm">Base Rate</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="form-section">
+                <div class="step-indicator">
+                    <div class="step active" id="step1">
+                        <div class="step-circle">1</div>
+                        <span class="text-white">Date & Time</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-circle">2</div>
+                        <span class="text-gray-400">Details</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-circle">3</div>
+                        <span class="text-gray-400">Payment</span>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-circle">4</div>
+                        <span class="text-gray-400">Confirm</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="bookingForm" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="playground_id" value="{{ playground.id }}">
+                
+                <!-- Step 1: Date & Time Selection -->
+                <div class="form-section" id="dateTimeSection">
+                    <h3 class="text-xl font-bold text-white mb-4">Select Date & Time</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="form-label" for="bookingDate">Booking Date</label>
+                            <input type="date" id="bookingDate" name="booking_date" class="form-input" 
+                                   min="{{ today|date:'Y-m-d' }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="duration">Duration (Hours)</label>
+                            <select id="duration" name="duration" class="form-select" required>
+                                <option value="">Select Duration</option>
+                                <option value="1">1 Hour</option>
+                                <option value="2">2 Hours</option>
+                                <option value="3">3 Hours</option>
+                                <option value="4">4 Hours</option>
+                                <option value="5">5 Hours</option>
+                                <option value="6">6 Hours</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="availability-info" id="availabilityInfo" style="display: none;">
+                        <h4 class="font-semibold text-white mb-3">Available Time Slots</h4>
+                        <div class="time-grid" id="timeSlots"></div>
+                        <input type="hidden" id="selectedStartTime" name="start_time">
+                        <input type="hidden" id="selectedEndTime" name="end_time">
+                    </div>
+
+                    <div class="mt-6">
+                        <button type="button" onclick="nextStep(2)" class="btn btn-primary" id="step1Next" disabled>
+                            Next: Booking Details
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Booking Details -->
+                <div class="form-section" id="detailsSection" style="display: none;">
+                    <h3 class="text-xl font-bold text-white mb-4">Booking Details</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="form-label" for="numberOfPlayers">Number of Players</label>
+                            <input type="number" id="numberOfPlayers" name="number_of_players" 
+                                   class="form-input" min="1" max="{{ playground.capacity }}" required>
+                            <small class="text-gray-400">Maximum {{ playground.capacity }} players allowed</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="contactPhone">Contact Phone</label>
+                            <input type="tel" id="contactPhone" name="contact_phone" 
+                                   class="form-input" placeholder="+91 9876543210" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="specialRequests">Special Requests (Optional)</label>
+                        <textarea id="specialRequests" name="special_requests" 
+                                  class="form-textarea" rows="3" 
+                                  placeholder="Any special requirements or requests..."></textarea>
+                    </div>
+
+                    <div class="flex gap-4 mt-6">
+                        <button type="button" onclick="prevStep(1)" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Previous
+                        </button>
+                        <button type="button" onclick="nextStep(3)" class="btn btn-primary">
+                            Next: Payment Method
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Payment Method -->
+                <div class="form-section" id="paymentSection" style="display: none;">
+                    <h3 class="text-xl font-bold text-white mb-4">Payment Method</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Choose Payment Method</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center p-4 border border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                    <input type="radio" name="payment_method" value="upi" class="mr-3" required>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-mobile-alt text-blue-400 text-xl mr-3"></i>
+                                        <div>
+                                            <p class="text-white font-medium">UPI Payment</p>
+                                            <p class="text-gray-400 text-sm">Pay via UPI apps like PhonePe, Google Pay</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="flex items-center p-4 border border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                    <input type="radio" name="payment_method" value="card" class="mr-3">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-credit-card text-green-400 text-xl mr-3"></i>
+                                        <div>
+                                            <p class="text-white font-medium">Card Payment</p>
+                                            <p class="text-gray-400 text-sm">Debit/Credit Card payment</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="flex items-center p-4 border border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                    <input type="radio" name="payment_method" value="cash" class="mr-3">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-money-bill-wave text-yellow-400 text-xl mr-3"></i>
+                                        <div>
+                                            <p class="text-white font-medium">Cash Payment</p>
+                                            <p class="text-gray-400 text-sm">Pay at the playground</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 mt-6">
+                        <button type="button" onclick="prevStep(2)" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Previous
+                        </button>
+                        <button type="button" onclick="nextStep(4)" class="btn btn-primary">
+                            Next: Review & Confirm
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review & Confirm -->
+                <div class="form-section" id="confirmSection" style="display: none;">
+                    <h3 class="text-xl font-bold text-white mb-4">Review & Confirm</h3>
+                    
+                    <!-- Booking Summary -->
+                    <div class="bg-gray-700/50 rounded-lg p-6 mb-6">
+                        <h4 class="font-semibold text-white mb-4">Booking Summary</h4>
+                        <div class="space-y-3 text-gray-300">
+                            <div class="flex justify-between">
+                                <span>Playground:</span>
+                                <span class="text-white">{{ playground.name }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Date:</span>
+                                <span class="text-white" id="summaryDate">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Time:</span>
+                                <span class="text-white" id="summaryTime">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Duration:</span>
+                                <span class="text-white" id="summaryDuration">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Players:</span>
+                                <span class="text-white" id="summaryPlayers">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Payment Method:</span>
+                                <span class="text-white" id="summaryPayment">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Breakdown -->
+                    <div class="pricing-info">
+                        <h4 class="font-semibold text-white mb-4">Pricing Breakdown</h4>
+                        <div class="space-y-2 text-gray-300">
+                            <div class="pricing-row">
+                                <span>Base Rate (per hour):</span>
+                                <span>₹{{ playground.hourly_rate }}</span>
+                            </div>
+                            <div class="pricing-row">
+                                <span>Duration:</span>
+                                <span id="pricingDuration">-</span>
+                            </div>
+                            <div class="pricing-row">
+                                <span>Subtotal:</span>
+                                <span id="pricingSubtotal">₹0</span>
+                            </div>
+                            {% if playground.peak_hour_rate %}
+                            <div class="pricing-row" id="peakHourRow" style="display: none;">
+                                <span>Peak Hour Charges:</span>
+                                <span id="peakHourCharges">₹0</span>
+                            </div>
+                            {% endif %}
+                            <div class="pricing-row">
+                                <span>Platform Fee:</span>
+                                <span id="platformFee">₹0</span>
+                            </div>
+                            <div class="pricing-row border-t border-gray-600 pt-2">
+                                <span class="text-white">Total Amount:</span>
+                                <span class="text-white text-xl" id="totalAmount">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-6">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <p class="font-medium">Please Note:</p>
+                            <ul class="text-sm mt-1 space-y-1">
+                                <li>• Booking confirmation is subject to playground availability</li>
+                                <li>• Cancellation is allowed up to 2 hours before the booking time</li>
+                                <li>• Platform fee is non-refundable</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 mt-6">
+                        <button type="button" onclick="prevStep(3)" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Previous
+                        </button>
+                        
+                        <!-- DEBUG: Test button -->
+                        <button type="button" onclick="testBookingSubmission()" class="btn" style="background: #ff6b6b; color: white; margin-right: 10px;">
+                            🧪 TEST BOOKING
+                        </button>
+                        
+                        <button type="submit" class="btn btn-primary" id="confirmBooking" title="Click to confirm your booking">
+                            <i class="fas fa-check"></i>
+                            Confirm Booking
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentStep = 1;
+let selectedTimeSlot = null;
+let availableSlots = [];
+
+// Form navigation
+function nextStep(step) {
+    // Validate current step
+    if (!validateStep(currentStep)) {
+        return;
+    }
+    
+    // Hide current step
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    document.getElementById(`step${currentStep}`).classList.add('completed');
+    
+    // Update step indicator
+    const sections = ['dateTimeSection', 'detailsSection', 'paymentSection', 'confirmSection'];
+    document.getElementById(sections[currentStep - 1]).style.display = 'none';
+    
+    // Show next step
+    currentStep = step;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    document.getElementById(sections[currentStep - 1]).style.display = 'block';
+    
+    // Update summary if going to confirmation step
+    if (currentStep === 4) {
+        updateBookingSummary();
+        validateAndEnableSubmit();
+    }
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep(step) {
+    // Hide current step
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    
+    // Update step indicator
+    const sections = ['dateTimeSection', 'detailsSection', 'paymentSection', 'confirmSection'];
+    document.getElementById(sections[currentStep - 1]).style.display = 'none';
+    
+    // Show previous step
+    currentStep = step;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    document.getElementById(`step${currentStep}`).classList.remove('completed');
+    document.getElementById(sections[currentStep - 1]).style.display = 'block';
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(step) {
+    switch(step) {
+        case 1:
+            const hasDate = document.getElementById('bookingDate').value;
+            const hasDuration = document.getElementById('duration').value;
+            const hasTimeSlot = selectedTimeSlot;
+            
+            if (!hasDate) {
+                showNotification('Please select a booking date', 'warning');
+                document.getElementById('bookingDate').focus();
+                return false;
+            }
+            if (!hasDuration) {
+                showNotification('Please select duration', 'warning');
+                document.getElementById('duration').focus();
+                return false;
+            }
+            if (!hasTimeSlot) {
+                showNotification('Please select a time slot', 'warning');
+                return false;
+            }
+            return true;
+            
+        case 2:
+            const hasPlayers = document.getElementById('numberOfPlayers').value;
+            const hasPhone = document.getElementById('contactPhone').value;
+            
+            if (!hasPlayers) {
+                showNotification('Please enter number of players', 'warning');
+                document.getElementById('numberOfPlayers').focus();
+                return false;
+            }
+            if (!hasPhone) {
+                showNotification('Please enter contact phone number', 'warning');
+                document.getElementById('contactPhone').focus();
+                return false;
+            }
+            return true;
+            
+        case 3:
+            const hasPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+            
+            if (!hasPaymentMethod) {
+                showNotification('Please select a payment method', 'warning');
+                return false;
+            }
+            return true;
+            
+        default:
+            return true;
+    }
+}
+
+// Function to validate entire form and enable submit button - SIMPLIFIED
+function validateAndEnableSubmit() {
+    const submitBtn = document.getElementById('confirmBooking');
+    
+    console.log('🔍 Validating form...');
+    
+    // Force enable the button for testing
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+    submitBtn.style.cursor = 'pointer';
+    submitBtn.classList.remove('opacity-50');
+    
+    console.log('✅ Submit button FORCE ENABLED for testing');
+    
+    showNotification('🎯 Form validation bypassed - button enabled for testing!', 'info');
+}
+
+// Date and time functionality
+document.getElementById('bookingDate').addEventListener('change', function() {
+    const duration = document.getElementById('duration').value;
+    if (this.value && duration) {
+        loadAvailableSlots();
+    }
+});
+
+document.getElementById('duration').addEventListener('change', function() {
+    const date = document.getElementById('bookingDate').value;
+    if (this.value && date) {
+        loadAvailableSlots();
+    }
+});
+
+async function loadAvailableSlots() {
+    const date = document.getElementById('bookingDate').value;
+    const duration = document.getElementById('duration').value;
+    
+    if (!date || !duration) return;
+    
+    try {
+        const response = await fetch(`/api/v2/available-slots/?playground_id={{ playground.id }}&date=${date}&duration=${duration}`);
+        const data = await response.json();
+        
+        displayTimeSlots(data.slots);
+        document.getElementById('availabilityInfo').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error loading slots:', error);
+        showNotification('Failed to load available time slots', 'error');
+    }
+}
+
+function displayTimeSlots(slots) {
+    const container = document.getElementById('timeSlots');
+    container.innerHTML = '';
+    availableSlots = slots;
+    
+    slots.forEach(slot => {
+        const slotDiv = document.createElement('div');
+        slotDiv.className = `time-slot ${slot.available ? '' : 'unavailable'}`;
+        slotDiv.textContent = `${slot.start_time} - ${slot.end_time}`;
+        slotDiv.onclick = () => selectTimeSlot(slot, slotDiv);
+        
+        if (!slot.available) {
+            slotDiv.title = 'This slot is not available';
+        }
+        
+        container.appendChild(slotDiv);
+    });
+}
+
+function selectTimeSlot(slot, element) {
+    if (!slot.available) return;
+    
+    // Remove previous selection
+    document.querySelectorAll('.time-slot.selected').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Select new slot
+    element.classList.add('selected');
+    selectedTimeSlot = slot;
+    
+    // Update hidden inputs
+    document.getElementById('selectedStartTime').value = slot.start_time;
+    document.getElementById('selectedEndTime').value = slot.end_time;
+    
+    // Enable next button
+    document.getElementById('step1Next').disabled = false;
+}
+
+// Booking summary update
+function updateBookingSummary() {
+    const date = document.getElementById('bookingDate').value;
+    const duration = document.getElementById('duration').value;
+    const players = document.getElementById('numberOfPlayers').value;
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
+    
+    // Format date
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    // Update summary
+    document.getElementById('summaryDate').textContent = formattedDate;
+    document.getElementById('summaryTime').textContent = `${selectedTimeSlot.start_time} - ${selectedTimeSlot.end_time}`;
+    document.getElementById('summaryDuration').textContent = `${duration} hour${duration > 1 ? 's' : ''}`;
+    document.getElementById('summaryPlayers').textContent = players;
+    document.getElementById('summaryPayment').textContent = paymentMethod ? paymentMethod.toUpperCase() : '-';
+    
+    // Update pricing
+    updatePricing(duration);
+}
+
+function updatePricing(duration) {
+    const hourlyRate = parseFloat('{{ playground.hourly_rate }}');
+    const subtotal = hourlyRate * duration;
+    const platformFee = Math.round(subtotal * 0.05); // 5% platform fee
+    const total = subtotal + platformFee;
+    
+    document.getElementById('pricingDuration').textContent = duration + ' hour' + (duration > 1 ? 's' : '');
+    document.getElementById('pricingSubtotal').textContent = '₹' + subtotal;
+    document.getElementById('platformFee').textContent = '₹' + platformFee;
+    document.getElementById('totalAmount').textContent = '₹' + total;
+}
+
+// Form submission
+document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    console.log('🔥 FORM SUBMIT TRIGGERED!');
+    
+    const submitBtn = document.getElementById('confirmBooking');
+    const originalText = submitBtn.innerHTML;
+    
+    console.log('Button element:', submitBtn);
+    console.log('Button disabled?', submitBtn.disabled);
+    
+    // Show loading state immediately
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+    
+    // Basic validation - simplified
+    const hasDate = document.getElementById('bookingDate').value;
+    const hasDuration = document.getElementById('duration').value;
+    const hasPlayers = document.getElementById('numberOfPlayers').value;
+    const hasPhone = document.getElementById('contactPhone').value;
+    const hasPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+    
+    console.log('Form validation:', {
+        hasDate, hasDuration, hasPlayers, hasPhone, hasPaymentMethod: !!hasPaymentMethod
+    });
+    
+    if (!hasDate || !hasDuration || !hasPlayers || !hasPhone || !hasPaymentMethod) {
+        showNotification('❌ Please fill all required fields!', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+    }
+    
+    try {
+        const formData = new FormData(this);
+        
+        // Debug: Log form data
+        console.log('📤 Submitting booking for playground:', '{{ playground.id }}');
+        console.log('👤 User authenticated:', '{% if user.is_authenticated %}true{% else %}false{% endif %}');
+        
+        console.log('📝 Form data:', {
+            playground_id: '{{ playground.id }}',
+            booking_date: hasDate,
+            duration: hasDuration,
+            number_of_players: hasPlayers,
+            contact_phone: hasPhone,
+            payment_method: hasPaymentMethod.value
+        });
+        
+        const response = await fetch(`/bookings/create/{{ playground.id }}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        console.log('🌐 Response status:', response.status);
+        console.log('🌐 Response headers:', response.headers);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ HTTP Error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Response data:', data);
+        
+        if (data.success) {
+            showNotification('✅ Booking saved successfully! Redirecting to payment...', 'success');
+            console.log('Booking created with ID:', data.booking_id);
+            setTimeout(() => {
+                window.location.href = `/bookings/payment/${data.booking_id}/`;
+            }, 1500);
+        } else {
+            showNotification(`❌ ${data.error || 'Failed to create booking'}`, 'error');
+            if (data.details) {
+                console.error('Booking error details:', data.details);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Network error. Please try again.', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+});
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white max-w-sm transform transition-transform duration-300 translate-x-full`;
+    
+    const colors = {
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        warning: 'bg-yellow-600',
+        info: 'bg-blue-600'
+    };
+    
+    notification.classList.add(colors[type] || colors.info);
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <div class="flex-1">${message}</div>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 5000);
+}
+
+// Initialize date picker with minimum date
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('bookingDate');
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    dateInput.min = today.toISOString().split('T')[0];
+    dateInput.value = tomorrow.toISOString().split('T')[0];
+    
+    // Make sure the confirm booking button is clickable
+    const confirmBtn = document.getElementById('confirmBooking');
+    confirmBtn.style.pointerEvents = 'auto';
+    confirmBtn.style.cursor = 'pointer';
+    confirmBtn.disabled = false;
+    
+    console.log('🚀 Confirm booking button found:', confirmBtn);
+    console.log('🚀 Button type:', confirmBtn.type);
+    console.log('🚀 Button form:', confirmBtn.form);
+    
+    // Add click handler as backup and for debugging
+    confirmBtn.addEventListener('click', function(e) {
+        console.log('🔥 BUTTON CLICKED! Event:', e);
+        console.log('🔥 Button disabled?', this.disabled);
+        console.log('🔥 Button type:', this.type);
+        
+        // If button is disabled, enable it temporarily for testing
+        if (this.disabled) {
+            console.log('⚠️ Button was disabled, enabling it...');
+            this.disabled = false;
+        }
+        
+        // Make sure form submission happens
+        if (this.type === 'submit') {
+            console.log('✅ Submit button clicked, form should submit');
+            return; // Let the form submission handler take care of it
+        } else {
+            console.log('⚠️ Button is not submit type, manually triggering form submit');
+            e.preventDefault();
+            document.getElementById('bookingForm').dispatchEvent(new Event('submit'));
+        }
+    });
+    
+    // Force enable the button for testing
+    setTimeout(() => {
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+        confirmBtn.style.cursor = 'pointer';
+        console.log('🎯 Button force-enabled after 1 second');
+    }, 1000);
+    
+    console.log('Confirm booking button initialized');
+});
+
+// TEST FUNCTION - Direct booking submission
+function testBookingSubmission() {
+    console.log('🧪 TEST BOOKING FUNCTION CALLED!');
+    
+    // Fill out dummy data
+    document.getElementById('bookingDate').value = '2025-08-04';
+    document.getElementById('duration').value = '2';
+    document.getElementById('numberOfPlayers').value = '5';
+    document.getElementById('contactPhone').value = '+8801234567890';
+    document.querySelector('input[name="payment_method"][value="cash"]').checked = true;
+    
+    // Set dummy time slot
+    selectedTimeSlot = {
+        start_time: '10:00',
+        end_time: '12:00',
+        available: true
+    };
+    document.getElementById('selectedStartTime').value = '10:00';
+    document.getElementById('selectedEndTime').value = '12:00';
+    
+    console.log('🧪 Filled dummy data, triggering form submit...');
+    
+    // Trigger the form submission
+    document.getElementById('bookingForm').dispatchEvent(new Event('submit'));
+}
+</script>
+{% endblock %}

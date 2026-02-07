@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Slot Storage API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+        }
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Slot Storage API Test</h1>
+    
+    <div class="test-container">
+        <div class="test-header">Test 1: Create Temporary Membership Pass</div>
+        <button onclick="testCreateMembershipPass()">Create Membership Pass</button>
+        <div id="membershipResult" class="test-result info">Click button to test...</div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">Test 2: Create Temporary Custom Slot</div>
+        <button onclick="testCreateCustomSlot()">Create Custom Slot</button>
+        <div id="slotResult" class="test-result info">Click button to test...</div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">Test 3: Check Session Data</div>
+        <button onclick="checkSessionData()">Check Session Data</button>
+        <div id="sessionResult" class="test-result info">Click button to test...</div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">Test 4: Clear Session Data</div>
+        <button onclick="clearSessionData()" class="clear-btn">Clear Session Data</button>
+        <div id="clearResult" class="test-result info">Click button to test...</div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">Test 5: Create Playground and Save Temporary Data</div>
+        <button onclick="testCompleteFlow()">Test Complete Flow</button>
+        <div id="completeResult" class="test-result info">Click button to test...</div>
+    </div>
+
+    <script>
+        // Get CSRF token
+        function getCSRFToken() {
+            const token = document.querySelector('[name=csrfmiddlewaretoken]');
+            return token ? token.value : '';
+        }
+
+        // Add CSRF token to page
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/dashboard-stats/')
+                .then(response => {
+                    const csrfToken = response.headers.get('X-CSRFToken');
+                    if (csrfToken) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'csrfmiddlewaretoken';
+                        input.value = csrfToken;
+                        document.body.appendChild(input);
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not get CSRF token from API, will try with empty token');
+                });
+        });
+
+        async function testCreateMembershipPass() {
+            const resultDiv = document.getElementById('membershipResult');
+            resultDiv.textContent = 'Testing...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const testData = {
+                    name: 'Test Premium Pass',
+                    duration_type: 'days',
+                    duration_days: 30,
+                    price: 1500,
+                    currency: 'BDT',
+                    description: 'Test membership pass for storage verification',
+                    is_temporary: true,
+                    unlimited_access: true,
+                    equipment_included: false,
+                    priority_booking: true
+                };
+
+                const response = await fetch('/api/membership-passes/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    resultDiv.textContent = `✅ SUCCESS: ${result.message}\nTemp ID: ${result.temp_id}\nData: ${JSON.stringify(result.data, null, 2)}`;
+                    resultDiv.className = 'test-result success';
+                } else {
+                    resultDiv.textContent = `❌ FAILED: ${result.error || result.message || 'Unknown error'}\nFull response: ${JSON.stringify(result, null, 2)}`;
+                    resultDiv.className = 'test-result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        }
+
+        async function testCreateCustomSlot() {
+            const resultDiv = document.getElementById('slotResult');
+            resultDiv.textContent = 'Testing...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const testData = {
+                    slot_type: 'premium',
+                    start_time: '10:00',
+                    end_time: '11:00',
+                    price: 500,
+                    currency: 'BDT',
+                    day_of_week: 'monday',
+                    description: 'Test custom slot for storage verification',
+                    is_temporary: true,
+                    max_capacity: 8,
+                    features: ['AC', 'LED Lighting']
+                };
+
+                const response = await fetch('/api/professional-slots/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    resultDiv.textContent = `✅ SUCCESS: ${result.message}\nTemp ID: ${result.temp_id}\nData: ${JSON.stringify(result.data, null, 2)}`;
+                    resultDiv.className = 'test-result success';
+                } else {
+                    resultDiv.textContent = `❌ FAILED: ${result.error || result.message || 'Unknown error'}\nFull response: ${JSON.stringify(result, null, 2)}`;
+                    resultDiv.className = 'test-result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        }
+
+        async function checkSessionData() {
+            const resultDiv = document.getElementById('sessionResult');
+            resultDiv.textContent = 'Checking...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const response = await fetch('/api/temporary-data-summary/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    resultDiv.textContent = `✅ SESSION DATA:\nTemporary Passes: ${result.temporary_passes}\nTemporary Slots: ${result.temporary_slots}\nTotal Items: ${result.total_temporary_items}\n\nDetailed Data:\n${JSON.stringify(result, null, 2)}`;
+                    resultDiv.className = 'test-result success';
+                } else {
+                    resultDiv.textContent = `❌ FAILED: ${result.error || result.message || 'Unknown error'}\nFull response: ${JSON.stringify(result, null, 2)}`;
+                    resultDiv.className = 'test-result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        }
+
+        async function clearSessionData() {
+            const resultDiv = document.getElementById('clearResult');
+            resultDiv.textContent = 'Clearing...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const response = await fetch('/api/clear-temporary-data/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    resultDiv.textContent = `✅ SUCCESS: ${result.message}\nCleared Passes: ${result.cleared_passes}\nCleared Slots: ${result.cleared_slots}`;
+                    resultDiv.className = 'test-result success';
+                } else {
+                    resultDiv.textContent = `❌ FAILED: ${result.error || result.message || 'Unknown error'}\nFull response: ${JSON.stringify(result, null, 2)}`;
+                    resultDiv.className = 'test-result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ ERROR: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        }
+
+        async function testCompleteFlow() {
+            const resultDiv = document.getElementById('completeResult');
+            resultDiv.textContent = 'Testing complete flow...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                // Step 1: Clear any existing data
+                await fetch('/api/clear-temporary-data/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                // Step 2: Create temporary membership pass
+                const membershipData = {
+                    name: 'Flow Test Pass',
+                    duration_type: 'days',
+                    duration_days: 15,
+                    price: 750,
+                    currency: 'BDT',
+                    is_temporary: true
+                };
+
+                const membershipResponse = await fetch('/api/membership-passes/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(membershipData)
+                });
+
+                const membershipResult = await membershipResponse.json();
+                if (!membershipResponse.ok || !membershipResult.success) {
+                    throw new Error(`Failed to create membership pass: ${membershipResult.error}`);
+                }
+
+                // Step 3: Create temporary custom slot
+                const slotData = {
+                    slot_type: 'regular',
+                    start_time: '14:00',
+                    end_time: '15:00',
+                    price: 400,
+                    currency: 'BDT',
+                    day_of_week: 'tuesday',
+                    is_temporary: true
+                };
+
+                const slotResponse = await fetch('/api/professional-slots/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(slotData)
+                });
+
+                const slotResult = await slotResponse.json();
+                if (!slotResponse.ok || !slotResult.success) {
+                    throw new Error(`Failed to create custom slot: ${slotResult.error}`);
+                }
+
+                // Step 4: Check session data
+                const sessionResponse = await fetch('/api/temporary-data-summary/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                const sessionResult = await sessionResponse.json();
+                
+                resultDiv.textContent = `✅ COMPLETE FLOW SUCCESS!\n\nStep 1: Cleared previous data ✅\nStep 2: Created membership pass ✅ (ID: ${membershipResult.temp_id})\nStep 3: Created custom slot ✅ (ID: ${slotResult.temp_id})\nStep 4: Session contains ${sessionResult.temporary_passes} passes and ${sessionResult.temporary_slots} slots\n\nNow when you create a playground, these should be automatically saved!\n\nDetailed session data:\n${JSON.stringify(sessionResult, null, 2)}`;
+                resultDiv.className = 'test-result success';
+
+            } catch (error) {
+                resultDiv.textContent = `❌ FLOW ERROR: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        }
+    </script>
+</body>
+</html>

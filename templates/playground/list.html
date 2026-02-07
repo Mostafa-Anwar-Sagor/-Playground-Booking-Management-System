@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Playgrounds - PlayGround Booking{% endblock %}
+
+{% block extra_head %}
+<style>
+    .filter-card {
+        background: rgba(30, 41, 59, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    
+    .playground-grid-card {
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+        border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    
+    .playground-grid-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.25);
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all filter elements
+    const countryFilter = document.getElementById('country-filter');
+    const stateFilter = document.getElementById('state-filter');
+    const cityFilter = document.getElementById('city-filter');
+    const priceSelect = document.getElementById('price-filter');
+    const searchForm = document.getElementById('search-form');
+    
+    // Map country names to currency symbols
+    const countryCurrencyMap = {
+        'malaysia': 'RM',
+        'singapore': 'S$',
+        'thailand': '฿',
+        'indonesia': 'Rp',
+        'united states': '$',
+        'united kingdom': '£',
+        'canada': 'C$',
+        'australia': 'A$',
+        'india': '₹',
+        'bangladesh': '৳',
+        'china': '¥',
+        'japan': '¥',
+        'south korea': '₩',
+        'pakistan': '₨',
+        'philippines': '₱',
+        'vietnam': '₫',
+        'default': '$'
+    };
+    
+    // Update price labels based on selected country
+    function updatePriceLabels() {
+        if (!countryFilter || !priceSelect) return;
+        
+        const selectedOption = countryFilter.options[countryFilter.selectedIndex];
+        let currency = '$'; // default
+        
+        if (selectedOption && selectedOption.text && selectedOption.value) {
+            const countryName = selectedOption.text.toLowerCase();
+            currency = countryCurrencyMap[countryName] || countryCurrencyMap['default'];
+        }
+        
+        // Update price filter options
+        const options = priceSelect.querySelectorAll('option');
+        options.forEach(option => {
+            if (option.value) {
+                const value = option.value;
+                if (value === '0-25') option.textContent = `${currency}0 - ${currency}25 (per hour)`;
+                else if (value === '25-50') option.textContent = `${currency}25 - ${currency}50 (per hour)`;
+                else if (value === '50-100') option.textContent = `${currency}50 - ${currency}100 (per hour)`;
+                else if (value === '100+') option.textContent = `${currency}100+ (per hour)`;
+            }
+        });
+    }
+    
+    // Load states when country is selected
+    async function loadStates(countryId) {
+        if (!countryId) {
+            stateFilter.disabled = true;
+            stateFilter.innerHTML = '<option value="">State/Region</option>';
+            cityFilter.disabled = true;
+            cityFilter.innerHTML = '<option value="">City</option>';
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/filter/states/?country_id=${countryId}`);
+            const data = await response.json();
+            
+            if (data.success && data.states) {
+                stateFilter.innerHTML = '<option value="">All States/Regions</option>';
+                data.states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.textContent = state.name;
+                    stateFilter.appendChild(option);
+                });
+                stateFilter.disabled = false;
+                
+                // If there was a previously selected state, keep it selected
+                const currentState = '{{ current_filters.state }}';
+                if (currentState) {
+                    stateFilter.value = currentState;
+                    loadCities(currentState);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading states:', error);
+        }
+    }
+    
+    // Load cities when state is selected
+    async function loadCities(stateId) {
+        if (!stateId) {
+            cityFilter.disabled = true;
+            cityFilter.innerHTML = '<option value="">City</option>';
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/filter/cities/?state_id=${stateId}`);
+            const data = await response.json();
+            
+            if (data.success && data.cities) {
+                cityFilter.innerHTML = '<option value="">All Cities</option>';
+                data.cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    cityFilter.appendChild(option);
+                });
+                cityFilter.disabled = false;
+                
+                // If there was a previously selected city, keep it selected
+                const currentCity = '{{ current_filters.city }}';
+                if (currentCity) {
+                    cityFilter.value = currentCity;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading cities:', error);
+        }
+    }
+    
+    // Event listeners for cascading dropdowns
+    if (countryFilter) {
+        countryFilter.addEventListener('change', function() {
+            const countryId = this.value;
+            updatePriceLabels();
+            loadStates(countryId);
+            
+            // Reset city when country changes
+            cityFilter.disabled = true;
+            cityFilter.innerHTML = '<option value="">City</option>';
+        });
+    }
+    
+    if (stateFilter) {
+        stateFilter.addEventListener('change', function() {
+            const stateId = this.value;
+            loadCities(stateId);
+        });
+    }
+    
+    // Auto-submit on filter change for real-time filtering
+    const autoSubmitFilters = [countryFilter, stateFilter, cityFilter, priceSelect, document.getElementById('sport-filter')];
+    autoSubmitFilters.forEach(filter => {
+        if (filter) {
+            filter.addEventListener('change', function() {
+                // Add a small delay to allow cascading dropdowns to load
+                setTimeout(() => {
+                    searchForm.submit();
+                }, 300);
+            });
+        }
+    });
+    
+    // Initialize on page load
+    updatePriceLabels();
+    
+    // Load states if a country is already selected (e.g., from URL parameters)
+    const currentCountry = '{{ current_filters.country }}';
+    if (currentCountry && countryFilter) {
+        loadStates(currentCountry);
+    }
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <!-- Search Header -->
+    <div class="bg-gradient-to-r from-slate-800 to-slate-900 py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-8">
+                <h1 class="text-5xl font-black text-white mb-4">
+                    Find Your Perfect <span class="bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">Playground</span>
+                </h1>
+                <p class="text-xl text-slate-300">Discover amazing sports facilities near you</p>
+            </div>
+            
+            <!-- Search Filters -->
+            <div class="filter-card rounded-2xl p-6 max-w-7xl mx-auto">
+                <form method="GET" id="search-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                        <div>
+                            <select name="sport" id="sport-filter" class="w-full px-4 py-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                <option value="">All Sports</option>
+                                {% for sport in sport_types %}
+                                    <option value="{{ sport.id }}" {% if current_filters.sport == sport.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ sport.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <select name="country" id="country-filter" class="w-full px-4 py-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                <option value="">All Countries</option>
+                                {% for country in countries %}
+                                    <option value="{{ country.id }}" {% if current_filters.country == country.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ country.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <select name="state" id="state-filter" class="w-full px-4 py-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500" disabled>
+                                <option value="">State/Region</option>
+                                {% if current_filters.state %}
+                                    <option value="{{ current_filters.state }}" selected>{{ current_filters.state_name }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <select name="city" id="city-filter" class="w-full px-4 py-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500" disabled>
+                                <option value="">City</option>
+                                {% if current_filters.city %}
+                                    <option value="{{ current_filters.city }}" selected>{{ current_filters.city_name }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <select name="price" id="price-filter" class="w-full px-4 py-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                <option value="">Any Price</option>
+                                <option value="0-25" {% if current_filters.price == "0-25" %}selected{% endif %}>0 - 25 (per hour)</option>
+                                <option value="25-50" {% if current_filters.price == "25-50" %}selected{% endif %}>25 - 50 (per hour)</option>
+                                <option value="50-100" {% if current_filters.price == "50-100" %}selected{% endif %}>50 - 100 (per hour)</option>
+                                <option value="100+" {% if current_filters.price == "100+" %}selected{% endif %}>100+ (per hour)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <input type="text" name="q" id="search-query" value="{{ current_filters.q }}" placeholder="Search by name or location..." class="w-full px-4 py-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        
+                        <div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all font-bold">
+                                <i class="fas fa-search mr-2"></i>Search
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <a href="{% url 'playgrounds:playground_search' %}" class="block w-full bg-slate-600 text-white px-6 py-3 rounded-lg hover:bg-slate-500 transition-all font-bold text-center">
+                                <i class="fas fa-times mr-2"></i>Clear
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results -->
+    <div class="container mx-auto px-6 py-12">
+        {% if playgrounds %}
+            <div class="mb-8">
+                <p class="text-slate-300 text-lg">
+                    Found {{ paginator.count }} playground{{ paginator.count|pluralize }} 
+                    {% if current_filters.q %}for "{{ current_filters.q }}"{% endif %}
+                </p>
+            </div>
+            
+            <!-- Playground Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                {% for playground in playgrounds %}
+                <div class="playground-grid-card rounded-2xl overflow-hidden shadow-xl">
+                    <div class="relative">
+                        {% if playground.images.first %}
+                            <img src="{{ playground.images.first.image.url }}" alt="{{ playground.name }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <div class="w-full h-48 bg-gradient-to-r from-emerald-600 to-emerald-700 flex items-center justify-center">
+                                <i class="fas fa-futbol text-white text-4xl"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="absolute top-4 left-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            {{ playground.sport_types.first.name|default:"Sport" }}
+                        </div>
+                        
+                        <div class="absolute top-4 right-4 flex items-center bg-black/50 text-white px-2 py-1 rounded-full text-sm">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span>{{ playground.rating|floatformat:1|default:"New" }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">{{ playground.name }}</h3>
+                        <div class="flex items-center text-slate-400 mb-3">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            <span class="text-sm">{{ playground.city.name }}, {{ playground.city.state.name }}, {{ playground.city.state.country.name }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="text-emerald-400 font-bold text-lg">
+                                {{ playground.currency.symbol }}{{ playground.price_per_hour|floatformat:playground.currency.decimal_places }}<span class="text-sm text-slate-400">/hour</span>
+                            </div>
+                            <a href="{% url 'playgrounds:playground_detail' playground.id %}" class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors font-medium">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <div class="flex justify-center">
+                <nav class="flex space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="px-4 py-2 bg-emerald-500 text-white rounded-lg">{{ num }}</span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <!-- No Results -->
+            <div class="text-center py-20">
+                <div class="filter-card rounded-3xl p-12 max-w-md mx-auto">
+                    <i class="fas fa-search text-6xl text-slate-500 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">No Playgrounds Found</h3>
+                    <p class="text-slate-300 mb-6">Try adjusting your search criteria or browse all playgrounds.</p>
+                    <a href="{% url 'playgrounds:playground_search' %}" class="bg-emerald-500 text-white px-6 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-bold">
+                        View All Playgrounds
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

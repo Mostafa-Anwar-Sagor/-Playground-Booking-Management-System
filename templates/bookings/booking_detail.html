@@ -1,0 +1,741 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ ui_text.sections.booking_details|default:"Booking Details" }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Dark Theme matchin            <!-- Print Header (only visible when printing) - PROFESSIONAL & COLORFUL -->
+            <div class="print-header">
+                <div style="max-width: 580px; margin: 0 auto; font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; max-height: 100vh; overflow: hidden;">
+                    
+                    <!-- Header (Colorful) -->
+                    <div style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; margin-bottom: 8px; border-radius: 8px;">
+                        <h1 style="font-size: 18px; font-weight: bold; margin: 0; letter-spacing: 1px;">{{ company_info.name|default:"PLAYGROUND BOOKING" }}</h1>
+                        <p style="font-size: 9px; margin: 3px 0 0; opacity: 0.9;">🎫 Official Booking Receipt</p>
+                    </div> */
+    body {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #000000 100%) !important;
+        color: #f8fafc !important;
+    }
+    
+    .booking-detail-container {
+        background: transparent;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .modern-card {
+        background: rgba(31, 41, 55, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        transition: all 0.3s ease;
+    }
+    
+    .modern-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        border-color: rgba(96, 165, 250, 0.5);
+    }
+    
+    .info-label {
+        color: #9ca3af;
+        font-weight: 500;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .info-value {
+        color: #f9fafb;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        color: #f9fafb;
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(96, 165, 250, 0.3);
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.25rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .divider {
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(96, 165, 250, 0.3), transparent);
+        margin: 1.5rem 0;
+    }
+    
+    .highlight-box {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 12px;
+        padding: 1.25rem;
+    }
+    
+    .rate-box {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 12px;
+        padding: 1.25rem;
+    }
+    
+    .grid-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .grid-info {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Print Styles - Professional Booking Form */
+    @media print {
+        /* Hide navigation and non-essential elements */
+        header, nav, footer, .navbar, .header, .footer, 
+        .navigation, .menu, .sidebar, .no-print {
+            display: none !important;
+        }
+        
+        /* HIDE ALL WEB PAGE CONTENT - Only show print-header */
+        .modern-card, .status-badge, .btn-modern {
+            display: none !important;
+        }
+        
+        body {
+            background: white !important;
+            color: black !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .booking-detail-container {
+            padding: 0 !important;
+            background: white !important;
+        }
+        
+        .container {
+            max-width: 100% !important;
+            padding: 0.5cm !important;
+        }
+        
+        .print-header {
+            display: block !important;
+            page-break-inside: avoid !important;
+            page-break-after: avoid !important;
+            overflow: hidden !important;
+        }
+        
+        /* Force everything after print-header to not print */
+        .print-header ~ * {
+            display: none !important;
+        }
+        
+        svg {
+            display: none !important;
+        }
+        
+        /* Prevent any orphan content */
+        body {
+            overflow: hidden !important;
+        }
+        
+        html {
+            overflow: hidden !important;
+        }
+        
+        @page {
+            margin: 8mm;
+            size: A4 portrait;
+        }
+        
+        @page :first {
+            margin: 8mm;
+        }
+        
+        @page :blank {
+            display: none !important;
+        }
+    }
+    
+    .print-header, .print-footer {
+        display: none;
+    }
+    
+    .print-qr-section {
+        display: none;
+    }
+    
+    @media print {
+        .print-qr-section {
+            display: block !important;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #000;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .print-qr-section img {
+            margin: 0 auto;
+            display: block;
+        }
+    }
+</style>
+
+<div class="booking-detail-container">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        
+        {% if booking %}
+            <!-- Print Header (only visible when printing) - ULTRA COMPACT -->
+            <div class="print-header">
+                <div style="max-width: 580px; margin: 0 auto; font-family: Arial, sans-serif; font-size: 9px;">
+                    
+                    <!-- Header (Colorful with Gradient) -->
+                    <div style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px; margin-bottom: 8px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h1 style="font-size: 20px; font-weight: bold; margin: 0; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">PLAYGROUND BOOKING</h1>
+                        <p style="font-size: 10px; margin: 3px 0 0; font-weight: 600;">🎫 Official Booking Receipt</p>
+                    </div>
+                    
+                    <!-- QR + ID (Professional) -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; padding: 8px; border: 3px solid #667eea; border-radius: 8px; background: linear-gradient(to right, #f8f9ff, #fff); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <div style="flex: 0 0 75px; text-align: center; background: white; padding: 4px; border: 2px solid #667eea; border-radius: 6px;">
+                            <img src="data:image/png;base64,{{ qr_code }}" style="width: 70px; height: 70px; display: block; margin: 0 auto;">
+                            <p style="margin: 3px 0 0; font-size: 8px; color: #667eea; font-weight: bold;">📱 SCAN ME</p>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 6px; margin-bottom: 6px;">
+                                <p style="margin: 0; font-size: 9px; font-weight: 600;">BOOKING ID</p>
+                                <p style="margin: 2px 0 0; font-size: 13px; font-weight: bold; letter-spacing: 1px;">{{ booking.booking_id|truncatechars:15 }}</p>
+                            </div>
+                            <p style="margin: 4px 0 0; font-size: 11px; color: #000;"><strong>👤 Customer:</strong> {{ booking.user.get_full_name|default:booking.user.username }}</p>
+                            <p style="margin: 3px 0; font-size: 11px; color: #000;"><strong>📞 Phone:</strong> {{ booking.contact_phone }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Date/Time (Colorful) -->
+                    <div style="display: flex; gap: 5px; margin-bottom: 7px; text-align: center;">
+                        <div style="flex: 1; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <p style="margin: 0; font-size: 9px; font-weight: 600;">📅 DATE</p>
+                            <p style="margin: 3px 0 0; font-weight: bold; font-size: 12px;">{{ booking.booking_date|date:"d M Y" }}</p>
+                        </div>
+                        <div style="flex: 1; background: linear-gradient(135deg, #f093fb, #f5576c); color: white; padding: 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <p style="margin: 0; font-size: 9px; font-weight: 600;">⏰ START</p>
+                            <p style="margin: 3px 0 0; font-weight: bold; font-size: 12px;">{{ booking.start_time|time:"g:i A" }}</p>
+                        </div>
+                        <div style="flex: 1; background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; padding: 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <p style="margin: 0; font-size: 9px; font-weight: 600;">🏁 END</p>
+                            <p style="margin: 3px 0 0; font-weight: bold; font-size: 12px;">{{ booking.end_time|time:"g:i A" }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Playground (Colorful Box) -->
+                    <div style="border: 3px solid #10b981; padding: 8px; margin-bottom: 7px; background: linear-gradient(to right, #ecfdf5, #fff); border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <p style="margin: 0; font-size: 9px; color: #059669; font-weight: bold; letter-spacing: 0.5px;">🏟️ PLAYGROUND DETAILS</p>
+                        <p style="margin: 4px 0; font-weight: bold; font-size: 13px; color: #000;">{{ booking.playground.name }}</p>
+                        <p style="margin: 3px 0; font-size: 10px; color: #333;">📍 {{ booking.playground.address|truncatewords:6 }}</p>
+                        <p style="margin: 3px 0; font-size: 10px; color: #333;">🎯 Type: <strong>{{ booking.playground.playground_type|default:"Standard" }}</strong> • 👥 Capacity: <strong>{{ booking.playground.capacity|default:"N/A" }}</strong></p>
+                    </div>
+                    
+                    <!-- Slot Details (Full Width) -->
+                    <div style="margin-bottom: 7px;">
+                        <!-- Slot Info -->
+                        <div style="border: 3px solid #a855f7; padding: 8px; background: linear-gradient(to bottom, #faf5ff, #fff); border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <p style="margin: 0; font-size: 9px; color: #7c3aed; font-weight: bold; letter-spacing: 0.5px;">🎮 SLOT DETAILS</p>
+                            <p style="margin: 4px 0; font-weight: 600; font-size: 11px; color: #000;">{% if slot_details.booking_type %}{{ slot_details.booking_type }}{% else %}Standard Slot{% endif %}</p>
+                            {% if slot_details.slot_type %}<p style="margin: 3px 0; font-size: 10px; color: #333;">Type: {{ slot_details.slot_type }}</p>{% endif %}
+                            <p style="margin: 3px 0; font-size: 10px; color: #333;">⏱️ Duration: <strong>{{ booking.duration_hours }}h</strong> • 👥 Players: <strong>{{ booking.number_of_players }}</strong></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Summary (Professional Gradient) -->
+                    <div style="border: 3px solid #6366f1; background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%); color: white; padding: 10px; margin-bottom: 7px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); font-size: 11px;">
+                            <span style="font-weight: 600;">💰 Rate ({{ booking.duration_hours }}h @ {{ currency_symbol }}{{ booking.price_per_hour }}/h)</span>
+                            <span style="font-weight: 600;">{{ currency_symbol }}{{ booking.total_amount }}</span>
+                        </div>
+                        {% if booking.discount_amount and booking.discount_amount > 0 %}
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); font-size: 11px;">
+                            <span style="font-weight: 600;">🎁 Discount</span>
+                            <span style="color: #10b981; font-weight: 600;">-{{ currency_symbol }}{{ booking.discount_amount }}</span>
+                        </div>
+                        {% endif %}
+                        <div style="background: rgba(255,255,255,0.15); padding: 8px; border-radius: 6px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: bold; font-size: 12px;">💵 TOTAL AMOUNT</span>
+                                <span style="font-size: 18px; font-weight: bold; color: #fbbf24;">{{ currency_symbol }}{{ booking.final_amount|default:booking.total_amount }}</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; background: {% if booking.payment_status == 'paid' or booking.payment_status == 'completed' %}#10b981{% else %}#f59e0b{% endif %}; padding: 6px; border-radius: 6px;">
+                            <span style="font-size: 10px; font-weight: bold;">{% if booking.payment_status == 'paid' or booking.payment_status == 'completed' %}✅ PAYMENT COMPLETED{% elif booking.payment_status == 'pending' %}⏳ PAYMENT PENDING{% else %}{{ booking.payment_status|upper }}{% endif %}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Instructions (Colorful) -->
+                    <div style="background: linear-gradient(to right, #dbeafe, #e0f2fe); border: 2px solid #3b82f6; padding: 6px; text-align: center; margin-bottom: 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <p style="margin: 0; font-size: 9px; color: #1e40af; line-height: 1.4; font-weight: 600;">
+                            <strong>📱 HOW TO USE:</strong> Show QR code at entrance → Owner scans → Booking verified ✅
+                        </p>
+                    </div>
+                    
+                    <!-- Footer (Professional) -->
+                    <div style="padding: 6px; border-top: 2px solid #e5e7eb; text-align: center; background: #f9fafb; border-radius: 6px;">
+                        <p style="margin: 0; font-size: 9px; color: #6b7280; font-weight: 600;">PLAYGROUND BOOKING</p>
+                        <p style="margin: 2px 0 0; font-size: 8px; color: #9ca3af;">📧 {{ company_info.email|default:"support@playground.com" }} | 📞 {{ company_info.phone|default:"Contact Support" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Section -->
+            <div class="modern-card p-8 mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                    <div>
+                        <h1 class="text-4xl font-bold text-white mb-3">
+                            {{ ui_text.sections.booking_details|default:"Booking Details" }}
+                        </h1>
+                        <div class="flex items-center gap-2 text-gray-300">
+                            <span class="text-sm font-medium">{{ ui_text.labels.booking_id|default:"Booking ID" }}:</span>
+                            <span class="text-lg font-bold text-blue-400">#{{ booking.booking_id|default:booking.id }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-3">
+                        {% if booking.status == 'confirmed' or booking.payment_status == 'completed' %}
+                            <span class="status-badge bg-green-500 bg-opacity-20 text-green-400 border-2 border-green-500">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ ui_text.labels.payment_complete|default:"Payment Complete" }}
+                            </span>
+                        {% elif booking.payment_status == 'pending' %}
+                            <span class="status-badge bg-orange-500 bg-opacity-20 text-orange-400 border-2 border-orange-500">
+                                <svg class="w-5 h-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ ui_text.labels.payment_pending|default:"Payment Pending" }}
+                            </span>
+                        {% endif %}
+                        
+                        <a href="{% url 'accounts:dashboard' %}" class="btn-modern bg-gray-700 text-white hover:bg-gray-600 no-print">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            {{ ui_text.buttons.return_dashboard|default:"Back to Dashboard" }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                
+                <!-- Playground Information -->
+                <div class="modern-card p-6">
+                    <h2 class="section-title">
+                        <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ ui_text.sections.playground_details|default:"Playground Details" }}
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="info-label">{{ ui_text.labels.name|default:"Playground Name" }}</div>
+                            <div class="info-value text-xl">{{ booking.playground.name }}</div>
+                        </div>
+                        
+                        {% if booking.playground.address %}
+                        <div>
+                            <div class="info-label">{{ ui_text.labels.address|default:"Address" }}</div>
+                            <div class="info-value">{{ booking.playground.address }}</div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="grid-info">
+                            {% if booking.playground.playground_type %}
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.type|default:"Type" }}</div>
+                                <div class="info-value">{{ booking.playground.playground_type }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if booking.playground.capacity %}
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.capacity|default:"Capacity" }}</div>
+                                <div class="info-value">{{ booking.playground.capacity }} {{ ui_text.labels.players|default:"players" }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if booking.playground.price_per_hour %}
+                        <div class="rate-box">
+                            <div class="info-label text-blue-300">{{ ui_text.labels.rate|default:"Hourly Rate" }}</div>
+                            <div class="text-2xl font-bold text-blue-400">{{ currency_symbol|default:"$" }}{{ booking.playground.price_per_hour }}/{{ ui_text.labels.hour|default:"hour" }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Complete Booking Information -->
+                <div class="modern-card p-6">
+                    <h2 class="section-title">
+                        <svg class="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ ui_text.sections.booking_information|default:"Booking Information" }}
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <!-- Date & Time -->
+                        <div class="grid-info">
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.date|default:"Date" }}</div>
+                                <div class="info-value">{{ booking.booking_date|date:"F d, Y" }}</div>
+                            </div>
+                            
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.time|default:"Time" }}</div>
+                                <div class="info-value">{{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Duration & Players -->
+                        <div class="grid-info">
+                            {% if booking.duration_hours %}
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.duration|default:"Duration" }}</div>
+                                <div class="info-value">{{ booking.duration_hours }} {{ ui_text.labels.hours|default:"hours" }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if booking.number_of_players %}
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.players|default:"Players" }}</div>
+                                <div class="info-value">{{ booking.number_of_players }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Slot Details - Professional Display -->
+                        <div class="p-4 rounded-lg" style="background: rgba(168, 85, 247, 0.1); border-left: 3px solid #a855f7;">
+                            <div class="info-label text-purple-300 mb-3">SLOT DETAILS</div>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                {% if slot_details.booking_type %}
+                                <div>
+                                    <span class="text-gray-400">Booking Type:</span>
+                                    <span class="text-purple-200 font-semibold ml-2">{{ slot_details.booking_type }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if slot_details.slot_type %}
+                                <div>
+                                    <span class="text-gray-400">Slot Type:</span>
+                                    <span class="text-purple-200 font-semibold ml-2">{{ slot_details.slot_type }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if slot_details.time_slot_type %}
+                                <div>
+                                    <span class="text-gray-400">Time Slot:</span>
+                                    <span class="text-purple-200 font-semibold ml-2">{{ slot_details.time_slot_type }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if slot_details.pass_name %}
+                                <div class="col-span-2">
+                                    <span class="text-gray-400">Membership Pass:</span>
+                                    <span class="text-purple-200 font-semibold ml-2">{{ slot_details.pass_name }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if slot_details.pass_duration_type %}
+                                <div>
+                                    <span class="text-gray-400">Duration:</span>
+                                    <span class="text-purple-200 font-semibold ml-2">{{ slot_details.pass_duration_type }} ({{ slot_details.pass_duration_days|default:"0" }} days)</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if not slot_details.booking_type %}
+                                <div class="col-span-2">
+                                    <span class="text-purple-200 font-semibold">Standard Booking Slot</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Pricing -->
+                        <div class="grid-info">
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.price_per_hour|default:"Rate" }}</div>
+                                <div class="info-value">{{ currency_symbol|default:"$" }}{{ booking.price_per_hour }}</div>
+                            </div>
+                            
+                            <div>
+                                <div class="info-label">{{ ui_text.labels.subtotal|default:"Subtotal" }}</div>
+                                <div class="info-value">{{ currency_symbol|default:"$" }}{{ booking.total_amount }}</div>
+                            </div>
+                        </div>
+                        
+                        {% if booking.discount_amount and booking.discount_amount > 0 %}
+                        <div class="flex justify-between items-center text-green-400">
+                            <span class="info-label text-green-400">{{ ui_text.labels.discount|default:"Discount" }}</span>
+                            <span class="font-semibold text-lg">-{{ currency_symbol|default:"$" }}{{ booking.discount_amount }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="highlight-box">
+                            <div class="flex justify-between items-center">
+                                <span class="info-label text-green-300">{{ ui_text.labels.total|default:"Total Amount" }}</span>
+                                <span class="text-3xl font-bold text-green-400">{{ currency_symbol|default:"$" }}{{ booking.final_amount|default:booking.total_amount }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="modern-card p-6 mb-6">
+                <h2 class="section-title">
+                    <svg class="w-6 h-6 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ ui_text.sections.customer_information|default:"Customer Information" }}
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    {% if booking.user.get_full_name %}
+                    <div>
+                        <div class="info-label">{{ ui_text.labels.customer_name|default:"Customer Name" }}</div>
+                        <div class="info-value">{{ booking.user.get_full_name }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if booking.user.email %}
+                    <div>
+                        <div class="info-label">{{ ui_text.labels.email|default:"Email" }}</div>
+                        <div class="info-value">{{ booking.user.email }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if booking.contact_phone %}
+                    <div>
+                        <div class="info-label">{{ ui_text.labels.phone|default:"Phone" }}</div>
+                        <div class="info-value">{{ booking.contact_phone }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div>
+                    <div class="info-label">{{ ui_text.labels.booked_on|default:"Booked On" }}</div>
+                    <div class="info-value">{{ booking.created_at|date:"F d, Y" }} {{ ui_text.labels.at|default:"at" }} {{ booking.created_at|time:"g:i A" }}</div>
+                </div>
+            </div>
+
+            <!-- Special Requests -->
+            {% if booking.special_requests %}
+                {% comment %}Check if special_requests looks like JSON - if it contains curly braces and quotes, it's likely system data{% endcomment %}
+                {% if '{"' not in booking.special_requests and '{"' not in booking.special_requests|slice:":10" %}
+            <div class="modern-card p-6 mb-6" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); border-color: rgba(59, 130, 246, 0.4); border-width: 2px;">
+                <h2 class="section-title text-blue-300">
+                    <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ ui_text.sections.special_requests|default:"Special Requests" }}
+                </h2>
+                <div class="mt-4 p-5 rounded-lg" style="background: rgba(30, 41, 59, 0.6); border-left: 4px solid #60a5fa;">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                        </svg>
+                        <p class="text-blue-50 leading-relaxed text-base flex-1" style="word-break: break-word; white-space: pre-wrap;">{{ booking.special_requests }}</p>
+                    </div>
+                </div>
+            </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="modern-card p-6 no-print">
+                <h2 class="section-title mb-6">
+                    <svg class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+                    </svg>
+                    {{ ui_text.sections.actions|default:"Actions" }}
+                </h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% if can_cancel and booking.status != 'cancelled' %}
+                    <button onclick="cancelBooking('{{ booking.booking_id|default:booking.id }}')" class="btn-modern bg-red-600 text-white hover:bg-red-700 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        {{ ui_text.buttons.cancel_booking|default:"Cancel Booking" }}
+                    </button>
+                    {% endif %}
+                    
+                    {% if can_reschedule %}
+                    <a href="{% url 'bookings:reschedule_booking' booking.booking_id %}" class="btn-modern bg-blue-600 text-white hover:bg-blue-700 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        {{ ui_text.buttons.reschedule|default:"Reschedule" }}
+                    </a>
+                    {% endif %}
+                    
+                    {% if booking.payment_status == 'pending' %}
+                    <a href="{% url 'bookings:payment' booking.booking_id %}" class="btn-modern bg-green-600 text-white hover:bg-green-700 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                        {{ ui_text.buttons.complete_payment|default:"Complete Payment" }}
+                    </a>
+                    {% endif %}
+                    
+                    <button onclick="window.print()" class="btn-modern bg-indigo-600 text-white hover:bg-indigo-700 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        {{ ui_text.buttons.print|default:"Print Receipt" }}
+                    </button>
+                    
+                    <a href="mailto:{{ company_info.email|default:'support@playground.com' }}?subject={{ ui_text.messages.support_subject|default:'Booking Support Request' }}%20-%20%23{{ booking.booking_id|default:booking.id }}" class="btn-modern bg-purple-600 text-white hover:bg-purple-700 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        {{ ui_text.buttons.contact_support|default:"Contact Support" }}
+                    </a>
+                    
+                    <a href="{% url 'accounts:dashboard' %}" class="btn-modern bg-gray-600 text-white hover:bg-gray-500 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        {{ ui_text.buttons.view_bookings|default:"View All Bookings" }}
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Print Footer (only visible when printing) -->
+            <div class="print-footer">
+                <p style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">
+                    Thank you for choosing {{ company_info.name|default:"Playground Booking System" }}!
+                </p>
+                <p style="font-size: 0.75rem; color: #999;">
+                    This is an official computer-generated receipt. No signature required.
+                </p>
+                <p style="font-size: 0.75rem; color: #999; margin-top: 1rem;">
+                    For inquiries, contact: {{ company_info.email|default:"support@playground.com" }}
+                </p>
+            </div>
+
+        {% else %}
+            <!-- No Booking Found -->
+            <div class="modern-card p-12 text-center">
+                <svg class="w-24 h-24 mx-auto text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <h2 class="text-4xl font-bold text-red-400 mb-4">{{ ui_text.messages.booking_not_found|default:"Booking Not Found" }}</h2>
+                <p class="text-gray-400 mb-8 text-lg max-w-md mx-auto">{{ ui_text.messages.booking_not_found_desc|default:"The booking you're looking for doesn't exist or has been removed from our system." }}</p>
+                <a href="{% url 'accounts:dashboard' %}" class="btn-modern bg-blue-600 text-white hover:bg-blue-700 mx-auto">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    {{ ui_text.buttons.return_dashboard|default:"Return to Dashboard" }}
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+function cancelBooking(bookingId) {
+    if (confirm('{{ ui_text.messages.cancel_confirm|default:"Are you sure you want to cancel this booking? This action cannot be undone." }}')) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.content ||
+                         '{{ csrf_token }}';
+        
+        fetch(`/bookings/cancel/${bookingId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('{{ ui_text.messages.cancel_success|default:"Booking cancelled successfully!" }}');
+                location.reload();
+            } else {
+                alert(data.error || '{{ ui_text.messages.cancel_error|default:"Failed to cancel booking. Please try again or contact support." }}');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('{{ ui_text.messages.cancel_error|default:"Failed to cancel booking. Please try again or contact support." }}');
+        });
+    }
+}
+
+// Auto-focus print button with keyboard shortcut
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        window.print();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,320 @@
+<!-- Earnings & Analytics Modal -->
+<div id="earningsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Earnings & Analytics</h2>
+                    <button onclick="closeEarningsModal()" class="text-gray-500 hover:text-gray-700 p-2">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- Earnings Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-sm font-medium">Today's Earnings</p>
+                                <p id="todayEarnings" class="text-2xl font-bold">₹0</p>
+                            </div>
+                            <i class="fas fa-calendar-day text-green-200 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-sm font-medium">This Week</p>
+                                <p id="weekEarnings" class="text-2xl font-bold">₹0</p>
+                            </div>
+                            <i class="fas fa-calendar-week text-blue-200 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 text-sm font-medium">This Month</p>
+                                <p id="monthEarnings" class="text-2xl font-bold">₹0</p>
+                            </div>
+                            <i class="fas fa-calendar-alt text-purple-200 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100 text-sm font-medium">Total Earnings</p>
+                                <p id="totalEarnings" class="text-2xl font-bold">₹0</p>
+                            </div>
+                            <i class="fas fa-chart-line text-orange-200 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Revenue Chart -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Monthly Revenue Trend</h3>
+                        <canvas id="revenueChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <!-- Booking Chart -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Daily Bookings</h3>
+                        <canvas id="bookingChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Playground Performance -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Playground Performance</h3>
+                    <div id="playgroundPerformance" class="space-y-4">
+                        <!-- Performance data will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Earnings by Playground -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Earnings by Playground</h3>
+                    <div id="earningsByPlayground" class="space-y-3">
+                        <!-- Earnings data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let revenueChart = null;
+let bookingChart = null;
+
+function openEarningsModal() {
+    document.getElementById('earningsModal').classList.remove('hidden');
+    loadEarningsData();
+    loadAnalyticsCharts();
+    loadPlaygroundPerformance();
+}
+
+function closeEarningsModal() {
+    document.getElementById('earningsModal').classList.add('hidden');
+    
+    // Destroy charts to prevent memory leaks
+    if (revenueChart) {
+        revenueChart.destroy();
+        revenueChart = null;
+    }
+    if (bookingChart) {
+        bookingChart.destroy();
+        bookingChart = null;
+    }
+}
+
+async function loadEarningsData() {
+    try {
+        const response = await fetch('/api/owner/earnings/');
+        const data = await response.json();
+        
+        if (data.success) {
+            const earnings = data.earnings;
+            
+            document.getElementById('todayEarnings').textContent = '₹' + earnings.today.toLocaleString();
+            document.getElementById('weekEarnings').textContent = '₹' + earnings.week.toLocaleString();
+            document.getElementById('monthEarnings').textContent = '₹' + earnings.month.toLocaleString();
+            document.getElementById('totalEarnings').textContent = '₹' + earnings.total.toLocaleString();
+            
+            // Update earnings by playground
+            updateEarningsByPlayground(earnings.by_playground);
+        }
+    } catch (error) {
+        console.error('Error loading earnings data:', error);
+    }
+}
+
+function updateEarningsByPlayground(playgroundEarnings) {
+    const container = document.getElementById('earningsByPlayground');
+    
+    if (playgroundEarnings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4">No earnings data available</p>';
+        return;
+    }
+    
+    container.innerHTML = playgroundEarnings.map(playground => `
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div>
+                <h4 class="font-medium text-gray-800">${playground.playground__name}</h4>
+                <p class="text-sm text-gray-600">${playground.bookings_count} bookings</p>
+            </div>
+            <div class="text-right">
+                <p class="text-lg font-semibold text-green-600">₹${playground.total.toLocaleString()}</p>
+                <p class="text-sm text-gray-500">Total Revenue</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadAnalyticsCharts() {
+    try {
+        const response = await fetch('/api/owner/revenue-analytics/');
+        const data = await response.json();
+        
+        if (data.success) {
+            createRevenueChart(data.analytics.monthly_data);
+            createBookingChart(data.analytics.daily_data);
+        }
+    } catch (error) {
+        console.error('Error loading analytics charts:', error);
+    }
+}
+
+function createRevenueChart(monthlyData) {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const revenues = monthlyData.map(item => item.revenue);
+    
+    revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: revenues,
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₹' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createBookingChart(dailyData) {
+    const ctx = document.getElementById('bookingChart').getContext('2d');
+    
+    // Get last 30 days of data
+    const last30Days = dailyData.slice(-30);
+    const labels = last30Days.map(item => item.day);
+    const revenues = last30Days.map(item => item.revenue);
+    
+    bookingChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Daily Revenue (₹)',
+                data: revenues,
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: 'rgb(16, 185, 129)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₹' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+async function loadPlaygroundPerformance() {
+    try {
+        const response = await fetch('/api/owner/playground-performance/');
+        const data = await response.json();
+        
+        if (data.success) {
+            updatePlaygroundPerformance(data.performance);
+        }
+    } catch (error) {
+        console.error('Error loading playground performance:', error);
+    }
+}
+
+function updatePlaygroundPerformance(performance) {
+    const container = document.getElementById('playgroundPerformance');
+    
+    if (performance.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4">No performance data available</p>';
+        return;
+    }
+    
+    container.innerHTML = performance.map(playground => `
+        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+            <div class="flex-1">
+                <h4 class="font-semibold text-gray-800">${playground.name}</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                    <div>
+                        <p class="text-xs text-gray-600">Total Bookings</p>
+                        <p class="font-medium text-gray-800">${playground.total_bookings}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-600">Revenue</p>
+                        <p class="font-medium text-green-600">₹${playground.total_revenue.toLocaleString()}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-600">Rating</p>
+                        <p class="font-medium text-yellow-600">
+                            <i class="fas fa-star"></i> ${playground.avg_rating.toFixed(1)}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-600">Occupancy</p>
+                        <p class="font-medium text-blue-600">${playground.occupancy_rate}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                    playground.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }">
+                    ${playground.status}
+                </span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Close modal when clicking outside
+document.getElementById('earningsModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEarningsModal();
+    }
+});
+</script>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Refund Policy | PlayGround Booking{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="card max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gradient mb-6">Refund Policy</h1>
+        
+        <div class="prose prose-lg">
+            <p class="text-gray-600 mb-6">Last updated: [Date]</p>
+            
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">Cancellation Policy</h2>
+                <p class="text-gray-600">Bookings can be cancelled up to 24 hours before the scheduled time for a full refund.</p>
+            </section>
+            
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">Refund Process</h2>
+                <p class="text-gray-600">Refunds will be processed within 5-7 business days to your original payment method.</p>
+            </section>
+            
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">Non-Refundable Situations</h2>
+                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                    <li>Cancellations made less than 24 hours before booking time</li>
+                    <li>No-shows without prior cancellation</li>
+                    <li>Weather-related cancellations (subject to individual playground policies)</li>
+                </ul>
+            </section>
+            
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">Contact Us</h2>
+                <p class="text-gray-600">For refund requests or questions, please contact our support team.</p>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

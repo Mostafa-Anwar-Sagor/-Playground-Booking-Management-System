@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Test Navbar - PlaygroundBooking{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                Welcome to <span class="text-gradient bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">PlaygroundBooking</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                Discover top-rated sports facilities loved by our community
+            </p>
+        </div>
+
+        <!-- Featured Playgrounds -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <!-- Playground Card 1 -->
+            <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl overflow-hidden border border-gray-700/50 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                        <i class="fas fa-futbol text-6xl text-gray-600"></i>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+                        <i class="fas fa-star text-xs"></i>
+                        <span>4.2</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                        Swimming
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Pro Sports Facility</h3>
+                    <p class="text-gray-400 text-sm mb-4 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-emerald-500"></i>
+                        <span>{{ playground.city.name|default:"default-playground..." }}</span>
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-emerald-400 font-bold text-lg">
+                            RM20.00<span class="text-sm text-gray-400">/hour</span>
+                        </div>
+                        <a href="#" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playground Card 2 -->
+            <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl overflow-hidden border border-gray-700/50 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                        <i class="fas fa-volleyball-ball text-6xl text-gray-600"></i>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+                        <i class="fas fa-star text-xs"></i>
+                        <span>4.2</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                        Volleyball
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Athletic Excellence Hub</h3>
+                    <p class="text-gray-400 text-sm mb-4 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-emerald-500"></i>
+                        <span>{{ playground.city.name|default:"default-playground..." }}</span>
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-emerald-400 font-bold text-lg">
+                            RM50.00<span class="text-sm text-gray-400">/hour</span>
+                        </div>
+                        <a href="#" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playground Card 3 -->
+            <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl overflow-hidden border border-gray-700/50 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                        <i class="fas fa-futbol text-6xl text-gray-600"></i>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+                        <i class="fas fa-star text-xs"></i>
+                        <span>3.9</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                        Soccer
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Premier League Complex</h3>
+                    <p class="text-gray-400 text-sm mb-4 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-emerald-500"></i>
+                        <span>{{ playground.city.name|default:"default-playground..." }}</span>
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-emerald-400 font-bold text-lg">
+                            RM75.00<span class="text-sm text-gray-400">/hour</span>
+                        </div>
+                        <a href="#" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="text-center bg-gradient-to-r from-emerald-600/20 to-emerald-500/20 border border-emerald-500/30 rounded-2xl p-12">
+            <h2 class="text-3xl font-bold text-white mb-4">Ready to Book Your Next Game?</h2>
+            <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                Join thousands of players who trust PlaygroundBooking for their sports facility needs
+            </p>
+            <div class="flex gap-4 justify-center flex-wrap">
+                <a href="{% url 'playgrounds:playground_search' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2">
+                    <i class="fas fa-search"></i>
+                    <span>Browse Playgrounds</span>
+                </a>
+                <a href="{% url 'accounts:become_partner' %}" class="bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>List Your Playground</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gradient {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
+{% endblock %}

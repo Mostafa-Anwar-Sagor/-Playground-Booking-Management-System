@@ -1,0 +1,482 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Become a Partner - Transform Your Sports Facility | PlayGround Booking{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    .partner-page {
+        padding: 6rem 0 4rem 0;
+        min-height: 100vh;
+    }
+
+    .partner-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    /* Hero Section */
+    .partner-hero-section {
+        text-align: center;
+        margin-bottom: 5rem;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .partner-hero-title {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        font-weight: 900;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+    }
+
+    .hero-gradient-text {
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: inline-block;
+    }
+
+    .partner-hero-subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        color: #cbd5e1;
+        max-width: 900px;
+        margin: 0 auto 3rem auto;
+        line-height: 1.7;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+        margin-bottom: 5rem;
+    }
+
+    .stat-box {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(16, 185, 129, 0.3);
+        border-radius: 1.5rem;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition: all 0.4s ease;
+        animation: fadeInUp 0.8s ease-out backwards;
+    }
+
+    .stat-box:nth-child(1) { animation-delay: 0.1s; }
+    .stat-box:nth-child(2) { animation-delay: 0.2s; }
+    .stat-box:nth-child(3) { animation-delay: 0.3s; }
+    .stat-box:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-box:hover {
+        transform: translateY(-10px);
+        border-color: rgba(16, 185, 129, 0.6);
+        box-shadow: 0 20px 60px rgba(16, 185, 129, 0.3);
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #94a3b8;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Benefits Grid */
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 5rem;
+    }
+
+    .benefit-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 2rem;
+        padding: 3rem 2.5rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeInUp 1s ease-out backwards;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .benefit-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .benefit-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .benefit-card:nth-child(1) { animation-delay: 0.2s; }
+    .benefit-card:nth-child(2) { animation-delay: 0.3s; }
+    .benefit-card:nth-child(3) { animation-delay: 0.4s; }
+    .benefit-card:nth-child(4) { animation-delay: 0.5s; }
+    .benefit-card:nth-child(5) { animation-delay: 0.6s; }
+    .benefit-card:nth-child(6) { animation-delay: 0.7s; }
+
+    .benefit-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        border-color: rgba(16, 185, 129, 0.6);
+        box-shadow: 0 25px 70px rgba(16, 185, 129, 0.3);
+    }
+
+    .benefit-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        border-radius: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .benefit-card:hover .benefit-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .benefit-icon-wrapper i {
+        font-size: 2.2rem;
+        color: #ffffff;
+    }
+
+    .benefit-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin-bottom: 1rem;
+    }
+
+    .benefit-description {
+        color: #cbd5e1;
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .benefit-features {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0 0 0;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .benefit-features li {
+        color: #94a3b8;
+        padding: 0.6rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .benefit-features li i {
+        color: #10b981;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+        border: 3px solid rgba(16, 185, 129, 0.4);
+        border-radius: 2.5rem;
+        padding: 5rem 4rem;
+        text-align: center;
+        animation: fadeInUp 1s ease-out backwards;
+        animation-delay: 0.8s;
+        margin-top: 3rem;
+    }
+
+    .cta-title {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-description {
+        font-size: 1.3rem;
+        color: #cbd5e1;
+        margin-bottom: 3rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    .partner-cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 1.3rem;
+        padding: 1.5rem 3.5rem;
+        border-radius: 1.2rem;
+        box-shadow: 0 15px 50px rgba(16, 185, 129, 0.5);
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .partner-cta-button:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 20px 60px rgba(16, 185, 129, 0.6);
+        color: #ffffff;
+    }
+
+    .partner-cta-button i {
+        transition: transform 0.3s ease;
+    }
+
+    .partner-cta-button:hover i {
+        transform: translateX(8px);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .partner-page {
+            padding: 4rem 0 3rem 0;
+        }
+
+        .partner-hero-section {
+            margin-bottom: 3rem;
+        }
+
+        .stats-grid,
+        .benefits-grid {
+            gap: 1.5rem;
+        }
+
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .benefit-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .cta-section {
+            padding: 3rem 2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-box {
+            padding: 2rem 1.5rem;
+        }
+
+        .partner-cta-button {
+            padding: 1.2rem 2.5rem;
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="partner-page">
+    <div class="partner-container">
+        <!-- Hero Section -->
+        <div class="partner-hero-section">
+            <h1 class="partner-hero-title">
+                Transform Your Sports Facility Into a<br>
+                <span class="hero-gradient-text">Revenue-Generating Powerhouse</span>
+            </h1>
+            <p class="partner-hero-subtitle">
+                Join thousands of successful facility owners who are maximizing bookings, increasing revenue by 300%, and building thriving sports communities with PlayGround Booking.
+            </p>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Active Facilities</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">500K+</div>
+                <div class="stat-label">Monthly Bookings</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">300%</div>
+                <div class="stat-label">Avg Revenue Increase</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Expert Support</div>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits-grid">
+            <!-- Benefit 1: Maximize Revenue -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="benefit-title">Maximize Revenue</h3>
+                <p class="benefit-description">
+                    Increase your facility utilization by up to 300% with our intelligent booking system and dynamic pricing tools.
+                </p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check-circle"></i> Dynamic pricing optimization</li>
+                    <li><i class="fas fa-check-circle"></i> Zero booking commission fees</li>
+                    <li><i class="fas fa-check-circle"></i> Automated payment processing</li>
+                </ul>
+            </div>
+
+            <!-- Benefit 2: Reach Millions -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="benefit-title">Reach Millions</h3>
+                <p class="benefit-description">
+                    Connect with over 2 million active players and teams searching for quality facilities in your area.
+                </p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check-circle"></i> Nationwide exposure</li>
+                    <li><i class="fas fa-check-circle"></i> Targeted marketing campaigns</li>
+                    <li><i class="fas fa-check-circle"></i> SEO-optimized listings</li>
+                </ul>
+            </div>
+
+            <!-- Benefit 3: Smart Scheduling -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="benefit-title">Smart Scheduling</h3>
+                <p class="benefit-description">
+                    Eliminate double bookings and no-shows with our real-time calendar and automated reminder system.
+                </p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check-circle"></i> Real-time availability updates</li>
+                    <li><i class="fas fa-check-circle"></i> Automated SMS/Email reminders</li>
+                    <li><i class="fas fa-check-circle"></i> Multi-sport scheduling</li>
+                </ul>
+            </div>
+
+            <!-- Benefit 4: Analytics & Insights -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="benefit-title">Analytics & Insights</h3>
+                <p class="benefit-description">
+                    Make data-driven decisions with comprehensive analytics on bookings, revenue, and customer behavior.
+                </p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check-circle"></i> Real-time performance dashboards</li>
+                    <li><i class="fas fa-check-circle"></i> Revenue forecasting</li>
+                    <li><i class="fas fa-check-circle"></i> Customer insights</li>
+                </ul>
+            </div>
+
+            <!-- Benefit 5: Mobile-First Platform -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="benefit-title">Mobile-First Platform</h3>
+                <p class="benefit-description">
+                    Manage your facility from anywhere with our powerful mobile apps for iOS and Android.
+                </p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check-circle"></i> Instant booking notifications</li>
+                    <li><i class="fas fa-check-circle"></i> Quick approval/rejection</li>
+                    <li><i class="fas fa-check-circle"></i> On-the-go management</li>
+                </ul>
+            </div>
+
+            <!-- Benefit 6: Secure & Reliable -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="benefit-title">Secure & Reliable</h3>
+                <p class="benefit-description">
+                    Bank-level security with instant payouts, fraud protection, and comprehensive insurance coverage.
+                </p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check-circle"></i> PCI-DSS compliant payments</li>
+                    <li><i class="fas fa-check-circle"></i> Daily automated payouts</li>
+                    <li><i class="fas fa-check-circle"></i> Fraud detection system</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2 class="cta-title">Ready to Transform Your Facility?</h2>
+            <p class="cta-description">
+                Join our network of successful facility owners today. No setup fees, no hidden charges. Start growing your business in minutes.
+            </p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'partner_register' %}" class="partner-cta-button">
+                    <span>Become a Partner Now</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:signup' %}?next={% url 'partner_register' %}" class="partner-cta-button">
+                    <span>Become a Partner Now</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

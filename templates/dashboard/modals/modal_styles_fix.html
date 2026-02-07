@@ -1,0 +1,38 @@
+<style>
+/* Modal positioning fixes for different screen sizes */
+@media (max-width: 1023px) {
+    #createPlaygroundModal .flex {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #createPlaygroundModal .flex {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    #createPlaygroundModal .bg-gradient-to-br {
+        max-width: 95vw !important;
+        margin: 0.5rem;
+    }
+}
+
+/* Ensure modal content doesn't overflow on any screen size */
+#createPlaygroundModal {
+    overflow-y: auto;
+}
+
+#createPlaygroundModal .bg-gradient-to-br {
+    max-width: calc(100vw - 280px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 1023px) {
+    #createPlaygroundModal .bg-gradient-to-br {
+        max-width: calc(100vw - 2rem);
+    }
+}
+</style>

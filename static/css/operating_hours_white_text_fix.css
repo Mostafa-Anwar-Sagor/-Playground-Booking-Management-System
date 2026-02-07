@@ -1,0 +1,266 @@
+/* 
+White Text Visibility Fix for Operating Hours Section
+This CSS ensures all text in the operating hours section is white with proper contrast
+*/
+
+/* Enhanced Operating Hours White Text Styling */
+.operating-hours-section * {
+    color: white !important;
+}
+
+/* Specific white text classes for enhanced visibility */
+.text-white,
+.text-slate-100,
+.text-slate-200,
+.day-label,
+.duration-label,
+.duration-value {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark input styling with white text */
+.dark-input,
+input[class*="bg-slate-8"] {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    color: white !important;
+    border-color: rgba(71, 85, 105, 0.8) !important;
+}
+
+.dark-input:focus,
+input[class*="bg-slate-8"]:focus {
+    background-color: rgba(30, 41, 59, 0.95) !important;
+    color: white !important;
+    border-color: rgba(59, 130, 246, 0.8) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Dark background containers */
+.operating-hours-card,
+.same-hours-section,
+.day-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.7) 100%) !important;
+    border-color: rgba(71, 85, 105, 0.4) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+/* Enhanced label styling */
+label {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+/* Button text styling */
+button span,
+button {
+    color: white !important;
+}
+
+/* Toggle switch styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #64748b;
+    border-radius: 24px;
+    transition: all 0.3s ease;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    top: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #10b981, #3b82f6) !important;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* Duration display styling */
+.duration-display {
+    color: white !important;
+}
+
+.duration-value {
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Time input wrapper styling */
+.time-input-wrapper {
+    position: relative;
+}
+
+.time-input-wrapper input[type="time"] {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    color: white !important;
+    border: 2px solid rgba(71, 85, 105, 0.8) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    transition: all 0.3s ease !important;
+}
+
+.time-input-wrapper input[type="time"]:focus {
+    border-color: rgba(59, 130, 246, 0.8) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+    background-color: rgba(30, 41, 59, 0.95) !important;
+}
+
+/* Icon styling */
+.fas,
+.far,
+.fab {
+    color: inherit !important;
+}
+
+/* Same hours section specific styling */
+.same-hours-section label {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.same-hours-section input {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    color: white !important;
+    border-color: rgba(71, 85, 105, 0.8) !important;
+}
+
+/* Individual day cards styling */
+.operating-hours-grid .day-card {
+    border: 2px solid rgba(71, 85, 105, 0.3) !important;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.6) 100%) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+.operating-hours-grid .day-card:hover {
+    transform: scale(1.02) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Day icon styling */
+.day-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+}
+
+/* Copy button styling */
+.copy-button {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.copy-button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Notification styling for dark theme */
+.notification {
+    background-color: rgba(30, 41, 59, 0.95) !important;
+    color: white !important;
+    border: 1px solid rgba(71, 85, 105, 0.6) !important;
+}
+
+.notification.success {
+    border-left: 4px solid #10b981 !important;
+}
+
+.notification.error {
+    border-left: 4px solid #ef4444 !important;
+}
+
+.notification.warning {
+    border-left: 4px solid #f59e0b !important;
+}
+
+.notification.info {
+    border-left: 4px solid #3b82f6 !important;
+}
+
+/* Ensure all text elements are white */
+#operatingHoursContainer * {
+    color: white !important;
+}
+
+#operatingHoursContainer label,
+#operatingHoursContainer span,
+#operatingHoursContainer div {
+    color: white !important;
+}
+
+/* Special handling for placeholder text */
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Enhanced accessibility and contrast */
+.operating-hours-section {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+/* Ensure proper contrast ratios */
+@media (prefers-contrast: high) {
+    .text-white,
+    .operating-hours-section *,
+    label,
+    span {
+        color: #ffffff !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }
+    
+    .dark-input,
+    input[class*="bg-slate"] {
+        background-color: rgba(15, 23, 42, 0.95) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .operating-hours-section {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .operating-hours-section * {
+        color: black !important;
+    }
+}

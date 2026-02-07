@@ -1,0 +1,904 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - PlayGround Booking{% endblock %}
+
+{% block body_class %}bg-gradient-to-br from-gray-900 via-black to-gray-900 min-h-screen{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Compact Professional Dark Login Page */
+    .auth-background {
+        background: linear-gradient(135deg, #111827 0%, #000000 25%, #1f2937 50%, #000000 75%, #111827 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 20s ease infinite;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        scroll-behavior: smooth;
+    }
+    
+    .auth-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.01"><circle cx="30" cy="30" r="1.5"/></g></svg>') repeat;
+        animation: float 30s linear infinite;
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes float {
+        0% { transform: translateY(0px) translateX(0px); }
+        33% { transform: translateY(-10px) translateX(5px); }
+        66% { transform: translateY(5px) translateX(-5px); }
+        100% { transform: translateY(0px) translateX(0px); }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes glow {
+        0%, 100% {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
+        }
+        50% {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.2);
+        }
+    }
+    
+    .auth-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        position: relative;
+        z-index: 10;
+        box-sizing: border-box;
+    }
+    
+    .auth-card {
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.1);
+        animation: slideUp 0.8s ease, glow 3s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .auth-title {
+        color: #ffffff;
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(135deg, #ffffff, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+    }
+    
+    .auth-subtitle {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        background: rgba(30, 41, 59, 0.6);
+        border: 2px solid rgba(59, 130, 246, 0.2);
+        border-radius: 16px;
+        color: #ffffff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        backdrop-filter: blur(10px);
+    }
+    
+    .form-input::placeholder {
+        color: #64748b;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #22c55e;
+        background: rgba(31, 41, 55, 0.9);
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1), 0 0 15px rgba(34, 197, 94, 0.2);
+        transform: translateY(-1px);
+    }
+    
+    .input-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus + .input-icon {
+        color: #3b82f6;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .submit-btn:hover::before {
+        left: 100%;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(34, 197, 94, 0.5);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+    
+    .loading-btn {
+        opacity: 0.8;
+        cursor: not-allowed;
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .auth-footer p {
+        color: #94a3b8;
+        font-size: 1rem;
+        margin: 0;
+    }
+    
+    .auth-footer a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-footer a:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+    
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fecaca;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .auth-card {
+            padding: 2.5rem 2rem;
+            margin: 1rem;
+            border-radius: 20px;
+        }
+        
+        .auth-title {
+            font-size: 2rem;
+        }
+        
+        .form-input {
+            padding: 1rem 1.25rem;
+        }
+        
+        .submit-btn {
+            padding: 1rem;
+            font-size: 1rem;
+        }
+    }
+    
+    /* Professional Toast Notifications */
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 350px;
+    }
+    
+    .toast {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1);
+        transform: translateX(400px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    
+    .toast.success {
+        border-color: rgba(34, 197, 94, 0.3);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 197, 94, 0.1);
+    }
+    
+    .toast.error {
+        border-color: rgba(239, 68, 68, 0.3);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.1);
+    }
+    
+    .toast-content {
+        display: flex;
+        align-items: center;
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .toast-icon {
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+    }
+    
+    .toast-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.2s ease;
+    }
+    
+    .toast-close:hover {
+        color: #ffffff;
+    }
+    
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .toast-container {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+        }
+        
+        .toast {
+            margin-bottom: 0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Toast Notification Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="auth-background">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to your PlayGround account</p>
+            </div>
+
+            <!-- Display form non-field errors (like invalid login) -->
+            {% if form.non_field_errors %}
+                <div class="mb-4 p-4 border-l-4 border-red-500 bg-red-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>
+                        <div class="text-red-800">
+                            {% for error in form.non_field_errors %}
+                                <p class="font-medium">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <form method="post" id="loginForm" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-envelope mr-2"></i>Email Address
+                    </label>
+                    <div class="relative">
+                        <input type="email" name="username" id="id_username" class="form-input" placeholder="Enter your email address" required>
+                        <i class="fas fa-at input-icon"></i>
+                    </div>
+                    {% if form.email.errors %}
+                        <div class="text-red-400 text-sm mt-1">
+                            {% for error in form.email.errors %}
+                                <p><i class="fas fa-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password" class="form-label">
+                        <i class="fas fa-lock mr-2"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="id_password" class="form-input" placeholder="Enter your password" required>
+                        <i class="fas fa-eye input-icon cursor-pointer" id="togglePassword"></i>
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="text-red-400 text-sm mt-1">
+                            {% for error in form.password.errors %}
+                                <p><i class="fas fa-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    <span id="btnText">Sign In</span>
+                    <i class="fas fa-spinner fa-spin ml-2 hidden" id="loadingIcon"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Create one now</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Professional Toast Notification System
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const iconClass = type === 'success' ? 'fa-check-circle' : 
+                         type === 'error' ? 'fa-exclamation-circle' : 
+                         'fa-info-circle';
+        
+        toast.innerHTML = `
+            <div class="toast-content">
+                <i class="fas ${iconClass} toast-icon"></i>
+                <span>${message}</span>
+            </div>
+            <button class="toast-close" onclick="closeToast(this.parentElement)">&times;</button>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Show toast
+        setTimeout(() => toast.classList.add('show'), 100);
+        
+        // Auto hide after 5 seconds
+        setTimeout(() => closeToast(toast), 5000);
+    }
+    
+    function closeToast(toast) {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    }
+    
+    // Enhanced form handling
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingIcon = document.getElementById('loadingIcon');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.querySelector('input[type="password"]');
+
+        // Password visibility toggle
+        if (togglePassword && passwordField) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // Form submission handling
+        form.addEventListener('submit', function(e) {
+            submitBtn.classList.add('loading-btn');
+            btnText.textContent = 'Signing In...';
+            loadingIcon.classList.remove('hidden');
+            submitBtn.disabled = true;
+            
+            showToast('Signing you in...', 'info');
+        });
+
+        // Enhanced input styling
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            // Add form-input class and attributes
+            input.classList.add('form-input');
+            
+            // Set placeholders
+            if (input.type === 'email') {
+                input.placeholder = 'Enter your email address';
+            } else if (input.type === 'password') {
+                input.placeholder = 'Enter your password';
+            }
+        });
+        
+        // Prevent auto-scroll to bottom on page load
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 0);
+        });
+        
+        // Prevent hash-based scrolling
+        if (window.location.hash) {
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+            }, 1);
+        }
+    });
+</script>
+
+{% endblock %}
+        }
+    }
+    
+    .auth-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+    
+    .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        width: 100%;
+        max-width: 450px;
+        animation: slideUp 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ef4444, #10b981);
+        background-size: 300% 100%;
+        animation: gradientMove 3s ease infinite;
+    }
+    
+    @keyframes gradientMove {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .auth-title {
+        color: #1f2937;
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(135deg, #1f2937, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .auth-subtitle {
+        color: #6b7280;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    
+    .form-group {
+        margin-bottom: 1.75rem;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        color: #374151;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        color: #1f2937;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .form-input::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+    }
+    
+    .input-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+    
+    .form-input:focus + .input-icon {
+        color: #3b82f6;
+        transform: translateY(-50%) scale(1.1);
+    }
+    
+    .forgot-password {
+        text-align: right;
+        margin-top: 0.75rem;
+    }
+    
+    .forgot-password a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .forgot-password a:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        padding: 1.125rem;
+        border: none;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .submit-btn:hover::before {
+        left: 100%;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .auth-footer p {
+        color: #6b7280;
+        font-size: 1rem;
+        margin: 0;
+    }
+    
+    .auth-footer a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-footer a:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+    
+    .social-login {
+        margin: 2rem 0;
+    }
+    
+    .divider {
+        position: relative;
+        text-align: center;
+        margin: 2rem 0;
+    }
+    
+    .divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e5e7eb;
+    }
+    
+    .divider span {
+        background: rgba(255, 255, 255, 0.95);
+        color: #9ca3af;
+        padding: 0 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .auth-card {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+            border-radius: 20px;
+        }
+        
+        .auth-title {
+            font-size: 1.875rem;
+        }
+        
+        .form-input {
+            padding: 0.875rem 1rem;
+        }
+        
+        .submit-btn {
+            padding: 1rem;
+            font-size: 1rem;
+        }
+    }
+    
+    /* Loading State */
+    .loading {
+        position: relative;
+    }
+    
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+
+<div class="auth-background">
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Header -->
+            <div class="auth-header">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to your PlayGround account</p>
+            </div>
+
+            <!-- Login Form -->
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Email Address</label>
+                    <div class="relative">
+                        <input type="email" name="username" id="id_username" class="form-input" placeholder="Enter your email address" required>
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_password" class="form-label">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="id_password" class="form-input" placeholder="Enter your password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" onclick="showForgotPasswordAlert()">Forgot password?</a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>New to PlayGround?</span>
+            </div>
+
+            <!-- Footer -->
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Create one now</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form handling with loading state
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.classList.add('loading');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing In...';
+        submitBtn.disabled = true;
+    });
+    
+    // Forgot password alert
+    function showForgotPasswordAlert() {
+        alert('Password reset feature will be available soon! Please contact support if you need assistance.');
+    }
+    
+    // Input animations
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Smooth animations on load
+    window.addEventListener('load', function() {
+        document.querySelector('.auth-card').style.opacity = '1';
+        document.querySelector('.auth-card').style.transform = 'translateY(0)';
+    });
+</script>
+

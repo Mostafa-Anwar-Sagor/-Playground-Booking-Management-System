@@ -1,0 +1,2537 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PlayGround Booking - Find & Book World's Best Sports Facilities{% endblock %}
+
+{% block extra_head %}
+<!-- Preconnect to image CDN for faster loading -->
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="dns-prefetch" href="https://images.unsplash.com">
+
+<!-- Preload Hero Images - Smaller optimized sizes for INSTANT loading -->
+<link rel="preload" as="image" fetchpriority="high"
+    href="https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=800&h=450&fit=crop&crop=center&q=60&auto=format">
+<link rel="preload" as="image"
+    href="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=450&fit=crop&crop=center&q=60&auto=format">
+<link rel="preload" as="image"
+    href="https://images.unsplash.com/photo-1459865264687-595d652de67e?w=800&h=450&fit=crop&crop=center&q=60&auto=format">
+<link rel="preload" as="image"
+    href="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=450&fit=crop&crop=center&q=60&auto=format">
+
+<!-- Enhanced Compact Home Page CSS with Advanced Animations -->
+<style>
+    /* Enhanced 3D Body and Global Styles - No White Colors */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        border-color: rgba(148, 163, 184, 0.15) !important;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.4;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%) !important;
+        color: #e2e8f0 !important;
+        min-height: 100vh;
+    }
+
+    /* Enhanced 3D Custom Variables */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 75%, #0f172a 100%);
+        --emerald-gradient: linear-gradient(145deg, #10b981 0%, #059669 50%, #047857 100%);
+        --glass-bg: rgba(15, 23, 42, 0.85);
+        --glass-border: rgba(148, 163, 184, 0.1);
+        --shadow-primary: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        --shadow-emerald: 0 25px 50px -12px rgba(16, 185, 129, 0.3);
+        --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius: 20px;
+        --compact-spacing: 1rem;
+        --section-padding: 3rem 0;
+    }
+
+    /* Enhanced 3D Text Effects */
+    .text-3d {
+        text-shadow:
+            0 2px 0 rgba(0, 0, 0, 0.9),
+            0 4px 6px rgba(0, 0, 0, 0.7),
+            0 8px 16px rgba(0, 0, 0, 0.5),
+            0 16px 32px rgba(0, 0, 0, 0.3);
+        transform: perspective(1000px) rotateX(8deg);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
+    }
+
+    .text-3d:hover {
+        transform: perspective(1000px) rotateX(0deg) translateY(-3px) scale(1.02);
+        text-shadow:
+            0 4px 0 rgba(0, 0, 0, 0.9),
+            0 8px 12px rgba(0, 0, 0, 0.7),
+            0 16px 32px rgba(0, 0, 0, 0.5),
+            0 32px 64px rgba(0, 0, 0, 0.3);
+        filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.5));
+    }
+
+    /* Enhanced Compact Hero Slider with 3D Effects */
+    .hero-slider {
+        position: relative;
+        height: 100vh;
+        min-height: 700px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        margin-top: -80px;
+        padding-top: 80px;
+    }
+
+    .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1s ease-out, transform 1s ease-out;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transform: scale(1.02);
+        will-change: opacity, transform;
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.15) 0%,
+            rgba(0, 0, 0, 0.25) 40%,
+            rgba(0, 0, 0, 0.3) 60%,
+            rgba(0, 0, 0, 0.4) 100%
+        );
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+    }
+
+    /* Enhanced 3D Search Form */
+    .search-form-glass {
+        background: var(--glass-bg);
+        backdrop-filter: blur(30px);
+        border: 1px solid var(--glass-border) !important;
+        box-shadow: var(--shadow-primary);
+        transition: var(--transition-smooth);
+        border-radius: var(--border-radius);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .search-form-glass::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .search-form-glass:hover::before {
+        left: 100%;
+    }
+
+    .search-form-glass:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-emerald);
+        border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+
+    /* Enhanced 3D Form Elements */
+    .form-group {
+        position: relative;
+        perspective: 1000px;
+    }
+
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: rgba(51, 65, 85, 0.9) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        border-radius: 16px;
+        color: #e2e8f0 !important;
+        font-size: 0.95rem;
+        transition: var(--transition-smooth);
+        backdrop-filter: blur(15px);
+        box-shadow:
+            inset 0 2px 4px rgba(0, 0, 0, 0.3),
+            0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none !important;
+        border-color: #10b981 !important;
+        box-shadow:
+            0 0 0 4px rgba(16, 185, 129, 0.15),
+            inset 0 2px 4px rgba(0, 0, 0, 0.3),
+            0 8px 24px rgba(16, 185, 129, 0.2);
+        background: rgba(51, 65, 85, 0.95) !important;
+        transform: translateY(-2px) scale(1.01);
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #94a3b8;
+        margin-bottom: 0.75rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-label i {
+        margin-right: 0.75rem;
+        color: #10b981;
+        text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Compact Moving Cards Animation */
+    .moving-cards {
+        animation: moveInfinite 90s linear infinite;
+        will-change: transform;
+    }
+
+    @keyframes moveInfinite {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* Compact Card Designs */
+    .playground-card {
+        transition: var(--transition-smooth);
+        backdrop-filter: blur(15px);
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .playground-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-emerald);
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .sport-icon {
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+        background: linear-gradient(145deg, rgba(51, 65, 85, 0.7), rgba(30, 41, 59, 0.85));
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+        animation: sportCardFadeIn 0.6s ease-out forwards;
+    }
+
+    @keyframes sportCardFadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .sport-icon:nth-child(1) { animation-delay: 0.1s; }
+    .sport-icon:nth-child(2) { animation-delay: 0.15s; }
+    .sport-icon:nth-child(3) { animation-delay: 0.2s; }
+    .sport-icon:nth-child(4) { animation-delay: 0.25s; }
+    .sport-icon:nth-child(5) { animation-delay: 0.3s; }
+    .sport-icon:nth-child(6) { animation-delay: 0.35s; }
+    .sport-icon:nth-child(7) { animation-delay: 0.4s; }
+    .sport-icon:nth-child(8) { animation-delay: 0.45s; }
+    .sport-icon:nth-child(9) { animation-delay: 0.5s; }
+    .sport-icon:nth-child(10) { animation-delay: 0.55s; }
+    .sport-icon:nth-child(11) { animation-delay: 0.6s; }
+    .sport-icon:nth-child(12) { animation-delay: 0.65s; }
+
+    .sport-icon:hover {
+        transform: translateY(-12px) scale(1.08) rotate(-2deg);
+        box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.5);
+        border-color: rgba(16, 185, 129, 0.6);
+        background: linear-gradient(145deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.95));
+    }
+
+    .sport-icon:hover .w-20 {
+        transform: scale(1.2) rotate(10deg);
+        box-shadow: 0 10px 40px rgba(16, 185, 129, 0.6);
+    }
+
+    .country-card {
+        backdrop-filter: blur(20px);
+        background: linear-gradient(145deg, rgba(51, 65, 85, 0.6), rgba(30, 41, 59, 0.8));
+        border: 1px solid var(--glass-border);
+        transition: var(--transition-smooth);
+        border-radius: var(--border-radius);
+    }
+
+    .country-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Advanced Animations */
+    .pulse-glow {
+        animation: pulseGlow 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+        from {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            transform: scale(1);
+        }
+
+        to {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+            transform: scale(1.01);
+        }
+    }
+
+    .fade-in-up {
+        opacity: 1;
+        transform: translateY(0);
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fade-in-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Only animate sections after hero on scroll */
+    section.animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    section.animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Compact Statistics */
+    .stats-counter {
+        font-weight: 900;
+        background: var(--emerald-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.4));
+    }
+
+    .section-title {
+        color: #10b981;
+        display: inline;
+    }
+
+    /* ===== HERO TEXT STYLING - PROFESSIONAL ===== */
+    #hero-text {
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .hero-text-slide {
+        opacity: 0;
+        transform: translateY(40px) scale(0.98);
+        transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        pointer-events: none;
+    }
+
+    .hero-text-slide.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    .hero-text-slide.exit {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.98);
+    }
+
+    .hero-heading {
+        font-size: clamp(2.5rem, 7vw, 5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        color: #ffffff;
+        margin-bottom: 1rem;
+        text-shadow: 
+            0 2px 4px rgba(0, 0, 0, 0.9),
+            0 4px 12px rgba(0, 0, 0, 0.8),
+            0 8px 24px rgba(0, 0, 0, 0.6);
+        letter-spacing: -0.02em;
+    }
+
+    .hero-heading .highlight {
+        color: #10b981;
+        text-shadow: 
+            0 0 8px rgba(16, 185, 129, 0.5),
+            0 0 15px rgba(16, 185, 129, 0.3),
+            0 2px 4px rgba(0, 0, 0, 0.9);
+        -webkit-text-fill-color: #10b981;
+        filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4));
+    }
+
+    @keyframes textGlow {
+        0% { filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.5)); }
+        100% { filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.8)); }
+    }
+
+    .hero-description {
+        font-size: clamp(1rem, 2.5vw, 1.35rem);
+        color: #ffffff;
+        font-weight: 400;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.6;
+        text-shadow: 
+            0 2px 6px rgba(0, 0, 0, 0.9),
+            0 4px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        #hero-text {
+            min-height: 150px;
+        }
+        .hero-heading {
+            font-size: 2rem !important;
+            margin-bottom: 0.75rem;
+            text-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.9),
+                0 4px 8px rgba(0, 0, 0, 0.7) !important;
+        }
+        .hero-description {
+            font-size: 1rem !important;
+            padding: 0 1rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8) !important;
+        }
+        .hero-slider {
+            margin-top: -70px;
+            padding-top: 70px;
+        }
+    }
+
+    /* ===== END HERO TEXT STYLING ===== */
+
+    /* Compact Spacing */
+    .section-compact {
+        padding: var(--section-padding);
+    }
+
+    .container-compact {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Loading States */
+    .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(16, 185, 129, 0.3);
+        border-top: 3px solid #10b981;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Responsive Compact Design */
+    @media (max-width: 768px) {
+        .hero-slider {
+            height: 100vh;
+            min-height: 600px;
+        }
+
+        .search-form-glass {
+            margin: 0 0.5rem;
+            padding: 1.25rem;
+        }
+
+        .form-input,
+        .form-select {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .moving-cards {
+            animation-duration: 60s;
+        }
+
+        :root {
+            --section-padding: 2rem 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-slider {
+            height: 100vh;
+            min-height: 550px;
+        }
+
+        #hero-text {
+            min-height: 120px;
+        }
+
+        .hero-heading {
+            font-size: 1.5rem !important;
+        }
+
+        .hero-description {
+            font-size: 0.85rem !important;
+        }
+
+        .search-form-glass {
+            padding: 1rem;
+        }
+    }
+
+    /* Advanced Micro-Interactions */
+    .btn-primary {
+        position: relative;
+        overflow: hidden;
+        background: var(--emerald-gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 0.875rem 2rem;
+        font-weight: 700;
+        color: white;
+        transition: var(--transition-smooth);
+        cursor: pointer;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Glass Card Effect */
+    .glass-card {
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: var(--border-radius);
+        transition: var(--transition-smooth);
+    }
+
+    .glass-card:hover {
+        border-color: rgba(16, 185, 129, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Remove all white borders and backgrounds */
+    input,
+    select,
+    button,
+    .form-control {
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        background: rgba(51, 65, 85, 0.8) !important;
+    }
+
+    /* Modern Gradient Backgrounds */
+    .bg-dark-gradient {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%);
+    }
+
+    .bg-section-gradient {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+    }
+
+    /* Professional Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes glow {
+        0%, 100% {
+            box-shadow: 0 0 5px rgba(16, 185, 129, 0.3), 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+        50% {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 40px rgba(16, 185, 129, 0.3);
+        }
+    }
+
+    .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .animate-fadeInScale {
+        animation: fadeInScale 0.5s ease-out forwards;
+    }
+
+    .animate-slideInLeft {
+        animation: slideInLeft 0.6s ease-out forwards;
+    }
+
+    .animate-slideInRight {
+        animation: slideInRight 0.6s ease-out forwards;
+    }
+
+    .animate-bounceIn {
+        animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    }
+
+    .animate-shimmer {
+        background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.1) 50%, transparent 100%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite linear;
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-glow {
+        animation: glow 2s ease-in-out infinite;
+    }
+
+    /* Delay classes for staggered animations */
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* Smooth hover effects for interactive elements */
+    .hover-lift {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .hover-glow:hover {
+        box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Form select dropdown styling */
+    .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2310b981' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+    }
+
+    .form-select option {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 0.5rem;
+    }
+
+    .form-select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Enhanced Hero Section with Dynamic Slider -->
+<section class="hero-slider relative">
+    <div id="hero-slides">
+        <!-- Dynamic Hero Slides from Database -->
+        {% for image_url in hero_images %}
+        <div class="hero-slide {% if forloop.first %}active{% endif %}"
+            style="background-image: url('{{ image_url }}');">
+            <div class="hero-overlay"></div>
+        </div>
+        {% empty %}
+        <!-- Fallback slides if no images in database -->
+        <div class="hero-slide active"
+            style="background-image: url('https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=800&h=450&fit=crop&crop=center&q=60&auto=format');">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide"
+            style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=450&fit=crop&crop=center&q=60&auto=format');">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide"
+            style="background-image: url('https://images.unsplash.com/photo-1459865264687-595d652de67e?w=800&h=450&fit=crop&crop=center&q=60&auto=format');">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide"
+            style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=450&fit=crop&crop=center&q=60&auto=format');">
+            <div class="hero-overlay"></div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Hero Content with Dynamic Text -->
+    <div class="relative z-10 flex items-center justify-center h-full">
+        <div class="container mx-auto px-6 text-center text-white">
+            <div class="max-w-6xl mx-auto">
+                <!-- Dynamic Hero Text -->
+                <div id="hero-text" class="relative mb-8">
+                    <div class="hero-text-slide active">
+                        <h1 class="hero-heading">
+                            Book Your Perfect <span class="highlight">Playground</span>
+                        </h1>
+                        <p class="hero-description">
+                            Find and reserve premium sports facilities worldwide with real-time availability
+                        </p>
+                    </div>
+                    <div class="hero-text-slide">
+                        <h1 class="hero-heading">
+                            Connect With <span class="highlight">Champions</span>
+                        </h1>
+                        <p class="hero-description">
+                            Join millions of athletes booking premium sports facilities every day
+                        </p>
+                    </div>
+                    <div class="hero-text-slide">
+                        <h1 class="hero-heading">
+                            Experience <span class="highlight">Excellence</span>
+                        </h1>
+                        <p class="hero-description">
+                            Premium facilities, instant booking, and seamless sports experiences
+                        </p>
+                    </div>
+                    <div class="hero-text-slide">
+                        <h1 class="hero-heading">
+                            Play Anywhere <span class="highlight">Anytime</span>
+                        </h1>
+                        <p class="hero-description">
+                            Global network of top-rated sports facilities at your fingertips
+                        </p>
+                    </div>
+                    <div class="hero-text-slide">
+                        <h1 class="hero-heading">
+                            Your Game <span class="highlight">Your Rules</span>
+                        </h1>
+                        <p class="hero-description">
+                            Flexible scheduling and instant confirmation for every match
+                        </p>
+                    </div>
+                    <div class="hero-text-slide">
+                        <h1 class="hero-heading">
+                            Train Like <span class="highlight">A Pro</span>
+                        </h1>
+                        <p class="hero-description">
+                            Access world-class venues used by professional athletes
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Compact Advanced Search Form with Animations -->
+                <div class="search-form-glass rounded-2xl p-6 shadow-2xl max-w-5xl mx-auto animate-fadeInUp hover-lift">
+                    <div class="flex items-center mb-6">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mr-3 animate-float">
+                            <i class="fas fa-search text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Find Your Perfect Playground</h3>
+                    </div>
+
+                    <form id="advanced-search-form" class="space-y-4">
+                        <!-- Compact First Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="form-group animate-fadeInUp delay-100">
+                                <label class="form-label">
+                                    <i class="fas fa-futbol"></i>
+                                    Sport Type
+                                </label>
+                                <select id="sport-select" class="form-select">
+                                    <option value="">All Sports</option>
+                                    {% for sport in sport_types %}
+                                    <option value="{{ sport.id }}">{{ sport.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+
+                            <div class="form-group animate-fadeInUp delay-200">
+                                <label class="form-label">
+                                    <i class="fas fa-globe"></i>
+                                    Country
+                                </label>
+                                <select id="country-select" class="form-select">
+                                    <option value="">Select Country</option>
+                                    {% for country in countries %}
+                                    <option value="{{ country.id }}">{{ country.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group animate-fadeInUp delay-300">
+                                <label class="form-label">
+                                    <i class="fas fa-map"></i>
+                                    State
+                                </label>
+                                <select id="state-select" class="form-select" disabled>
+                                    <option value="">Select State</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group animate-fadeInUp delay-400">
+                                <label class="form-label">
+                                    <i class="fas fa-city"></i>
+                                    City
+                                </label>
+                                <select id="city-select" class="form-select" disabled>
+                                    <option value="">Select City</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Compact Second Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="form-group animate-fadeInUp delay-200">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Date
+                                </label>
+                                <input type="date" id="booking-date" class="form-input" min="{{ today }}">
+                            </div>
+
+                            <div class="form-group animate-fadeInUp delay-300">
+                                <label class="form-label">
+                                    <i class="fas fa-dollar-sign" id="price-icon"></i>
+                                    <span id="price-label">Price Range</span>
+                                </label>
+                                <select id="price-range" class="form-select">
+                                    <option value="">Any Price</option>
+                                    <option value="0-25" data-display="0 - 25">$0 - $25</option>
+                                    <option value="25-50" data-display="25 - 50">$25 - $50</option>
+                                    <option value="50-100" data-display="50 - 100">$50 - $100</option>
+                                    <option value="100+" data-display="100+">$100+</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group flex items-end animate-fadeInUp delay-400">
+                                <button type="submit" class="btn-primary w-full hover-glow">
+                                    <i class="fas fa-search mr-2"></i>Search Playgrounds
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Most Popular Playgrounds Section - Professional Design -->
+<section class="py-16 bg-gradient-to-b from-slate-900 to-slate-800 relative overflow-hidden">
+    <!-- Subtle Background Pattern -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute inset-0"
+            style="background-image: radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);">
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight" style="color: #ffffff;">
+                Most Popular <span style="color: #10b981;">Playgrounds</span>
+            </h2>
+            <p class="text-2xl md:text-3xl max-w-3xl mx-auto" style="color: #cbd5e1;">
+                Discover top-rated sports facilities loved by our community
+            </p>
+            <div class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto mt-8 rounded-full"></div>
+        </div>
+
+        <!-- Playgrounds Grid - Dynamic Loading -->
+        <div id="popular-playgrounds-grid"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            <!-- Loading indicator -->
+            <div class="col-span-full text-center py-12">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-700/50 rounded-full mb-4">
+                    <i class="fas fa-spinner fa-spin text-emerald-400 text-2xl"></i>
+                </div>
+                <p class="text-slate-400">Loading popular playgrounds...</p>
+            </div>
+        </div>
+
+        <!-- View All Button -->
+        <div class="text-center">
+            <a href="{% url 'playgrounds:playground_search' %}"
+                class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 group">
+                <span class="mr-2">View All Playgrounds</span>
+                <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Popular Sports Section -->
+<section class="py-24 bg-slate-800 relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight animate-fadeInUp" style="color: #ffffff;">
+                Popular <span style="color: #10b981;">SPORTS</span>
+            </h2>
+            <p class="text-2xl md:text-3xl max-w-3xl mx-auto animate-fadeInUp delay-200" style="color: #cbd5e1;">
+                Choose from a variety of sports and activities available worldwide
+            </p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 sports-grid">
+            {% for sport in popular_sports %}
+            <div class="sport-icon rounded-3xl p-6 text-center cursor-pointer group" data-sport="{{ sport.id }}">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg group-hover:shadow-emerald-500/50 transition-all duration-300">
+                    {% if sport.icon %}
+                    <i class="{{ sport.icon }} text-white"></i>
+                    {% else %}
+                    <i class="fas fa-futbol text-white"></i>
+                    {% endif %}
+                </div>
+                <h3 class="text-white font-bold text-lg mb-2">{{ sport.name }}</h3>
+                <p class="text-emerald-400 text-sm font-semibold">{{ sport.facilities_count }}+ facilities</p>
+            </div>
+            {% empty %}
+            <!-- Default sports with beautiful icons -->
+            <div class="sport-icon rounded-3xl p-6 text-center cursor-pointer group" data-sport="football">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg group-hover:shadow-green-500/50 transition-all duration-300">
+                    <i class="fas fa-futbol text-white"></i>
+                </div>
+                <h3 class="text-white font-bold text-lg mb-2">Football</h3>
+                <p class="text-green-400 text-sm font-semibold">2,500+ facilities</p>
+            </div>
+            <div class="sport-icon rounded-3xl p-6 text-center cursor-pointer group" data-sport="basketball">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg group-hover:shadow-orange-500/50 transition-all duration-300">
+                    <i class="fas fa-basketball-ball text-white"></i>
+                </div>
+                <h3 class="text-white font-bold text-lg mb-2">Basketball</h3>
+                <p class="text-orange-400 text-sm font-semibold">1,800+ facilities</p>
+            </div>
+            <div class="sport-icon rounded-3xl p-6 text-center cursor-pointer group" data-sport="tennis">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg group-hover:shadow-blue-500/50 transition-all duration-300">
+                    <i class="fas fa-table-tennis text-white"></i>
+                </div>
+                <h3 class="text-white font-bold text-lg mb-2">Tennis</h3>
+                <p class="text-blue-400 text-sm font-semibold">1,200+ facilities</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced We Are Available Worldwide Section -->
+<section class="py-24 bg-gradient-to-b from-slate-800 to-slate-900 relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight" style="color: #ffffff;">
+                We Are Available <span style="color: #10b981;">Worldwide</span>
+            </h2>
+            <p class="text-2xl md:text-3xl max-w-4xl mx-auto" style="color: #cbd5e1;">
+                Playground booking available in these countries with premium facilities
+            </p>
+        </div>
+
+        <!-- Moving Cards Container -->
+        <div class="relative h-80 overflow-hidden rounded-3xl">
+            <div class="moving-cards flex space-x-8 absolute top-0 h-full" style="width: max-content;">
+                {% for country in available_countries %}
+                <!-- Duplicate the loop for seamless effect -->
+                <div
+                    class="country-card rounded-3xl p-8 w-96 flex-shrink-0 shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300">
+                    <div class="flex items-center space-x-6">
+                        <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-600 shadow-lg">
+                            {% if country.flag_image %}
+                            <img src="{{ country.flag_image.url }}" alt="{{ country.name }}"
+                                class="w-full h-full object-cover">
+                            {% else %}
+                            <div
+                                class="w-full h-full bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                                {{ country.code|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white mb-2">{{ country.name }}</h3>
+                            <p class="text-emerald-400 font-bold text-lg mb-3">{{ country.playground_count }}
+                                Playgrounds</p>
+
+                            {% if country.popular_cities %}
+                            <div class="space-y-2">
+                                <p class="text-sm text-blue-400 font-semibold">Popular Cities:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    {% for city in country.popular_cities|slice:":3" %}
+                                    <span class="bg-slate-700/80 text-slate-300 px-3 py-1 rounded-full text-xs font-medium">{{ city.name }}</span>
+                                    {% endfor %}
+                                    {% if country.popular_cities|length > 3 %}
+                                    <span class="text-xs text-emerald-400 font-semibold">+{{
+                                        country.popular_cities|length|add:"-3" }} more</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Repeat for seamless loop -->
+                {% for country in available_countries %}
+                <div
+                    class="country-card rounded-3xl p-8 w-96 flex-shrink-0 shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300">
+                    <div class="flex items-center space-x-6">
+                        <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-600 shadow-lg">
+                            {% if country.flag_image %}
+                            <img src="{{ country.flag_image.url }}" alt="{{ country.name }}"
+                                class="w-full h-full object-cover">
+                            {% else %}
+                            <div
+                                class="w-full h-full bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                                {{ country.code|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white mb-2">{{ country.name }}</h3>
+                            <p class="text-emerald-400 font-bold text-lg">{{ country.playground_count }} Playgrounds</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Ready to Play Section -->
+<section class="py-24 bg-gradient-to-br from-emerald-600 via-emerald-700 to-green-600 relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="absolute inset-0">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div
+            class="absolute top-10 left-10 w-64 h-64 bg-white/10 rounded-full mix-blend-overlay filter blur-xl animate-float">
+        </div>
+        <div
+            class="absolute bottom-10 right-10 w-96 h-96 bg-white/5 rounded-full mix-blend-overlay filter blur-2xl animate-float-reverse">
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black text-white mb-10 leading-tight">
+                Ready to Play?
+            </h2>
+            <p class="text-2xl md:text-3xl text-emerald-100 max-w-4xl mx-auto mb-16 leading-relaxed">
+                Join thousands of athletes who trust us for their sports facility booking needs
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
+                <a href="{% url 'playgrounds:playground_search' %}"
+                    class="group bg-emerald-600 text-white px-12 py-6 rounded-2xl hover:bg-emerald-700 transition-all duration-300 font-bold text-xl inline-flex items-center shadow-2xl hover:shadow-emerald-500/50 hover:scale-105">
+                    <i class="fas fa-play-circle mr-4 text-3xl group-hover:scale-110 transition-transform"></i>
+                    <span>Start Booking Now</span>
+                </a>
+                <a href="{% url 'accounts:become_partner' %}"
+                    class="group bg-transparent border-3 border-emerald-400 text-emerald-400 px-12 py-6 rounded-2xl hover:bg-emerald-400 hover:text-gray-900 transition-all duration-300 font-bold text-xl inline-flex items-center shadow-2xl hover:shadow-emerald-400/30 hover:scale-105">
+                    <i class="fas fa-handshake mr-4 text-3xl group-hover:scale-110 transition-transform"></i>
+                    <span>Become a Partner</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Live Statistics Section -->
+<section class="py-24 bg-slate-900 relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight" style="color: #ffffff;">
+                Real-time <span style="color: #10b981;">STATISTICS</span>
+            </h2>
+            <p class="text-2xl md:text-3xl" style="color: #cbd5e1;">Live data from our growing community</p>
+            <div class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto mt-8 rounded-full"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div
+                class="text-center fade-in-up glass-effect rounded-3xl p-8 hover:shadow-emerald-500/20 transition-all duration-300">
+                <div class="stats-counter text-6xl md:text-7xl font-black mb-4" data-target="{{ total_users }}">0</div>
+                <p class="text-xl text-slate-300 font-medium">Active Users</p>
+                <div class="w-16 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <div
+                class="text-center fade-in-up glass-effect rounded-3xl p-8 hover:shadow-emerald-500/20 transition-all duration-300">
+                <div class="stats-counter text-6xl md:text-7xl font-black mb-4" data-target="{{ total_playgrounds }}">0
+                </div>
+                <p class="text-xl text-slate-300 font-medium">Playgrounds</p>
+                <div class="w-16 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <div
+                class="text-center fade-in-up glass-effect rounded-3xl p-8 hover:shadow-emerald-500/20 transition-all duration-300">
+                <div class="stats-counter text-6xl md:text-7xl font-black mb-4" data-target="{{ total_bookings }}">0
+                </div>
+                <p class="text-xl text-slate-300 font-medium">Bookings Made</p>
+                <div class="w-16 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <div
+                class="text-center fade-in-up glass-effect rounded-3xl p-8 hover:shadow-emerald-500/20 transition-all duration-300">
+                <div class="stats-counter text-6xl md:text-7xl font-black mb-4" data-target="{{ total_countries }}">0
+                </div>
+                <p class="text-xl text-slate-300 font-medium">Countries</p>
+                <div class="w-16 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Partnership Benefits Section -->
+<section class="py-24 bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-900 relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight" style="color: #ffffff;">
+                Partnership <span style="color: #a855f7;">BENEFITS</span>
+            </h2>
+            <p class="text-2xl md:text-3xl max-w-4xl mx-auto" style="color: #e9d5ff;">
+                Join our network and unlock unlimited potential for your sports facility
+            </p>
+            <div class="w-24 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 mx-auto mt-8 rounded-full"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+                class="glass-effect rounded-3xl p-8 hover:shadow-purple-500/30 transition-all duration-500 fade-in-up group">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-chart-line text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Increase Revenue</h3>
+                <p class="text-purple-200 leading-relaxed">
+                    Boost your facility's income by up to 300% with our dynamic pricing and peak-hour optimization
+                    algorithms.
+                </p>
+                <div class="mt-6 text-emerald-400 font-bold text-lg">
+                    Average 300% increase
+                </div>
+            </div>
+
+            <div
+                class="glass-effect rounded-3xl p-8 hover:shadow-purple-500/30 transition-all duration-500 fade-in-up group">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-users text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Global Exposure</h3>
+                <p class="text-purple-200 leading-relaxed">
+                    Reach millions of sports enthusiasts worldwide through our comprehensive marketing network and SEO
+                    optimization.
+                </p>
+                <div class="mt-6 text-blue-400 font-bold text-lg">
+                    10M+ monthly users
+                </div>
+            </div>
+
+            <div
+                class="glass-effect rounded-3xl p-8 hover:shadow-purple-500/30 transition-all duration-500 fade-in-up group">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-robot text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Smart Management</h3>
+                <p class="text-purple-200 leading-relaxed">
+                    AI-powered booking management, automated scheduling, and intelligent maintenance alerts for seamless
+                    operations.
+                </p>
+                <div class="mt-6 text-purple-400 font-bold text-lg">
+                    100% Automated
+                </div>
+            </div>
+
+            <div
+                class="glass-effect rounded-3xl p-8 hover:shadow-purple-500/30 transition-all duration-500 fade-in-up group">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-shield-alt text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Secure Payments</h3>
+                <p class="text-purple-200 leading-relaxed">
+                    Bank-grade security with instant payments, fraud protection, and guaranteed revenue with zero
+                    payment delays.
+                </p>
+                <div class="mt-6 text-orange-400 font-bold text-lg">
+                    Zero payment delays
+                </div>
+            </div>
+
+            <div
+                class="glass-effect rounded-3xl p-8 hover:shadow-purple-500/30 transition-all duration-500 fade-in-up group">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-headset text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">24/7 Support</h3>
+                <p class="text-purple-200 leading-relaxed">
+                    Dedicated support team, comprehensive training, and ongoing optimization to maximize your facility's
+                    potential.
+                </p>
+                <div class="mt-6 text-red-400 font-bold text-lg">
+                    Round-the-clock help
+                </div>
+            </div>
+
+            <div
+                class="glass-effect rounded-3xl p-8 hover:shadow-purple-500/30 transition-all duration-500 fade-in-up group">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-mobile-alt text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Mobile First</h3>
+                <p class="text-purple-200 leading-relaxed">
+                    Complete mobile app for facility management, real-time analytics, and instant customer
+                    communication.
+                </p>
+                <div class="mt-6 text-teal-400 font-bold text-lg">
+                    iOS & Android apps
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-16 fade-in-up">
+            <a href="{% url 'accounts:become_partner' %}"
+                class="inline-flex items-center bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white px-12 py-6 rounded-2xl hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 transition-all duration-300 font-bold text-xl shadow-2xl hover:shadow-purple-500/50 group hover:scale-105">
+                <i class="fas fa-rocket mr-4 text-3xl group-hover:scale-110 transition-transform"></i>
+                <span>Start Your Partnership Journey</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Partnership Requirements Section -->
+<section class="py-24 bg-gradient-to-b from-slate-800 to-slate-900 relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight" style="color: #ffffff;">
+                Partnership <span style="color: #10b981;">REQUIREMENTS</span>
+            </h2>
+            <p class="text-2xl md:text-3xl max-w-3xl mx-auto" style="color: #cbd5e1;">
+                Simple criteria to join our exclusive network of premium sports facilities
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <!-- Facility Standards Card -->
+            <div class="glass-effect rounded-3xl p-8 fade-in-up hover:shadow-emerald-500/30 transition-all duration-500 group">
+                <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-building text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-6">Facility Standards</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-emerald-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Professional-grade sports equipment and facilities</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-emerald-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Clean and well-maintained premises</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-emerald-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Adequate parking and accessibility</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-emerald-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Safety protocols and emergency procedures</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Legal Requirements Card -->
+            <div class="glass-effect rounded-3xl p-8 fade-in-up hover:shadow-blue-500/30 transition-all duration-500 group">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-certificate text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-6">Legal Requirements</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Valid business license and operating permits</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Comprehensive liability insurance coverage</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Compliance with local regulations</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Tax registration and documentation</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Operational Excellence Card -->
+            <div class="glass-effect rounded-3xl p-8 fade-in-up hover:shadow-purple-500/30 transition-all duration-500 group">
+                <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-clock text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-6">Operational Excellence</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Minimum 12 hours daily operation</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Professional experienced staff</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Online booking system integration</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-400 mr-3 mt-1 flex-shrink-0"></i>
+                        <span class="text-slate-300">Customer service excellence commitment</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-5xl mx-auto">
+
+            <div class="text-center mt-16 fade-in-up">
+                <div
+                    class="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 rounded-2xl p-8 backdrop-blur-sm border border-emerald-500/30">
+                    <h3 class="text-3xl font-bold text-white mb-4">Ready to Meet Our Standards?</h3>
+                    <p class="text-slate-300 text-lg mb-6">
+                        Our partnership team will guide you through the application process and help ensure your
+                        facility meets all requirements.
+                    </p>
+                    <a href="{% url 'accounts:become_partner' %}"
+                        class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-emerald-500/30">
+                        <i class="fas fa-file-signature mr-3"></i>
+                        Apply Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Support Section -->
+<section class="py-24 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-7xl md:text-8xl font-black mb-8 leading-tight" style="color: #ffffff;">
+                Comprehensive <span style="color: #fbbf24;">SUPPORT</span>
+            </h2>
+            <p class="text-2xl md:text-3xl max-w-4xl mx-auto" style="color: #d1fae5;">
+                We're committed to your success with round-the-clock assistance and dedicated resources
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 fade-in-up">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fas fa-phone-alt text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">24/7 Hotline</h3>
+                <p class="text-emerald-100 leading-relaxed mb-6">
+                    Direct access to our expert support team anytime, anywhere. Get immediate assistance for urgent
+                    issues and technical support.
+                </p>
+                <div class="text-yellow-300 font-bold text-lg">
+                    <i class="fas fa-clock mr-2"></i>Available 24/7
+                </div>
+            </div>
+
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 fade-in-up">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Training Programs</h3>
+                <p class="text-emerald-100 leading-relaxed mb-6">
+                    Comprehensive training for your staff on our platform, customer service excellence, and facility
+                    management best practices.
+                </p>
+                <div class="text-blue-300 font-bold text-lg">
+                    <i class="fas fa-users mr-2"></i>Expert Trainers
+                </div>
+            </div>
+
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 fade-in-up">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fas fa-tools text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Technical Support</h3>
+                <p class="text-emerald-100 leading-relaxed mb-6">
+                    Complete technical assistance for system integration, troubleshooting, and ongoing platform
+                    optimization and updates.
+                </p>
+                <div class="text-purple-300 font-bold text-lg">
+                    <i class="fas fa-cog mr-2"></i>Full Integration
+                </div>
+            </div>
+
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 fade-in-up">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fas fa-chart-bar text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Analytics & Insights</h3>
+                <p class="text-emerald-100 leading-relaxed mb-6">
+                    Detailed performance analytics, business insights, and strategic recommendations to maximize your
+                    facility's revenue potential.
+                </p>
+                <div class="text-green-300 font-bold text-lg">
+                    <i class="fas fa-trending-up mr-2"></i>Data-Driven Growth
+                </div>
+            </div>
+
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 fade-in-up">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-red-400 to-pink-500 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fas fa-bullhorn text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Marketing Support</h3>
+                <p class="text-emerald-100 leading-relaxed mb-6">
+                    Professional marketing materials, social media templates, and promotional campaigns to boost your
+                    facility's visibility.
+                </p>
+                <div class="text-red-300 font-bold text-lg">
+                    <i class="fas fa-rocket mr-2"></i>Boost Visibility
+                </div>
+            </div>
+
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 fade-in-up">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fas fa-users-cog text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Account Management</h3>
+                <p class="text-emerald-100 leading-relaxed mb-6">
+                    Dedicated account managers to ensure your success, provide strategic guidance, and handle any
+                    partnership concerns.
+                </p>
+                <div class="text-indigo-300 font-bold text-lg">
+                    <i class="fas fa-user-tie mr-2"></i>Personal Manager
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-16 fade-in-up">
+            <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border border-white/20 max-w-4xl mx-auto">
+                <h3 class="text-4xl font-bold text-white mb-6">Need Immediate Assistance?</h3>
+                <p class="text-emerald-100 text-xl mb-8">
+                    Our support team is standing by to help you with any questions or concerns
+                </p>
+                <div class="flex flex-col md:flex-row gap-6 justify-center">
+                    <a href="tel:+1-800-PLAYGROUND"
+                        class="inline-flex items-center bg-white text-emerald-700 px-8 py-4 rounded-xl hover:bg-emerald-50 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-white/30">
+                        <i class="fas fa-phone mr-3"></i>
+                        Call Support
+                    </a>
+                    <a href="mailto:support@playgroundbooking.com"
+                        class="inline-flex items-center bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl hover:bg-white hover:text-emerald-700 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-white/30">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Email Support
+                    </a>
+                    <a href="#"
+                        class="inline-flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-blue-500/30">
+                        <i class="fas fa-comments mr-3"></i>
+                        Live Chat
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced JavaScript with Advanced Features -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ===== ENHANCED HERO SLIDER WITH SMOOTH TRANSITIONS =====
+        let currentSlide = 0;
+        let currentText = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const textSlides = document.querySelectorAll('.hero-text-slide');
+        let slideInterval = null;
+        let isAnimating = false;
+
+        function nextSlide() {
+            if (isAnimating || textSlides.length === 0) return;
+            isAnimating = true;
+            
+            // Remove active and add exit to current text slide
+            const currentTextSlide = textSlides[currentText];
+            const currentImageSlide = slides[currentSlide];
+            
+            if (currentTextSlide) {
+                currentTextSlide.classList.remove('active');
+                currentTextSlide.classList.add('exit');
+            }
+            if (currentImageSlide) {
+                currentImageSlide.classList.remove('active');
+            }
+
+            // Calculate next indices
+            const nextTextIndex = (currentText + 1) % textSlides.length;
+            const nextSlideIndex = (currentSlide + 1) % slides.length;
+
+            // Add active classes with delay for smooth transition
+            setTimeout(() => {
+                // Remove exit from previous
+                if (currentTextSlide) {
+                    currentTextSlide.classList.remove('exit');
+                }
+                
+                // Update current indices
+                currentText = nextTextIndex;
+                currentSlide = nextSlideIndex;
+                
+                // Add active to new slides
+                if (textSlides[currentText]) {
+                    textSlides[currentText].classList.add('active');
+                }
+                if (slides[currentSlide]) {
+                    slides[currentSlide].classList.add('active');
+                }
+                
+                isAnimating = false;
+            }, 200);
+        }
+
+        function startSlider() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+            }
+            // Auto-rotate every 5 seconds
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopSlider() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+                slideInterval = null;
+            }
+        }
+
+        // Start the slider immediately
+        if (textSlides.length > 0 && slides.length > 0) {
+            startSlider();
+        }
+
+        // Pause slider on hover
+        const heroSlider = document.querySelector('.hero-slider');
+        if (heroSlider) {
+            heroSlider.addEventListener('mouseenter', stopSlider);
+            heroSlider.addEventListener('mouseleave', startSlider);
+        }
+
+        // Advanced Search Form with Dynamic Dropdowns
+        const countrySelect = document.getElementById('country-select');
+        const stateSelect = document.getElementById('state-select');
+        const citySelect = document.getElementById('city-select');
+        const sportSelect = document.getElementById('sport-select');
+        const priceRangeSelect = document.getElementById('price-range');
+        const loadingHTML = '<option value="">Loading...</option>';
+
+        // Currency symbols mapping
+        const currencySymbols = {
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'BDT': '৳',
+            'INR': '₹',
+            'MYR': 'RM',
+            'SGD': 'S$',
+            'AUD': 'A$',
+            'CAD': 'C$',
+            'JPY': '¥',
+            'CNY': '¥',
+            'AED': 'د.إ',
+            'SAR': '﷼',
+            'PKR': '₨',
+            'THB': '฿',
+            'VND': '₫',
+            'PHP': '₱',
+            'IDR': 'Rp',
+            'KRW': '₩',
+            'TRY': '₺'
+        };
+
+        let currentCurrency = '$';
+        let currentCurrencyCode = 'USD';
+
+        // Function to update price range options with selected currency
+        function updatePriceRangeCurrency(currencySymbol) {
+            currentCurrency = currencySymbol;
+            const options = priceRangeSelect.querySelectorAll('option');
+            options.forEach(option => {
+                if (option.value === '') {
+                    option.textContent = 'Any Price';
+                } else if (option.value === '0-25') {
+                    option.textContent = `${currencySymbol}0 - ${currencySymbol}25`;
+                } else if (option.value === '25-50') {
+                    option.textContent = `${currencySymbol}25 - ${currencySymbol}50`;
+                } else if (option.value === '50-100') {
+                    option.textContent = `${currencySymbol}50 - ${currencySymbol}100`;
+                } else if (option.value === '100+') {
+                    option.textContent = `${currencySymbol}100+`;
+                }
+            });
+        }
+
+        // Utility function for API calls with proper response parsing
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                console.log('API Response for', url, ':', data);
+                return data;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                return null;
+            }
+        }
+
+        // Country change handler with animations and currency update
+        countrySelect.addEventListener('change', async function () {
+            const countryId = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+
+            // Reset dependent dropdowns with smooth transition
+            stateSelect.style.opacity = '0.5';
+            citySelect.style.opacity = '0.5';
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            stateSelect.disabled = !countryId;
+            citySelect.disabled = true;
+
+            if (countryId) {
+                // Fetch country currency info
+                try {
+                    const currencyData = await fetchData(`/api/currency/?country=${countryId}`);
+                    if (currencyData && currencyData.success && currencyData.currency_symbol) {
+                        updatePriceRangeCurrency(currencyData.currency_symbol);
+                        currentCurrencyCode = currencyData.currency_code;
+                        console.log('Currency updated to:', currencyData.currency_symbol, currencyData.currency_code);
+                    } else if (currencyData && currencyData.currency_code) {
+                        const symbol = currencySymbols[currencyData.currency_code] || currencyData.currency_code + ' ';
+                        updatePriceRangeCurrency(symbol);
+                        currentCurrencyCode = currencyData.currency_code;
+                    }
+                } catch (e) {
+                    console.log('Could not fetch currency, using default');
+                }
+
+                stateSelect.innerHTML = loadingHTML;
+                const data = await fetchData(`/api/states/?country=${countryId}`);
+                const states = data?.states || data || [];
+
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                if (Array.isArray(states)) {
+                    states.forEach(state => {
+                        stateSelect.innerHTML += `<option value="${state.id}">${state.name}</option>`;
+                    });
+                }
+                stateSelect.style.opacity = '1';
+            } else {
+                // Reset to default currency when no country selected
+                updatePriceRangeCurrency('$');
+                currentCurrencyCode = 'USD';
+                stateSelect.style.opacity = '1';
+            }
+            citySelect.style.opacity = '1';
+        });
+
+        // State change handler with animations
+        stateSelect.addEventListener('change', async function () {
+            const stateId = this.value;
+
+            citySelect.style.opacity = '0.5';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            citySelect.disabled = !stateId;
+
+            if (stateId) {
+                citySelect.innerHTML = loadingHTML;
+                const data = await fetchData(`/api/cities/?state=${stateId}`);
+                const cities = data?.cities || data || [];
+
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                if (Array.isArray(cities)) {
+                    cities.forEach(city => {
+                        citySelect.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+                    });
+                }
+            }
+            citySelect.style.opacity = '1';
+        });
+
+        // Enhanced Search Form Submission
+        document.getElementById('advanced-search-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const params = new URLSearchParams();
+
+            // Build search parameters
+            const sportId = document.getElementById('sport-select').value;
+            const countryId = document.getElementById('country-select').value;
+            const stateId = document.getElementById('state-select').value;
+            const cityId = document.getElementById('city-select').value;
+            const date = document.getElementById('booking-date').value;
+            const priceRange = document.getElementById('price-range').value;
+
+            if (sportId) params.set('sport', sportId);
+            if (countryId) params.set('country', countryId);
+            if (stateId) params.set('state', stateId);
+            if (cityId) params.set('city', cityId);
+            if (date) params.set('date', date);
+            if (priceRange) params.set('price', priceRange);
+
+            // Navigate to search results
+            window.location.href = `/playgrounds/?${params.toString()}`;
+        });
+
+        // Live Statistics Counter Animation with Real-time Data
+        function fetchAndAnimateCounters() {
+            // Fetch real-time statistics from backend
+            fetch('/api/realtime-stats/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const stats = data.data;
+                        animateCounters(stats);
+                    } else {
+                        // Fallback to static values if API fails
+                        animateCountersStatic();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching statistics:', error);
+                    // Fallback to static values
+                    animateCountersStatic();
+                });
+        }
+
+        function animateCounters(stats) {
+            const counters = document.querySelectorAll('.stats-counter');
+            const targets = {
+                0: stats.total_users,
+                1: stats.total_playgrounds,
+                2: stats.total_bookings,
+                3: stats.total_countries
+            };
+
+            counters.forEach((counter, index) => {
+                const target = targets[index];
+                const duration = 3000; // 3 seconds
+                const increment = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 16);
+            });
+        }
+
+        function animateCountersStatic() {
+            const counters = document.querySelectorAll('.stats-counter');
+
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 3000; // 3 seconds
+                const increment = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 16);
+            });
+        }
+
+        // Enhanced Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    // Trigger counter animation when statistics section is visible
+                    if (entry.target.querySelector('.stats-counter')) {
+                        setTimeout(fetchAndAnimateCounters, 500);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Sport Selection with smooth navigation
+        document.querySelectorAll('.sport-icon').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const sportId = this.getAttribute('data-sport');
+                if (sportId) {
+                    // Add loading state
+                    this.style.opacity = '0.7';
+                    this.style.transform = 'scale(0.95)';
+
+                    setTimeout(() => {
+                        window.location.href = `/playgrounds/?sport=${sportId}`;
+                    }, 200);
+                }
+            });
+        });
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('booking-date').min = today;
+
+        // Enhanced form validation with visual feedback
+        const formInputs = document.querySelectorAll('select, input');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function () {
+                this.parentElement.classList.remove('focused');
+                if (this.value) {
+                    this.parentElement.classList.add('has-value');
+                } else {
+                    this.parentElement.classList.remove('has-value');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Live statistics updater (every 30 seconds)
+        async function updateLiveStats() {
+            try {
+                const stats = await fetchData('/api/live-stats/');
+                if (stats) {
+                    // Update counters with new values
+                    Object.keys(stats).forEach(key => {
+                        const counter = document.querySelector(`[data-target]`);
+                        if (counter && stats[key] !== parseInt(counter.getAttribute('data-target'))) {
+                            counter.setAttribute('data-target', stats[key]);
+                            // Re-animate if visible
+                            if (counter.classList.contains('visible')) {
+                                animateCounters();
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating live stats:', error);
+            }
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateLiveStats, 30000);
+
+        // Performance optimization: Lazy load images
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function (e) {
+            // Add keyboard shortcuts for better accessibility
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 'k': // Ctrl+K to focus search
+                        e.preventDefault();
+                        document.getElementById('sport-select').focus();
+                        break;
+                }
+            }
+        });
+
+        // Add loading states and error handling
+        window.addEventListener('beforeunload', function () {
+            document.body.classList.add('loading');
+        });
+
+        // Custom cursor for interactive elements
+        const interactiveElements = document.querySelectorAll('.sport-icon, .playground-card, .country-card');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', function () {
+                document.body.style.cursor = 'pointer';
+            });
+
+            element.addEventListener('mouseleave', function () {
+                document.body.style.cursor = 'default';
+            });
+        });
+
+        // Real-time search DISABLED - only search when button is clicked
+        // This prevents auto-searching when just selecting options
+        let searchTimeout;
+        function setupRealTimeSearch() {
+            // Disabled auto-search - users must click the Search button
+            // const searchInputs = document.querySelectorAll('#sport-select, #country-select, #state-select, #city-select, #price-range');
+            // searchInputs.forEach(input => {
+            //     input.addEventListener('change', function () {
+            //         clearTimeout(searchTimeout);
+            //         searchTimeout = setTimeout(() => {
+            //             performInstantSearch();
+            //         }, 500);
+            //     });
+            // });
+        }
+
+        async function performInstantSearch() {
+            // This function is now only called when the search button is clicked
+            const searchForm = document.getElementById('advanced-search-form');
+            const formData = new FormData(searchForm);
+            const params = new URLSearchParams();
+
+            for (let [key, value] of formData.entries()) {
+                if (value) params.append(key, value);
+            }
+
+            try {
+                const response = await fetch(`/api/search-playgrounds/?${params}`);
+                const data = await response.json();
+
+                // Update search results preview (if results container exists)
+                const resultsContainer = document.getElementById('instant-search-results');
+                if (resultsContainer && data.results.length > 0) {
+                    resultsContainer.innerHTML = `
+                    <div class="glass-card p-4 mt-4">
+                        <h4 class="text-white font-bold mb-3">Found ${data.pagination.total_count} playgrounds</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${data.results.slice(0, 4).map(playground => `
+                                <div class="playground-card p-3 rounded-lg">
+                                    <h5 class="text-emerald-400 font-semibold">${playground.name}</h5>
+                                    <p class="text-slate-300 text-sm">${playground.location}</p>
+                                    <p class="text-white font-bold">$${playground.price_per_hour}/hour</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <a href="/search/?${params}" class="btn-primary mt-3 inline-block text-center">
+                            View All Results
+                        </a>
+                    </div>
+                `;
+                }
+            } catch (error) {
+                console.error('Real-time search error:', error);
+            }
+        }
+
+        // Progressive Web App features
+        function setupPWAFeatures() {
+            // Service Worker registration for caching
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/static/sw.js').catch(err => {
+                    console.log('SW registration failed:', err);
+                });
+            }
+
+            // Install prompt for PWA
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+
+                // Show custom install button
+                const installButton = document.createElement('button');
+                installButton.innerHTML = '<i class="fas fa-download mr-2"></i>Install App';
+                installButton.className = 'btn-primary fixed bottom-4 right-4 z-50 shadow-lg';
+                installButton.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        installButton.remove();
+                    }
+                });
+
+                document.body.appendChild(installButton);
+
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    if (installButton.parentNode) {
+                        installButton.remove();
+                    }
+                }, 10000);
+            });
+        }
+
+        // Advanced performance monitoring
+        function setupPerformanceMonitoring() {
+            // Monitor Core Web Vitals
+            if ('web-vital' in window) {
+                // This would require importing web-vitals library
+                // getCLS(console.log);
+                // getFID(console.log);
+                // getLCP(console.log);
+            }
+
+            // Custom performance tracking
+            const startTime = performance.now();
+
+            window.addEventListener('load', () => {
+                const loadTime = performance.now() - startTime;
+                console.log(`Page loaded in ${loadTime.toFixed(2)}ms`);
+
+                // Send analytics if needed
+                // analytics.track('page_load_time', { duration: loadTime });
+            });
+        }
+
+        // Enhanced accessibility features
+        function setupAccessibilityFeatures() {
+            // High contrast mode detection
+            if (window.matchMedia('(prefers-contrast: high)').matches) {
+                document.body.classList.add('high-contrast');
+            }
+
+            // Reduced motion preference
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.body.classList.add('reduced-motion');
+                // Disable animations
+                const style = document.createElement('style');
+                style.textContent = `
+                .reduced-motion * {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            `;
+                document.head.appendChild(style);
+            }
+
+            // Keyboard navigation improvements
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    document.body.classList.add('keyboard-navigation');
+                }
+            });
+
+            document.addEventListener('mousedown', () => {
+                document.body.classList.remove('keyboard-navigation');
+            });
+        }
+
+        // Initialize all enhanced features
+        setupRealTimeSearch();
+        setupPWAFeatures();
+        setupPerformanceMonitoring();
+        setupAccessibilityFeatures();
+    });
+
+    // Enhanced CSS animations for better UX with reduced motion support
+    const additionalStyles = `
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-10px) rotate(1deg); }
+        66% { transform: translateY(-5px) rotate(-1deg); }
+    }
+    
+    @keyframes float-reverse {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(10px) rotate(-1deg); }
+        66% { transform: translateY(5px) rotate(1deg); }
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+    
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .animate-float-reverse {
+        animation: float-reverse 8s ease-in-out infinite;
+    }
+    
+    .loading {
+        cursor: wait !important;
+    }
+    
+    .focused {
+        transform: scale(1.02);
+        transition: transform 0.2s ease;
+    }
+    
+    .has-value label {
+        color: #10b981;
+    }
+    
+    .keyboard-navigation *:focus {
+        outline: 3px solid #10b981 !important;
+        outline-offset: 2px !important;
+    }
+    
+    .high-contrast {
+        filter: contrast(150%);
+    }
+    
+    .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite ease-in-out;
+    }
+    
+    /* Mobile-first responsive enhancements */
+    @media (max-width: 640px) {
+        .hero-slider {
+            height: 75vh;
+        }
+        
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+        
+        .form-label {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+    
+    /* Print styles */
+    @media print {
+        .hero-slider, .search-form-glass, .moving-cards {
+            display: none !important;
+        }
+        
+        body {
+            background: white !important;
+            color: black !important;
+        }
+    }
+`;
+
+    // Inject enhanced styles
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = additionalStyles;
+    document.head.appendChild(styleSheet);
+
+    // Instant search results container DISABLED - search only via button click
+    // const instantSearchContainer = document.createElement('div');
+    // instantSearchContainer.id = 'instant-search-results';
+    // const searchForm = document.getElementById('advanced-search-form');
+    // if (searchForm) {
+    //     searchForm.parentNode.appendChild(instantSearchContainer);
+    // }
+
+    // Enhanced Counter Animation
+    function animateCounters() {
+        const counters = document.querySelectorAll('.counter-3d');
+
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count'));
+            const increment = target / 100;
+            let current = 0;
+
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.style.fontSize = '2.5rem';
+                    counter.style.fontWeight = 'bold';
+                    counter.style.color = '#10b981';
+                    counter.style.textShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+
+                    if (target > 1000) {
+                        counter.textContent = Math.ceil(current).toLocaleString() + '+';
+                    } else {
+                        counter.textContent = Math.ceil(current) + (target === 98 ? '%' : '+');
+                    }
+
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.textContent = target.toLocaleString() + (target === 98 ? '%' : '+');
+                }
+            };
+
+            updateCounter();
+        });
+    }
+
+    // Intersection Observer for counter animation
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe counter section
+    const counterSection = document.querySelector('.counter-3d');
+    if (counterSection && counterSection.closest('section')) {
+        counterObserver.observe(counterSection.closest('section'));
+    }
+
+    // Enhanced scroll animations - Only for sections after the hero
+    function initScrollAnimations() {
+        const sections = document.querySelectorAll('section');
+
+        // First section (hero) should always be visible
+        if (sections.length > 0) {
+            sections[0].style.opacity = '1';
+            sections[0].style.transform = 'none';
+        }
+
+        // Add scroll animation class to other sections
+        sections.forEach((section, index) => {
+            if (index === 0) return; // Skip hero section
+            section.classList.add('animate-on-scroll');
+        });
+
+        // Intersection Observer for smooth reveal on scroll
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        sections.forEach((section, index) => {
+            if (index > 0) {
+                sectionObserver.observe(section);
+            }
+        });
+
+        // Trigger check on page load for sections already in view
+        setTimeout(() => {
+            sections.forEach((section, index) => {
+                if (index === 0) return;
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    section.classList.add('visible');
+                }
+            });
+        }, 100);
+    }
+
+    // Initialize scroll animations
+    initScrollAnimations();
+
+    // Dynamic Popular Playgrounds Loading
+    async function loadPopularPlaygrounds() {
+        const grid = document.getElementById('popular-playgrounds-grid');
+        if (!grid) return;
+        
+        try {
+            const response = await fetch('/api/popular-playgrounds/?limit=8');
+            const data = await response.json();
+            
+            if (!data.success || !data.playgrounds || data.playgrounds.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-700/50 rounded-full mb-4">
+                            <i class="fas fa-info-circle text-slate-400 text-2xl"></i>
+                        </div>
+                        <p class="text-slate-400">No popular playgrounds available at the moment.</p>
+                        <p class="text-slate-500 text-sm mt-2">Check back later or browse all playgrounds.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Clear existing content
+            grid.innerHTML = '';
+            
+            // Render playgrounds
+            data.playgrounds.forEach(playground => {
+                const card = createPlaygroundCard(playground);
+                grid.appendChild(card);
+            });
+            
+            // Add error handlers to all playground images
+            setTimeout(() => {
+                document.querySelectorAll('.playground-img').forEach(img => {
+                    img.onerror = function() {
+                        console.log('Image failed to load:', this.src);
+                        const container = this.closest('.playground-image-container');
+                        const icon = container ? container.dataset.icon : 'fas fa-futbol';
+                        this.parentElement.innerHTML = `
+                            <div class="w-full h-full bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 flex items-center justify-center">
+                                <i class="${icon} text-slate-500 text-5xl"></i>
+                            </div>`;
+                    };
+                });
+            }, 100);
+            
+        } catch (error) {
+            console.error('Error loading popular playgrounds:', error);
+            // Keep server-side rendered content on error
+        }
+    }
+    
+    function createPlaygroundCard(playground) {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-emerald-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 group';
+        
+        const imageUrl = playground.image_url || '';
+        const sportIcon = playground.sport_icon || 'fas fa-futbol';
+        const rating = playground.rating ? playground.rating.toFixed(1) : '0.0';
+        const currencySymbol = playground.currency_symbol || playground.currency + ' ';
+        const price = playground.price_per_hour ? `${currencySymbol}${playground.price_per_hour.toFixed(2)}` : 'Contact for price';
+        const priceLabel = playground.price_per_hour ? '<span class="text-slate-400 text-sm font-normal">/hour</span>' : '';
+        
+        console.log('Creating card for:', playground.name, 'Image URL:', imageUrl);
+        
+        // Create image element separately for better control
+        const imageHtml = imageUrl ? 
+            `<img src="${imageUrl}" alt="${playground.name}" 
+                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 playground-img" 
+                 style="min-height: 192px;"
+                 data-playground-id="${playground.id}"
+                 onload="console.log('Image loaded successfully:', this.src)"
+                 onerror="console.log('Image load error:', this.src); this.style.display='none'; this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 flex items-center justify-center\\'><i class=\\'fas fa-image text-slate-500 text-5xl\\'></i></div>';">` :
+            `<div class="w-full h-full bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 flex items-center justify-center">
+                <i class="${sportIcon} text-slate-500 text-5xl"></i>
+             </div>`;
+        
+        card.innerHTML = `
+            <div class="relative h-48 overflow-hidden playground-image-container" data-icon="${sportIcon}">
+                ${imageHtml}
+                
+                ${playground.sport_type ? 
+                    `<div class="absolute top-3 left-3">
+                        <span class="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg">
+                            ${playground.sport_type}
+                        </span>
+                    </div>` : ''
+                }
+                
+                <div class="absolute top-3 right-3">
+                    <span class="bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center">
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        ${rating}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="p-5">
+                <h3 class="text-lg font-bold text-white mb-2 truncate">${playground.name}</h3>
+                
+                <div class="flex items-center text-slate-400 text-sm mb-4">
+                    <i class="fas fa-map-marker-alt text-emerald-400 mr-2"></i>
+                    <span class="truncate">${playground.location || 'Location Available'}</span>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="text-emerald-400 font-bold">
+                        ${price}${priceLabel}
+                    </div>
+                    <a href="${playground.detail_url}" 
+                       class="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    // Load popular playgrounds on page load
+    if (document.getElementById('popular-playgrounds-grid')) {
+        loadPopularPlaygrounds();
+        // Refresh every 60 seconds
+        setInterval(loadPopularPlaygrounds, 60000);
+    }
+</script>
+{% endblock %}

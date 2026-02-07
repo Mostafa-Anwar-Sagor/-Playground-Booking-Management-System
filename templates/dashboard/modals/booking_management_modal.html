@@ -1,0 +1,506 @@
+<!-- Booking Management Modal -->
+<div id="bookingManagementModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Booking Management</h2>
+                    <button onclick="closeBookingManagementModal()" class="text-gray-500 hover:text-gray-700 p-2">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- Booking Filters -->
+                <div class="mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        
+                        <select id="playgroundFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All Playgrounds</option>
+                            <!-- Playgrounds will be loaded dynamically -->
+                        </select>
+                        
+                        <input type="date" id="dateFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        
+                        <button onclick="applyBookingFilters()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Bookings Table -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                        <h3 class="text-lg font-semibold text-gray-800">All Bookings</h3>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking Details</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Bookings will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            Showing <span id="bookingsStart">1</span> to <span id="bookingsEnd">10</span> of <span id="bookingsTotal">0</span> bookings
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="previousBookingsPage()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                Previous
+                            </button>
+                            <button onclick="nextBookingsPage()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Detail Modal -->
+<div id="bookingDetailModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-60">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800">Booking Details</h2>
+                    <button onclick="closeBookingDetailModal()" class="text-gray-500 hover:text-gray-700 p-2">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="bookingDetailContent" class="p-6">
+                <!-- Booking detail content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentBookingsPage = 1;
+let totalBookingsPages = 1;
+let bookingsFilters = {};
+
+function openBookingManagementModal() {
+    document.getElementById('bookingManagementModal').classList.remove('hidden');
+    loadBookingsForManagement();
+    loadPlaygroundsForFilter();
+}
+
+function closeBookingManagementModal() {
+    document.getElementById('bookingManagementModal').classList.add('hidden');
+}
+
+function closeBookingDetailModal() {
+    document.getElementById('bookingDetailModal').classList.add('hidden');
+}
+
+async function loadBookingsForManagement(page = 1) {
+    try {
+        // Build query parameters
+        const params = new URLSearchParams({
+            page: page,
+            ...bookingsFilters
+        });
+        
+        // For now, we'll use the existing pending bookings API and extend it
+        const response = await fetch(`/api/owner/pending-bookings/?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayBookingsTable(data.bookings);
+            updateBookingsPagination(page, data.bookings.length);
+        }
+    } catch (error) {
+        console.error('Error loading bookings:', error);
+    }
+}
+
+function displayBookingsTable(bookings) {
+    const tbody = document.getElementById('bookingsTableBody');
+    
+    if (bookings.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                    <i class="fas fa-calendar-times text-3xl mb-2"></i>
+                    <p>No bookings found</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = bookings.map(booking => {
+        const statusColor = getStatusColor(booking.status);
+        
+        return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">${booking.playground_name}</div>
+                        <div class="text-sm text-gray-500">ID: ${booking.booking_id}</div>
+                        <div class="text-sm text-gray-500">${booking.number_of_players} players</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">${booking.user_name}</div>
+                        <div class="text-sm text-gray-500">${booking.user_email}</div>
+                        <div class="text-sm text-gray-500">${booking.user_phone}</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">${booking.booking_date}</div>
+                        <div class="text-sm text-gray-500">${booking.start_time} - ${booking.end_time}</div>
+                        <div class="text-sm text-gray-500">${booking.duration_hours}h duration</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">₹${booking.final_amount}</div>
+                        <div class="text-sm text-gray-500">${booking.payment_method || 'Not specified'}</div>
+                        <div class="text-xs ${booking.payment_status === 'paid' ? 'text-green-600' : 'text-orange-600'}">${booking.payment_status}</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
+                        ${booking.status}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex space-x-2">
+                        <button onclick="viewBookingDetail('${booking.id}')" class="text-blue-600 hover:text-blue-900 p-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        ${booking.status === 'pending' ? `
+                            <button onclick="quickApproveBooking('${booking.id}')" class="text-green-600 hover:text-green-900 p-1">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button onclick="quickRejectBooking('${booking.id}')" class="text-red-600 hover:text-red-900 p-1">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function getStatusColor(status) {
+    switch (status) {
+        case 'confirmed':
+            return 'bg-green-100 text-green-800';
+        case 'pending':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'completed':
+            return 'bg-blue-100 text-blue-800';
+        case 'cancelled':
+            return 'bg-red-100 text-red-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+}
+
+async function loadPlaygroundsForFilter() {
+    try {
+        // For now, we'll use a simple approach
+        const playgrounds = ['Playground 1', 'Playground 2', 'Playground 3']; // Replace with actual API call
+        
+        const select = document.getElementById('playgroundFilter');
+        select.innerHTML = '<option value="">All Playgrounds</option>';
+        
+        playgrounds.forEach(playground => {
+            const option = document.createElement('option');
+            option.value = playground;
+            option.textContent = playground;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading playgrounds for filter:', error);
+    }
+}
+
+function applyBookingFilters() {
+    bookingsFilters = {
+        status: document.getElementById('statusFilter').value,
+        playground: document.getElementById('playgroundFilter').value,
+        date: document.getElementById('dateFilter').value
+    };
+    
+    currentBookingsPage = 1;
+    loadBookingsForManagement(1);
+}
+
+function updateBookingsPagination(currentPage, itemsCount) {
+    currentBookingsPage = currentPage;
+    
+    document.getElementById('bookingsStart').textContent = ((currentPage - 1) * 10) + 1;
+    document.getElementById('bookingsEnd').textContent = ((currentPage - 1) * 10) + itemsCount;
+    document.getElementById('bookingsTotal').textContent = itemsCount; // This should be total count from API
+}
+
+function previousBookingsPage() {
+    if (currentBookingsPage > 1) {
+        loadBookingsForManagement(currentBookingsPage - 1);
+    }
+}
+
+function nextBookingsPage() {
+    // This check should be based on actual total pages from API
+    if (currentBookingsPage < totalBookingsPages) {
+        loadBookingsForManagement(currentBookingsPage + 1);
+    }
+}
+
+async function viewBookingDetail(bookingId) {
+    try {
+        // For now, simulate booking detail
+        const bookingDetail = {
+            id: bookingId,
+            booking_id: 'BK' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+            playground_name: 'Sports Complex A',
+            user_name: 'John Doe',
+            user_email: 'john@example.com',
+            user_phone: '+91 9876543210',
+            booking_date: '2025-07-28',
+            start_time: '10:00',
+            end_time: '12:00',
+            duration_hours: 2,
+            number_of_players: 8,
+            total_amount: 500,
+            final_amount: 450,
+            payment_method: 'Online Payment',
+            payment_status: 'pending',
+            status: 'pending',
+            special_requests: 'Please arrange equipment for 8 players',
+            created_at: '2025-07-27T10:30:00Z'
+        };
+        
+        displayBookingDetail(bookingDetail);
+        document.getElementById('bookingDetailModal').classList.remove('hidden');
+        
+    } catch (error) {
+        console.error('Error loading booking detail:', error);
+    }
+}
+
+function displayBookingDetail(booking) {
+    const container = document.getElementById('bookingDetailContent');
+    
+    container.innerHTML = `
+        <div class="space-y-6">
+            <!-- Booking Overview -->
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-blue-800 mb-2">Booking Overview</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-blue-600">Booking ID</p>
+                        <p class="font-medium text-blue-800">${booking.booking_id}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-blue-600">Status</p>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(booking.status)}">
+                            ${booking.status}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customer Information -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Customer Information</h3>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Name:</span>
+                        <span class="font-medium">${booking.user_name}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Email:</span>
+                        <span class="font-medium">${booking.user_email}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Phone:</span>
+                        <span class="font-medium">${booking.user_phone}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Details -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Booking Details</h3>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Playground:</span>
+                        <span class="font-medium">${booking.playground_name}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Date:</span>
+                        <span class="font-medium">${booking.booking_date}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Time:</span>
+                        <span class="font-medium">${booking.start_time} - ${booking.end_time}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Duration:</span>
+                        <span class="font-medium">${booking.duration_hours} hours</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Players:</span>
+                        <span class="font-medium">${booking.number_of_players}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Information -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Payment Information</h3>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Amount:</span>
+                        <span class="font-medium">₹${booking.total_amount}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Final Amount:</span>
+                        <span class="font-medium text-green-600">₹${booking.final_amount}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Payment Method:</span>
+                        <span class="font-medium">${booking.payment_method}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Payment Status:</span>
+                        <span class="font-medium ${booking.payment_status === 'paid' ? 'text-green-600' : 'text-orange-600'}">${booking.payment_status}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Special Requests -->
+            ${booking.special_requests ? `
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Special Requests</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p class="text-gray-700">${booking.special_requests}</p>
+                    </div>
+                </div>
+            ` : ''}
+            
+            <!-- Actions -->
+            ${booking.status === 'pending' ? `
+                <div class="flex space-x-3 pt-4 border-t border-gray-200">
+                    <button onclick="approveBookingFromDetail('${booking.id}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-check mr-2"></i>Approve Booking
+                    </button>
+                    <button onclick="rejectBookingFromDetail('${booking.id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-times mr-2"></i>Reject Booking
+                    </button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+async function quickApproveBooking(bookingId) {
+    if (confirm('Are you sure you want to approve this booking?')) {
+        try {
+            const response = await fetch(`/api/owner/approve-booking/${bookingId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('Booking approved successfully!', 'success');
+                loadBookingsForManagement(currentBookingsPage);
+            } else {
+                showNotification(data.message || 'Error approving booking', 'error');
+            }
+        } catch (error) {
+            console.error('Error approving booking:', error);
+            showNotification('Error approving booking', 'error');
+        }
+    }
+}
+
+async function quickRejectBooking(bookingId) {
+    const reason = prompt('Please provide a reason for rejection:');
+    if (!reason) return;
+    
+    try {
+        const response = await fetch(`/api/owner/reject-booking/${bookingId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            },
+            body: JSON.stringify({ rejection_reason: reason })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Booking rejected successfully!', 'success');
+            loadBookingsForManagement(currentBookingsPage);
+        } else {
+            showNotification(data.message || 'Error rejecting booking', 'error');
+        }
+    } catch (error) {
+        console.error('Error rejecting booking:', error);
+        showNotification('Error rejecting booking', 'error');
+    }
+}
+
+function approveBookingFromDetail(bookingId) {
+    quickApproveBooking(bookingId);
+    closeBookingDetailModal();
+}
+
+function rejectBookingFromDetail(bookingId) {
+    quickRejectBooking(bookingId);
+    closeBookingDetailModal();
+}
+
+// Close modals when clicking outside
+document.getElementById('bookingManagementModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeBookingManagementModal();
+    }
+});
+
+document.getElementById('bookingDetailModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeBookingDetailModal();
+    }
+});
+</script>

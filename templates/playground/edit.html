@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ playground.name }} | PlayGround Booking{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="card max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gradient mb-6">Edit Playground</h1>
+        
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Playground Name</label>
+                    <input type="text" name="name" class="form-input" value="{{ playground.name }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Price per Hour ($)</label>
+                    <input type="number" name="price_per_hour" class="form-input" step="0.01" value="{{ playground.price_per_hour }}" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-textarea" rows="4" required>{{ playground.description }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <textarea name="address" class="form-textarea" rows="3" required>{{ playground.address }}</textarea>
+            </div>
+            
+            <div class="grid grid-3 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Capacity (people)</label>
+                    <input type="number" name="capacity" class="form-input" value="{{ playground.capacity }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Opening Time</label>
+                    <input type="time" name="opening_time" class="form-input" value="{{ playground.opening_time }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Closing Time</label>
+                    <input type="time" name="closing_time" class="form-input" value="{{ playground.closing_time }}" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select name="is_active" class="form-input">
+                    <option value="true" {% if playground.is_active %}selected{% endif %}>Active</option>
+                    <option value="false" {% if not playground.is_active %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            
+            {% if playground.image %}
+            <div class="form-group">
+                <label class="form-label">Current Image</label>
+                <img src="{{ playground.image.url }}" alt="{{ playground.name }}" class="w-32 h-32 object-cover rounded-lg mb-2">
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label class="form-label">{% if playground.image %}Replace Image{% else %}Main Image{% endif %}</label>
+                <input type="file" name="image" class="form-input" accept="image/*">
+            </div>
+            
+            <div class="flex justify-center gap-4 pt-6">
+                <a href="{% url 'playgrounds:my_playgrounds' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary btn-lg">Update Playground</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

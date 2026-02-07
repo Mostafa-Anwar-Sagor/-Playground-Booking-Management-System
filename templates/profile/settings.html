@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - PlaygroundBooking{% endblock %}
+
+{% block body_class %}bg-gray-900{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Settings specific styles */
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        background: #111827 !important;
+    }
+    
+    body {
+        padding-top: 64px;
+        margin: 0;
+        background: #111827 !important;
+    }
+    
+    .settings-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #111827 !important;
+    }
+    
+    .settings-card {
+        background: linear-gradient(145deg, #1f2937, #111827) !important;
+        border: 1px solid rgba(75, 85, 99, 0.5) !important;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .setting-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+    }
+    
+    .setting-item:last-child {
+        border-bottom: none;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 24px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #4B5563;
+        transition: .4s;
+        border-radius: 24px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: #22C55E;
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    
+    .danger-zone {
+        border: 1px solid rgba(239, 68, 68, 0.5) !important;
+        background: linear-gradient(145deg, #1f1f23, #111827) !important;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #DC2626, #B91C1C);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #B91C1C, #991B1B);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 text-gray-100">
+    <div class="settings-container">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-white mb-2 flex items-center">
+                <i class="fas fa-cog text-emerald-400 mr-3"></i>
+                Settings
+            </h1>
+            <p class="text-gray-400">Manage your account preferences and privacy settings</p>
+        </div>
+        
+        <!-- Account Settings -->
+        <div class="settings-card">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-user-cog text-blue-400 mr-2"></i>
+                Account Settings
+            </h2>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Profile Visibility</h3>
+                    <p class="text-gray-400 text-sm">Make your profile visible to other users</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Two-Factor Authentication</h3>
+                    <p class="text-gray-400 text-sm">Add an extra layer of security to your account</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Session Timeout</h3>
+                    <p class="text-gray-400 text-sm">Automatically log out after inactivity</p>
+                </div>
+                <select class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <option value="30">30 minutes</option>
+                    <option value="60" selected>1 hour</option>
+                    <option value="120">2 hours</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Notification Settings -->
+        <div class="settings-card">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-bell text-yellow-400 mr-2"></i>
+                Notification Settings
+            </h2>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Email Notifications</h3>
+                    <p class="text-gray-400 text-sm">Receive booking confirmations and updates via email</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">SMS Notifications</h3>
+                    <p class="text-gray-400 text-sm">Receive important alerts via SMS</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Push Notifications</h3>
+                    <p class="text-gray-400 text-sm">Receive browser notifications</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Marketing Emails</h3>
+                    <p class="text-gray-400 text-sm">Receive promotional offers and news</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Privacy Settings -->
+        <div class="settings-card">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-shield-alt text-green-400 mr-2"></i>
+                Privacy Settings
+            </h2>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Activity Tracking</h3>
+                    <p class="text-gray-400 text-sm">Allow us to track your activity for better recommendations</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Data Analytics</h3>
+                    <p class="text-gray-400 text-sm">Help improve our service by sharing anonymous usage data</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Location Services</h3>
+                    <p class="text-gray-400 text-sm">Use your location to find nearby playgrounds</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Language & Region -->
+        <div class="settings-card">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-globe text-purple-400 mr-2"></i>
+                Language & Region
+            </h2>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Language</h3>
+                    <p class="text-gray-400 text-sm">Choose your preferred language</p>
+                </div>
+                <select class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <option value="en" selected>English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Time Zone</h3>
+                    <p class="text-gray-400 text-sm">Your current time zone</p>
+                </div>
+                <select class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <option value="UTC-5">Eastern Time (UTC-5)</option>
+                    <option value="UTC-6" selected>Central Time (UTC-6)</option>
+                    <option value="UTC-7">Mountain Time (UTC-7)</option>
+                    <option value="UTC-8">Pacific Time (UTC-8)</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Currency</h3>
+                    <p class="text-gray-400 text-sm">Display prices in your preferred currency</p>
+                </div>
+                <select class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <option value="USD" selected>US Dollar ($)</option>
+                    <option value="EUR">Euro (€)</option>
+                    <option value="GBP">British Pound (£)</option>
+                    <option value="CAD">Canadian Dollar (C$)</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Danger Zone -->
+        <div class="settings-card danger-zone">
+            <h2 class="text-xl font-semibold text-red-400 mb-4 flex items-center">
+                <i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>
+                Danger Zone
+            </h2>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Download Your Data</h3>
+                    <p class="text-gray-400 text-sm">Download a copy of all your account data</p>
+                </div>
+                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-download mr-2"></i>
+                    Download
+                </button>
+            </div>
+            
+            <div class="setting-item">
+                <div>
+                    <h3 class="text-white font-medium">Delete Account</h3>
+                    <p class="text-gray-400 text-sm">Permanently delete your account and all associated data</p>
+                </div>
+                <button class="btn-danger" onclick="confirmDeleteAccount()">
+                    <i class="fas fa-trash-alt mr-2"></i>
+                    Delete Account
+                </button>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 mt-6">
+            <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                <i class="fas fa-save mr-2"></i>
+                Save All Settings
+            </button>
+            <a href="{% url 'accounts:profile' %}" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Profile
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDeleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        if (confirm('This will permanently delete all your data. Are you absolutely sure?')) {
+            // Handle account deletion
+            alert('Account deletion functionality would be implemented here.');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth animations
+    const cards = document.querySelectorAll('.settings-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Toggle switch interactions
+    const toggles = document.querySelectorAll('.toggle-switch input');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            // Add visual feedback
+            const slider = this.nextElementSibling;
+            slider.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                slider.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Here you would typically save the setting via AJAX
+            console.log('Setting changed:', this.checked);
+        });
+    });
+    
+    // Select change handlers
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            // Add visual feedback
+            this.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            console.log('Setting changed:', this.value);
+        });
+    });
+    
+    console.log('✅ Settings page initialized');
+});
+</script>
+{% endblock %}

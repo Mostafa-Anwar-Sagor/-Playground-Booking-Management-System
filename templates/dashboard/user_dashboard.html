@@ -1,0 +1,2238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - PlaygroundBooking{% endblock %}
+
+{% block body_class %}bg-gray-900{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ===== CSS Variables ===== */
+    :root {
+        --primary: #10b981;
+        --primary-hover: #059669;
+        --secondary: #3b82f6;
+        --accent: #8b5cf6;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark-bg: #0f172a;
+        --card-bg: rgba(30, 41, 59, 0.8);
+        --card-border: rgba(51, 65, 85, 0.5);
+        --sidebar-width: 280px;
+        --navbar-height: 64px;
+    }
+    
+    /* Universal box-sizing */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    /* ===== Base Styles ===== */
+    html {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        background: var(--dark-bg) !important;
+        width: 100vw;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        padding-top: var(--navbar-height);
+        background: var(--dark-bg) !important;
+        overflow-x: hidden;
+        width: 100vw;
+        box-sizing: border-box;
+    }
+    
+    /* Override base.html and navbar constraints */
+    .navbar-simple,
+    .navbar-container {
+        max-width: none !important;
+        width: 100vw !important;
+    }
+    
+    /* Hide footer on dashboard */
+    footer,
+    .footer,
+    .site-footer {
+        display: none !important;
+    }
+    
+    /* Override base.html main-content styling for dashboard */
+    main.main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: none !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* ===== Dashboard Layout ===== */
+    .dashboard-layout {
+        display: block;
+        min-height: calc(100vh - var(--navbar-height));
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        padding-left: var(--sidebar-width);
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    /* ===== Desktop Sidebar ===== */
+    .sidebar {
+        width: var(--sidebar-width);
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+        border-right: 1px solid var(--card-border);
+        position: fixed;
+        left: 0;
+        top: var(--navbar-height);
+        bottom: 0;
+        overflow-y: auto;
+        z-index: 150;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(51, 65, 85, 0.5);
+        border-radius: 2px;
+    }
+
+    .sidebar-header {
+        padding: 24px 20px;
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .sidebar-nav {
+        padding: 16px 12px;
+    }
+
+    .nav-section {
+        margin-bottom: 24px;
+    }
+
+    .nav-section-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        padding: 0 12px;
+        margin-bottom: 8px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        color: #94a3b8;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        margin-bottom: 4px;
+        position: relative;
+    }
+
+    .nav-link:hover {
+        background: rgba(51, 65, 85, 0.5);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    .nav-link.active {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+    }
+
+    .nav-link i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .nav-badge {
+        margin-left: auto;
+        background: var(--danger);
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    /* ===== Main Content ===== */
+    .dashboard-layout .main-content {
+        margin-left: 0;
+        padding: 24px;
+        min-height: calc(100vh - var(--navbar-height));
+        background: var(--dark-bg);
+        width: 100%;
+        min-width: 0;
+        position: relative;
+        z-index: 1;
+        box-sizing: border-box;
+        transition: margin-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Desktop layout - content shifts when sidebar is open */
+    @media (min-width: 1024px) {
+        .dashboard-layout.sidebar-open .main-content {
+            margin-left: var(--sidebar-width);
+        }
+    }
+
+    .content-wrapper {
+        max-width: 100%;
+        margin: 0;
+        width: 100%;
+        padding: 0;
+    }
+    
+    /* Ensure grid layouts don't overflow */
+    .grid {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .glass-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* ===== Dynamic Content Loading ===== */
+    .page-section {
+        display: none;
+    }
+    
+    .page-section.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Mobile Bottom Navigation ===== */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--card-border);
+        z-index: 1000;
+        padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
+        display: none;
+    }
+
+    .bottom-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        color: #64748b;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-radius: 12px;
+        min-width: 60px;
+        position: relative;
+    }
+
+    .bottom-nav-item.active {
+        color: var(--primary);
+    }
+
+    .bottom-nav-item i {
+        font-size: 1.2rem;
+        margin-bottom: 2px;
+    }
+
+    .bottom-nav-item span {
+        font-size: 0.65rem;
+        font-weight: 500;
+    }
+
+    .bottom-nav-badge {
+        position: absolute;
+        top: 2px;
+        right: 8px;
+        min-width: 16px;
+        height: 16px;
+        background: var(--danger);
+        color: white;
+        font-size: 0.6rem;
+        font-weight: 700;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+    }
+
+    /* ===== Glass Cards ===== */
+    .glass-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(16, 185, 129, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ===== Stat Cards ===== */
+    .stat-card {
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .stat-card.blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .stat-card.green::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .stat-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .stat-card.orange::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .stat-icon.purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+    .stat-icon.orange { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+    /* ===== Booking Card ===== */
+    .booking-card {
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(51, 65, 85, 0.2);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: block;
+    }
+
+    .booking-card:hover {
+        background: rgba(51, 65, 85, 0.3);
+        border-color: rgba(16, 185, 129, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* ===== Status Badges ===== */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .status-confirmed { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .status-completed { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .status-cancelled { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+    /* ===== Loading Skeleton ===== */
+    .skeleton {
+        background: linear-gradient(90deg, rgba(51, 65, 85, 0.3) 25%, rgba(51, 65, 85, 0.5) 50%, rgba(51, 65, 85, 0.3) 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+        border-radius: 8px;
+    }
+
+    @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 16px;
+        background: rgba(51, 65, 85, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #64748b;
+    }
+
+    /* ===== Animations ===== */
+    .fade-in {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .loading i { animation: spin 1s linear infinite; }
+
+    /* ===== Chart Container ===== */
+    .chart-container {
+        position: relative;
+        height: 220px;
+    }
+
+    /* ===== Action Button ===== */
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        text-decoration: none;
+    }
+
+    .action-btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+        color: white;
+    }
+
+    .action-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .action-btn-outline {
+        background: transparent;
+        border: 1px solid var(--card-border);
+        color: #94a3b8;
+    }
+
+    .action-btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    /* ===== Toast Notifications ===== */
+    .toast-container {
+        position: fixed;
+        top: 80px;
+        right: 16px;
+        z-index: 1100;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: calc(100vw - 32px);
+    }
+
+    .toast {
+        padding: 12px 16px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+
+    .toast.success { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95)); }
+    .toast.error { background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95)); }
+    .toast.info { background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95)); }
+
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ===== Mobile Styles ===== */
+    @media (max-width: 1024px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .dashboard-layout {
+            padding-left: 0 !important;
+        }
+
+        .dashboard-layout .main-content {
+            margin-left: 0 !important;
+            padding: 16px !important;
+            width: 100% !important;
+        }
+
+        .mobile-bottom-nav {
+            display: block;
+        }
+
+        body {
+            padding-bottom: 80px;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 140;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+        }
+    }
+
+    /* ===== Progress Bar ===== */
+    .progress-bar {
+        height: 6px;
+        background: rgba(51, 65, 85, 0.5);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), #34d399);
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    /* ===== Quick Stats Mini Cards ===== */
+    .quick-stat {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(51, 65, 85, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .quick-stat:hover {
+        background: rgba(51, 65, 85, 0.3);
+    }
+
+    /* ===== Notification Item ===== */
+    .notification-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(51, 65, 85, 0.2);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .notification-item:hover {
+        background: rgba(51, 65, 85, 0.3);
+    }
+
+    .notification-item.unread {
+        border-left: 3px solid var(--primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Sidebar Overlay (Mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Dashboard Layout -->
+<div class="dashboard-layout">
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-lg">
+                    {{ user.display_name|slice:":1"|upper }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-semibold truncate">{{ user.display_name }}</p>
+                    <p class="text-gray-400 text-xs truncate">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <!-- Main Section -->
+            <div class="nav-section">
+                <p class="nav-section-title">Main</p>
+                <a href="#" class="nav-link active" data-page="dashboard" onclick="return loadPage(event, 'dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'playgrounds:playground_search' %}" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    <span>Browse Playgrounds</span>
+                </a>
+                <a href="#" class="nav-link" data-page="bookings" onclick="return loadPage(event, 'bookings')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>My Bookings</span>
+                    <span class="nav-badge hidden" id="bookingsBadge">0</span>
+                </a>
+            </div>
+
+            <!-- Account Section -->
+            <div class="nav-section">
+                <p class="nav-section-title">Account</p>
+                <a href="#" class="nav-link" data-page="profile" onclick="return loadPage(event, 'profile')">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="nav-link" data-page="messages" id="messagesLink" onclick="return loadPage(event, 'messages')">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                    <span class="nav-badge hidden" id="messagesBadge">0</span>
+                </a>
+                <a href="#" class="nav-link" data-page="notifications" onclick="return loadPage(event, 'notifications')">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="nav-badge hidden" id="notifBadge">0</span>
+                </a>
+                <a href="#" class="nav-link" data-page="settings" onclick="return loadPage(event, 'settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+
+            <!-- Support Section -->
+            <div class="nav-section">
+                <p class="nav-section-title">Support</p>
+                <a href="{% url 'accounts:help' %}" class="nav-link" data-page="help">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help Center</span>
+                </a>
+                <a href="{% url 'accounts:contact' %}" class="nav-link" data-page="contact">
+                    <i class="fas fa-headset"></i>
+                    <span>Contact Support</span>
+                </a>
+            </div>
+
+            <!-- Logout -->
+            <div class="nav-section mt-auto pt-4 border-t border-gray-700/50">
+                <a href="{% url 'accounts:logout' %}" class="nav-link text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- Dashboard Page Section -->
+            <div id="dashboardPage" class="page-section active">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 fade-in">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                        <span class="text-2xl">👋</span>
+                        Welcome back, <span class="text-emerald-400">{{ user.display_name }}</span>
+                    </h1>
+                    <p class="text-gray-400 text-sm mt-1">Here's what's happening with your bookings</p>
+                </div>
+                <button id="refreshBtn" class="action-btn action-btn-outline" onclick="refreshDashboard()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 fade-in" style="animation-delay: 0.1s;">
+                <!-- Total Bookings -->
+                <div class="glass-card stat-card blue">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-medium mb-1">Total Bookings</p>
+                            <p class="text-2xl font-bold text-white" id="statTotalBookings">-</p>
+                            <p class="text-xs mt-1" id="statBookingsChange"><span class="text-blue-400">Loading...</span></p>
+                        </div>
+                        <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Hours Played -->
+                <div class="glass-card stat-card green">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-medium mb-1">Hours Played</p>
+                            <p class="text-2xl font-bold text-white" id="statHoursPlayed">-</p>
+                            <p class="text-xs mt-1" id="statHoursChange"><span class="text-emerald-400">Loading...</span></p>
+                        </div>
+                        <div class="stat-icon green"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+
+                <!-- Favorite Sport -->
+                <div class="glass-card stat-card purple">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-medium mb-1">Favorite Sport</p>
+                            <p class="text-xl font-bold text-white truncate" id="statFavoriteSport">-</p>
+                            <p class="text-xs mt-1" id="statSportPercentage"><span class="text-purple-400">Loading...</span></p>
+                        </div>
+                        <div class="stat-icon purple"><i class="fas fa-trophy"></i></div>
+                    </div>
+                </div>
+
+                <!-- Total Spent -->
+                <div class="glass-card stat-card orange">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-medium mb-1">Total Spent</p>
+                            <p class="text-2xl font-bold text-white" id="statTotalSpent">-</p>
+                            <p class="text-xs mt-1" id="statSpentChange"><span class="text-orange-400">Loading...</span></p>
+                        </div>
+                        <div class="stat-icon orange"><i class="fas fa-wallet"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in" style="animation-delay: 0.2s;">
+                <!-- Left Column (2/3) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Upcoming Bookings -->
+                    <div class="glass-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-emerald-400"></i>
+                                Upcoming Bookings
+                            </h2>
+                            <a href="{% url 'bookings:my_bookings' %}" class="text-emerald-400 hover:text-emerald-300 text-sm font-medium">
+                                View All <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+
+                        <div id="bookingsContainer">
+                            <!-- Loading State -->
+                            <div id="bookingsLoading" class="space-y-3">
+                                <div class="booking-card"><div class="skeleton" style="height: 70px;"></div></div>
+                                <div class="booking-card"><div class="skeleton" style="height: 70px;"></div></div>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div id="bookingsEmpty" class="hidden empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-calendar-times"></i></div>
+                                <h3 class="text-white font-semibold mb-2">No Upcoming Bookings</h3>
+                                <p class="text-gray-400 text-sm mb-4">Start exploring playgrounds near you</p>
+                                <a href="{% url 'playgrounds:playground_search' %}" class="action-btn action-btn-primary">
+                                    <i class="fas fa-search"></i> Find Playgrounds
+                                </a>
+                            </div>
+
+                            <!-- Bookings List -->
+                            <div id="bookingsList" class="space-y-3 hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Chart -->
+                    <div class="glass-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i class="fas fa-chart-line text-emerald-400"></i>
+                                Activity Trends
+                            </h2>
+                            <select id="chartPeriodSelect" class="bg-gray-700/50 text-white text-sm rounded-lg px-3 py-2 border border-gray-600 focus:border-emerald-500 focus:outline-none">
+                                <option value="7">Last 7 days</option>
+                                <option value="30">Last 30 days</option>
+                                <option value="90">Last 3 months</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Popular Playgrounds -->
+                    <div class="glass-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i class="fas fa-star text-emerald-400"></i>
+                                Popular Playgrounds
+                            </h2>
+                            <a href="{% url 'playgrounds:playground_search' %}" class="text-emerald-400 hover:text-emerald-300 text-sm font-medium">
+                                Browse All <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                        <div id="playgroundsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="skeleton" style="height: 140px; border-radius: 12px;"></div>
+                            <div class="skeleton" style="height: 140px; border-radius: 12px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (1/3) -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="glass-card p-5">
+                        <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-400"></i>
+                            Quick Actions
+                        </h3>
+                        <div class="space-y-3">
+                            <a href="{% url 'playgrounds:playground_search' %}" class="action-btn action-btn-primary w-full">
+                                <i class="fas fa-search"></i> Find Playgrounds
+                            </a>
+                            <a href="{% url 'bookings:my_bookings' %}" class="action-btn action-btn-outline w-full">
+                                <i class="fas fa-calendar-alt"></i> My Bookings
+                            </a>
+                            <a href="{% url 'accounts:profile' %}" class="action-btn action-btn-outline w-full">
+                                <i class="fas fa-user"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Sports Preferences -->
+                    <div class="glass-card p-5">
+                        <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-chart-pie text-emerald-400"></i>
+                            Sports Activity
+                        </h3>
+                        <div id="sportsPreferences" class="space-y-4">
+                            <div class="skeleton" style="height: 30px;"></div>
+                            <div class="skeleton" style="height: 30px;"></div>
+                            <div class="skeleton" style="height: 30px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Notifications -->
+                    <div class="glass-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-semibold text-white flex items-center gap-2">
+                                <i class="fas fa-bell text-emerald-400"></i>
+                                Notifications
+                            </h3>
+                            <a href="{% url 'notifications:notification_list' %}" class="text-emerald-400 hover:text-emerald-300 text-xs">View All</a>
+                        </div>
+                        <div id="notificationsContainer" class="space-y-3">
+                            <div class="skeleton" style="height: 60px;"></div>
+                            <div class="skeleton" style="height: 60px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- End Dashboard Page Section -->
+        
+        <!-- Bookings Page Section -->
+        <div id="bookingsPage" class="page-section">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">My Bookings</h1>
+                    <p class="text-gray-400 text-sm mt-1">View and manage all your playground bookings</p>
+                </div>
+                <a href="{% url 'playgrounds:playground_search' %}" class="action-btn action-btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span>New Booking</span>
+                </a>
+            </div>
+            
+            <!-- Booking Filters -->
+            <div class="glass-card p-4 mb-6">
+                <div class="flex flex-wrap gap-4 items-end">
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-sm text-gray-400 mb-2">Status</label>
+                        <select id="bookingStatusFilter" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-sm text-gray-400 mb-2">Date Range</label>
+                        <select id="bookingDateFilter" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                            <option value="all">All Dates</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="past">Past</option>
+                            <option value="this_month">This Month</option>
+                        </select>
+                    </div>
+                    <button onclick="filterBookings()" class="action-btn action-btn-outline">
+                        <i class="fas fa-filter"></i>
+                        <span>Apply</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Booking Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass-card p-4 text-center">
+                    <p class="text-2xl font-bold text-white" id="bookingStatTotal">0</p>
+                    <p class="text-sm text-gray-400">Total</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <p class="text-2xl font-bold text-yellow-400" id="bookingStatPending">0</p>
+                    <p class="text-sm text-gray-400">Pending</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <p class="text-2xl font-bold text-emerald-400" id="bookingStatConfirmed">0</p>
+                    <p class="text-sm text-gray-400">Confirmed</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <p class="text-2xl font-bold text-blue-400" id="bookingStatCompleted">0</p>
+                    <p class="text-sm text-gray-400">Completed</p>
+                </div>
+            </div>
+            
+            <!-- Bookings Grid -->
+            <div id="bookingsListContainer">
+                <div class="text-center py-12 text-gray-400">
+                    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                    <p>Loading bookings...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Page Section -->
+        <div id="profilePage" class="page-section">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-white">My Profile</h1>
+                <p class="text-gray-400 text-sm mt-1">Manage your account information</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Profile Card -->
+                <div class="glass-card p-6 text-center">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold">
+                        {{ user.display_name|slice:":1"|upper }}
+                    </div>
+                    <h3 class="text-xl font-bold text-white">{{ user.display_name }}</h3>
+                    <p class="text-gray-400 text-sm">{{ user.email }}</p>
+                    <p class="text-emerald-400 text-sm mt-2">
+                        {% if user.is_owner %}Playground Owner{% else %}Member{% endif %}
+                    </p>
+                    <p class="text-gray-500 text-xs mt-2">Member since {{ user.date_joined|date:"M Y" }}</p>
+                </div>
+                
+                <!-- Profile Details -->
+                <div class="lg:col-span-2 glass-card p-6">
+                    <h3 class="text-lg font-semibold text-white mb-4">Account Details</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between py-3 border-b border-gray-700">
+                            <span class="text-gray-400">Full Name</span>
+                            <span class="text-white">{{ user.first_name }} {{ user.last_name|default:"" }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-700">
+                            <span class="text-gray-400">Email</span>
+                            <span class="text-white">{{ user.email }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-700">
+                            <span class="text-gray-400">Phone</span>
+                            <span class="text-white">{{ user.phone|default:"Not set" }}</span>
+                        </div>
+                        <div class="flex justify-between py-3">
+                            <span class="text-gray-400">Account Type</span>
+                            <span class="text-emerald-400">{% if user.is_owner %}Owner{% else %}User{% endif %}</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <a href="{% url 'accounts:profile' %}" class="action-btn action-btn-primary">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Messages Page Section -->
+        <div id="messagesPage" class="page-section">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Messages</h1>
+                    <p class="text-gray-400 text-sm mt-1">Chat with playground owners</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" style="min-height: 500px;">
+                <!-- Conversations List -->
+                <div class="glass-card p-0 overflow-hidden">
+                    <div class="p-4 border-b border-gray-700">
+                        <input type="text" id="conversationSearch" placeholder="Search conversations..." 
+                               class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-emerald-500 focus:outline-none text-sm">
+                    </div>
+                    <div id="conversationsList" class="max-h-[450px] overflow-y-auto">
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                            <p class="text-sm">Loading conversations...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Area -->
+                <div class="lg:col-span-2 glass-card p-0 overflow-hidden flex flex-col">
+                    <div id="chatHeader" class="p-4 border-b border-gray-700 bg-gray-800/50">
+                        <p class="text-gray-400 text-sm">Select a conversation to start chatting</p>
+                    </div>
+                    <div id="chatMessages" class="flex-1 p-4 overflow-y-auto min-h-[350px] flex items-center justify-center">
+                        <div class="text-center text-gray-500">
+                            <i class="fas fa-comments text-4xl mb-3"></i>
+                            <p>No conversation selected</p>
+                        </div>
+                    </div>
+                    <div id="chatInput" class="p-4 border-t border-gray-700 hidden">
+                        <div class="flex gap-2">
+                            <input type="text" id="messageInput" placeholder="Type a message..." 
+                                   class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                            <button onclick="sendMessage()" class="action-btn action-btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notifications Page Section -->
+        <div id="notificationsPage" class="page-section">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Notifications</h1>
+                    <p class="text-gray-400 text-sm mt-1">Stay updated with your activities</p>
+                </div>
+                <button onclick="markAllNotificationsRead()" class="action-btn action-btn-outline">
+                    <i class="fas fa-check-double"></i>
+                    <span>Mark All Read</span>
+                </button>
+            </div>
+            
+            <div id="notificationsList" class="space-y-3">
+                <div class="text-center py-12 text-gray-400">
+                    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                    <p>Loading notifications...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Page Section -->
+        <div id="settingsPage" class="page-section">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-white">Settings</h1>
+                <p class="text-gray-400 text-sm mt-1">Manage your account preferences</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Account Settings -->
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-user-cog text-emerald-400"></i>
+                        Account Settings
+                    </h3>
+                    <div class="space-y-4">
+                        <a href="{% url 'accounts:profile' %}" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-700/50 transition">
+                            <span class="text-gray-300">Edit Profile</span>
+                            <i class="fas fa-chevron-right text-gray-500"></i>
+                        </a>
+                        <a href="{% url 'accounts:settings' %}" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-700/50 transition">
+                            <span class="text-gray-300">Change Password</span>
+                            <i class="fas fa-chevron-right text-gray-500"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Notification Settings -->
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-bell text-emerald-400"></i>
+                        Notification Preferences
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3">
+                            <span class="text-gray-300">Email Notifications</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-emerald-500 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-3">
+                            <span class="text-gray-300">Booking Reminders</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-emerald-500 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+</div>
+
+<!-- Booking Detail Modal - OUTSIDE of main content for proper z-index -->
+<div id="bookingDetailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4" style="z-index: 9999;" onclick="closeBookingDetail(event)">
+    <div class="bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl" onclick="event.stopPropagation()">
+        <div id="bookingDetailContent" class="p-6">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+    <div class="flex justify-around items-center px-2">
+        <a href="#" class="bottom-nav-item active" onclick="return loadPage(event, 'dashboard')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'playgrounds:playground_search' %}" class="bottom-nav-item">
+            <i class="fas fa-search"></i>
+            <span>Browse</span>
+        </a>
+        <a href="#" class="bottom-nav-item" onclick="return loadPage(event, 'messages')">
+            <i class="fas fa-comments"></i>
+            <span>Messages</span>
+            <span class="bottom-nav-badge hidden" id="mobileMessagesBadge">0</span>
+        </a>
+        <a href="#" class="bottom-nav-item" onclick="return loadPage(event, 'notifications')">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
+            <span class="bottom-nav-badge hidden" id="mobileNotifBadge">0</span>
+        </a>
+        <a href="#" class="bottom-nav-item" onclick="return loadPage(event, 'profile')">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </div>
+</nav>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ===== Dashboard State =====
+const State = {
+    isLoading: false,
+    chart: null,
+    chartPeriod: 7,
+    refreshInterval: null
+};
+
+// ===== API Endpoints =====
+const API = {
+    dashboard: '{% url "accounts:dashboard_data_api" %}',
+    activity: (days) => `/api/dashboard/activity/${days}/`,
+    notifications: '{% url "accounts:dashboard_notifications_api" %}',
+    userStats: '{% url "accounts:user_stats_api" %}',
+    messagingCount: '/messages/api/messages/unread-count/'
+};
+
+// ===== Initialize =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Dashboard initialized');
+    loadDashboardData();
+    initChart();
+    setupEventListeners();
+    startAutoRefresh();
+});
+
+// ===== Page Loading Function =====
+function loadPage(event, pageName) {
+    event.preventDefault();
+    
+    // Hide all page sections
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Update active nav link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // Show selected page
+    const pageId = pageName + 'Page';
+    const pageSection = document.getElementById(pageId);
+    
+    if (pageSection) {
+        pageSection.classList.add('active');
+        
+        // Load content based on page
+        switch(pageName) {
+            case 'dashboard':
+                loadDashboardData();
+                break;
+            case 'bookings':
+                loadBookingsContent();
+                break;
+            case 'profile':
+                loadProfileContent();
+                break;
+            case 'messages':
+                loadMessagesContent();
+                break;
+            case 'notifications':
+                loadNotificationsContent();
+                break;
+            case 'settings':
+                loadSettingsContent();
+                break;
+        }
+    }
+    
+    // Close mobile sidebar if open
+    closeSidebar();
+    
+    return false;
+}
+
+// ===== Bookings Data Storage =====
+let allBookingsData = [];
+
+// ===== Load Bookings Content =====
+async function loadBookingsContent() {
+    const container = document.getElementById('bookingsListContainer');
+    try {
+        // Request ALL bookings with ?all=true
+        const response = await fetch('/api/dashboard/data/?all=true', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load bookings');
+        
+        const result = await response.json();
+        
+        if (result.success && result.bookings) {
+            allBookingsData = result.bookings;
+            const bookings = result.bookings;
+            
+            // Update stats
+            document.getElementById('bookingStatTotal').textContent = result.data?.total_bookings || bookings.length;
+            document.getElementById('bookingStatPending').textContent = bookings.filter(b => b.status.toLowerCase() === 'pending').length;
+            document.getElementById('bookingStatConfirmed').textContent = bookings.filter(b => b.status.toLowerCase() === 'confirmed').length;
+            document.getElementById('bookingStatCompleted').textContent = bookings.filter(b => b.status.toLowerCase() === 'completed').length;
+            
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card p-12 text-center">
+                        <i class="fas fa-calendar-times text-5xl text-gray-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">No Bookings Found</h3>
+                        <p class="text-gray-400 mb-6">You haven't made any bookings yet.</p>
+                        <a href="{% url 'playgrounds:playground_search' %}" class="action-btn action-btn-primary">
+                            <i class="fas fa-search"></i>
+                            <span>Browse Playgrounds</span>
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Professional Grid Layout
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    ${bookings.map((b, index) => `
+                        <div class="glass-card overflow-hidden hover:border-emerald-500/50 transition cursor-pointer group" onclick="showBookingDetail(${index})">
+                            <!-- Booking Header with Status -->
+                            <div class="relative">
+                                <div class="h-24 bg-gradient-to-r ${getStatusGradient(b.status)} flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-${getStatusIcon(b.status)} text-3xl text-white/80 mb-1"></i>
+                                        <p class="text-white/90 text-sm font-medium">${b.status}</p>
+                                    </div>
+                                </div>
+                                <div class="absolute top-2 right-2">
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${getPaymentBadgeClass(b)}">
+                                        ${getPaymentStatusText(b)}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Booking Details -->
+                            <div class="p-4">
+                                <h4 class="text-white font-semibold text-lg mb-1 group-hover:text-emerald-400 transition">${b.playground_name}</h4>
+                                <p class="text-gray-500 text-xs mb-3">ID: ${b.booking_id}</p>
+                                
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <i class="fas fa-futbol text-emerald-400 w-5"></i>
+                                        <span class="text-gray-300">${b.sport}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <i class="far fa-calendar text-blue-400 w-5"></i>
+                                        <span class="text-gray-300">${b.date}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <i class="far fa-clock text-purple-400 w-5"></i>
+                                        <span class="text-gray-300">${b.time}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+                                    <span class="text-2xl font-bold text-white">৳${b.amount.toLocaleString()}</span>
+                                    <span class="text-emerald-400 text-sm group-hover:translate-x-1 transition-transform">
+                                        View Details <i class="fas fa-arrow-right ml-1"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            throw new Error('No booking data');
+        }
+    } catch (error) {
+        console.error('Error loading bookings:', error);
+        container.innerHTML = `
+            <div class="glass-card p-12 text-center">
+                <i class="fas fa-calendar-times text-5xl text-gray-500 mb-4"></i>
+                <h3 class="text-xl font-semibold text-white mb-2">No Bookings Found</h3>
+                <p class="text-gray-400 mb-6">You haven't made any bookings yet.</p>
+                <a href="{% url 'playgrounds:playground_search' %}" class="action-btn action-btn-primary">
+                    <i class="fas fa-search"></i>
+                    <span>Browse Playgrounds</span>
+                </a>
+            </div>
+        `;
+    }
+}
+
+// ===== Helper Functions for Booking Cards =====
+function getStatusGradient(status) {
+    const gradients = {
+        'pending': 'from-yellow-600 to-orange-600',
+        'confirmed': 'from-emerald-600 to-teal-600',
+        'completed': 'from-blue-600 to-indigo-600',
+        'cancelled': 'from-red-600 to-rose-600'
+    };
+    return gradients[status.toLowerCase()] || 'from-gray-600 to-gray-700';
+}
+
+function getStatusIcon(status) {
+    const icons = {
+        'pending': 'hourglass-half',
+        'confirmed': 'check-circle',
+        'completed': 'trophy',
+        'cancelled': 'times-circle'
+    };
+    return icons[status.toLowerCase()] || 'calendar';
+}
+
+function getPaymentBadgeClass(booking) {
+    if (booking.payment_status === 'paid') {
+        return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+    } else if (booking.has_receipt && !booking.receipt_verified) {
+        return 'bg-blue-500/20 text-blue-400 border border-blue-500/30';
+    } else {
+        return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
+    }
+}
+
+function getPaymentStatusText(booking) {
+    if (booking.payment_status === 'paid') {
+        return '✓ Payment Verified by Admin';
+    } else if (booking.has_receipt && !booking.receipt_verified) {
+        return '⏳ Awaiting Admin Verification';
+    } else if (booking.has_receipt) {
+        return '📄 Receipt Uploaded';
+    } else {
+        return '⚠ Upload Receipt';
+    }
+}
+
+// ===== Show Booking Detail Modal =====
+function showBookingDetail(index) {
+    const booking = allBookingsData[index];
+    if (!booking) return;
+    
+    const modal = document.getElementById('bookingDetailModal');
+    const content = document.getElementById('bookingDetailContent');
+    
+    content.innerHTML = `
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Booking Details</h2>
+                <p class="text-gray-400 text-sm">ID: ${booking.booking_id}</p>
+            </div>
+            <button onclick="closeBookingDetail()" class="text-gray-400 hover:text-white transition p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Status Banner -->
+        <div class="rounded-xl p-4 mb-6 bg-gradient-to-r ${getStatusGradient(booking.status)}">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-${getStatusIcon(booking.status)} text-3xl text-white"></i>
+                    <div>
+                        <p class="text-white font-semibold text-lg">${booking.status}</p>
+                        <p class="text-white/80 text-sm">Booked on ${booking.created_at || 'N/A'}</p>
+                    </div>
+                </div>
+                <span class="px-3 py-1 rounded-full text-sm font-medium ${getPaymentBadgeClass(booking)}">
+                    ${getPaymentStatusText(booking)}
+                </span>
+            </div>
+        </div>
+        
+        <!-- Details Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Playground Info -->
+            <div class="glass-card p-4">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-emerald-400"></i>
+                    Playground Information
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Name</span>
+                        <span class="text-white font-medium">${booking.playground_name}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Sport</span>
+                        <span class="text-white">${booking.sport}</span>
+                    </div>
+                    ${booking.playground_address ? `
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Location</span>
+                        <span class="text-white text-right max-w-[200px]">${booking.playground_address}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                <a href="/playgrounds/details/${booking.playground_id}/" class="mt-4 block text-center py-2 px-4 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition">
+                    <i class="fas fa-eye mr-2"></i>View Playground
+                </a>
+            </div>
+            
+            <!-- Booking Schedule -->
+            <div class="glass-card p-4">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-calendar-check text-blue-400"></i>
+                    Schedule Details
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Date</span>
+                        <span class="text-white font-medium">${booking.date}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Start Time</span>
+                        <span class="text-white">${booking.start_time || booking.time.split(' - ')[0]}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">End Time</span>
+                        <span class="text-white">${booking.end_time || booking.time.split(' - ')[1]}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Duration</span>
+                        <span class="text-white">${booking.duration || '2 hours'}</span>
+                    </div>
+                    ${booking.number_of_players ? `
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Players</span>
+                        <span class="text-white">${booking.number_of_players} players</span>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Summary -->
+        <div class="glass-card p-4 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-receipt text-purple-400"></i>
+                Payment Summary
+            </h3>
+            <div class="flex items-center justify-between p-4 bg-gray-900/50 rounded-xl">
+                <div>
+                    <p class="text-gray-400 text-sm">Total Amount</p>
+                    <p class="text-3xl font-bold text-white">৳${booking.amount.toLocaleString()}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-400 text-sm">Payment Status</p>
+                    <p class="font-semibold ${booking.payment_status === 'paid' ? 'text-emerald-400' : 'text-yellow-400'}">
+                        ${booking.payment_status === 'paid' ? 'Paid ✓' : 'Pending'}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        ${booking.special_requests ? `
+        <!-- Special Requests -->
+        <div class="glass-card p-4 mb-6">
+            <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <i class="fas fa-clipboard-list text-orange-400"></i>
+                Special Requests
+            </h3>
+            <p class="text-gray-300 bg-gray-900/50 p-3 rounded-lg">${booking.special_requests}</p>
+        </div>
+        ` : ''}
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3">
+            ${booking.status_raw === 'pending' || booking.status_raw === 'confirmed' ? `
+                <a href="/bookings/reschedule/${booking.booking_id}/" class="flex-1 action-btn action-btn-outline text-center">
+                    <i class="fas fa-calendar-alt mr-2"></i>Reschedule
+                </a>
+                <button onclick="confirmCancelBooking('${booking.booking_id}')" class="flex-1 action-btn bg-red-600 hover:bg-red-700 text-white text-center">
+                    <i class="fas fa-times mr-2"></i>Cancel Booking
+                </button>
+            ` : ''}
+            ${booking.status_raw === 'completed' ? `
+                <a href="/bookings/review/${booking.booking_id}/" class="flex-1 action-btn action-btn-primary text-center">
+                    <i class="fas fa-star mr-2"></i>Leave Review
+                </a>
+            ` : ''}
+            <button onclick="closeBookingDetail()" class="flex-1 action-btn action-btn-outline text-center">
+                <i class="fas fa-arrow-left mr-2"></i>Back to List
+            </button>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+// ===== Close Booking Detail Modal =====
+function closeBookingDetail(event) {
+    if (event && event.target !== event.currentTarget) return;
+    const modal = document.getElementById('bookingDetailModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+}
+
+// ===== Confirm Cancel Booking =====
+function confirmCancelBooking(bookingId) {
+    if (confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
+        window.location.href = `/bookings/cancel/${bookingId}/`;
+    }
+}
+
+// ===== Filter Bookings =====
+function filterBookings() {
+    const status = document.getElementById('bookingStatusFilter').value;
+    const date = document.getElementById('bookingDateFilter').value;
+    loadBookingsContent();
+    showToast('Filters applied', 'success');
+}
+
+// ===== Load Profile Content =====
+function loadProfileContent() {
+    // Profile is already rendered server-side in the template
+    console.log('Profile section loaded');
+}
+
+// ===== Load Messages Content =====
+async function loadMessagesContent() {
+    const container = document.getElementById('conversationsList');
+    try {
+        const response = await fetch('/messages/api/conversations/', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load messages');
+        
+        const result = await response.json();
+        
+        if (result.success && result.conversations) {
+            if (result.conversations.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fas fa-comments text-3xl mb-3"></i>
+                        <p class="text-sm">No conversations yet</p>
+                        <p class="text-xs mt-1">Start by contacting a playground owner</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = result.conversations.map(conv => `
+                <div class="p-4 border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer transition" onclick="openConversation(${conv.id})">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-semibold">
+                            ${(conv.other_user_name || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-white font-medium truncate">${conv.other_user_name || 'User'}</p>
+                            <p class="text-gray-400 text-sm truncate">${conv.last_message || 'No messages'}</p>
+                        </div>
+                        ${conv.unread_count > 0 ? `<span class="bg-emerald-500 text-white text-xs px-2 py-1 rounded-full">${conv.unread_count}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        container.innerHTML = `
+            <div class="text-center py-8 text-gray-400">
+                <i class="fas fa-comments text-3xl mb-3"></i>
+                <p class="text-sm">No conversations yet</p>
+            </div>
+        `;
+    }
+}
+
+// ===== Open Conversation =====
+let currentConversationId = null;
+
+async function openConversation(conversationId) {
+    currentConversationId = conversationId;
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatHeader = document.getElementById('chatHeader');
+    
+    chatMessages.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+    chatInput.classList.remove('hidden');
+    
+    try {
+        const response = await fetch(`/messages/api/conversations/${conversationId}/messages/`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            chatHeader.innerHTML = `<p class="text-white font-medium">${result.other_user_name || 'Chat'}</p>`;
+            
+            if (result.messages.length === 0) {
+                chatMessages.innerHTML = '<div class="text-center text-gray-400"><p>No messages yet. Start the conversation!</p></div>';
+            } else {
+                chatMessages.innerHTML = result.messages.map(msg => `
+                    <div class="mb-3 ${msg.is_mine ? 'text-right' : 'text-left'}">
+                        <div class="inline-block max-w-[80%] px-4 py-2 rounded-lg ${msg.is_mine ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-100'}">
+                            <p>${msg.content}</p>
+                            <p class="text-xs ${msg.is_mine ? 'text-emerald-200' : 'text-gray-400'} mt-1">${msg.created_at_display}</p>
+                        </div>
+                    </div>
+                `).join('');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        chatMessages.innerHTML = '<div class="text-center text-red-400"><p>Failed to load messages</p></div>';
+    }
+}
+
+// ===== Send Message =====
+async function sendMessage() {
+    if (!currentConversationId) return;
+    
+    const input = document.getElementById('messageInput');
+    const content = input.value.trim();
+    if (!content) return;
+    
+    input.value = '';
+    
+    try {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const response = await fetch('/messages/api/messages/send/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                conversation_id: currentConversationId,
+                content: content
+            })
+        });
+        
+        if (response.ok) {
+            openConversation(currentConversationId);
+        }
+    } catch (error) {
+        console.error('Error sending message:', error);
+        showToast('Failed to send message', 'error');
+    }
+}
+
+// ===== Load Notifications Content =====
+async function loadNotificationsContent() {
+    const container = document.getElementById('notificationsList');
+    try {
+        const response = await fetch('/api/dashboard/notifications/', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.notifications) {
+            if (result.notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card p-12 text-center">
+                        <i class="fas fa-bell-slash text-5xl text-gray-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">No Notifications</h3>
+                        <p class="text-gray-400">You're all caught up!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = result.notifications.map(notif => `
+                <div class="glass-card p-4 ${notif.is_read ? 'opacity-75' : ''}">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full ${notif.type === 'warning' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400'} flex items-center justify-center">
+                            <i class="fas ${notif.icon || 'fa-bell'}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white">${notif.message}</p>
+                            <p class="text-gray-500 text-sm mt-1">${notif.time_ago || 'Just now'}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        container.innerHTML = `
+            <div class="glass-card p-12 text-center">
+                <i class="fas fa-bell-slash text-5xl text-gray-500 mb-4"></i>
+                <p class="text-gray-400">No notifications</p>
+            </div>
+        `;
+    }
+}
+
+// ===== Mark All Notifications Read =====
+function markAllNotificationsRead() {
+    showToast('All notifications marked as read', 'success');
+    loadNotificationsContent();
+}
+
+// ===== Load Settings Content =====
+function loadSettingsContent() {
+    // Settings are already rendered server-side
+    console.log('Settings section loaded');
+}
+
+// ===== Event Listeners =====
+function setupEventListeners() {
+    // Chart period
+    document.getElementById('chartPeriodSelect')?.addEventListener('change', function() {
+        State.chartPeriod = parseInt(this.value);
+        loadActivityChart(State.chartPeriod);
+    });
+
+    // Mobile menu toggle
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
+}
+
+// ===== Auto Refresh (every 60 seconds) =====
+function startAutoRefresh() {
+    State.refreshInterval = setInterval(() => {
+        loadDashboardData(true);
+    }, 60000);
+}
+
+// ===== Sidebar Toggle =====
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+}
+
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+}
+
+// ===== Load Dashboard Data =====
+async function loadDashboardData(silent = false) {
+    if (State.isLoading) return;
+    State.isLoading = true;
+
+    try {
+        const response = await fetch(API.dashboard, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const result = await response.json();
+
+        if (result.success) {
+            updateStats(result.data);
+            updateBookings(result.bookings);
+            updatePlaygrounds(result.playgrounds);
+            updateSportsPreferences(result.sports_preferences);
+            loadNotifications();
+            loadUserStats();
+            loadMessagingCount();
+        } else {
+            throw new Error(result.error || 'Failed to load data');
+        }
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        if (!silent) showToast('Failed to load dashboard data', 'error');
+        showEmptyStates();
+    } finally {
+        State.isLoading = false;
+    }
+}
+
+// ===== Show Empty States =====
+function showEmptyStates() {
+    document.getElementById('statTotalBookings').textContent = '0';
+    document.getElementById('statBookingsChange').innerHTML = '<span class="text-gray-400">No data</span>';
+    document.getElementById('statHoursPlayed').textContent = '0';
+    document.getElementById('statHoursChange').innerHTML = '<span class="text-gray-400">No data</span>';
+    document.getElementById('statFavoriteSport').textContent = 'None';
+    document.getElementById('statSportPercentage').innerHTML = '<span class="text-gray-400">No bookings</span>';
+    document.getElementById('statTotalSpent').textContent = '৳0';
+    document.getElementById('statSpentChange').innerHTML = '<span class="text-gray-400">No spending</span>';
+
+    document.getElementById('bookingsLoading').classList.add('hidden');
+    document.getElementById('bookingsEmpty').classList.remove('hidden');
+}
+
+// ===== Update Stats =====
+function updateStats(data) {
+    document.getElementById('statTotalBookings').textContent = data.total_bookings || 0;
+    document.getElementById('statBookingsChange').innerHTML = `
+        <span class="${data.booking_change >= 0 ? 'text-emerald-400' : 'text-red-400'}">
+            ${data.booking_change >= 0 ? '+' : ''}${data.booking_change || 0}% from last week
+        </span>
+    `;
+
+    document.getElementById('statHoursPlayed').textContent = Math.round(data.total_hours || 0);
+    document.getElementById('statHoursChange').innerHTML = `
+        <span class="${data.hours_change >= 0 ? 'text-emerald-400' : 'text-red-400'}">
+            ${data.hours_change >= 0 ? '+' : ''}${data.hours_change || 0}% from last month
+        </span>
+    `;
+
+    document.getElementById('statFavoriteSport').textContent = data.favorite_sport || 'None';
+    document.getElementById('statSportPercentage').innerHTML = `
+        <span class="text-purple-400">${data.sport_percentage || 0}% of bookings</span>
+    `;
+
+    document.getElementById('statTotalSpent').textContent = `৳${(data.total_spent || 0).toLocaleString()}`;
+    document.getElementById('statSpentChange').innerHTML = `
+        <span class="text-orange-400">This month: ৳${(data.month_spent || 0).toLocaleString()}</span>
+    `;
+}
+
+// ===== Update Bookings =====
+function updateBookings(bookings) {
+    const loading = document.getElementById('bookingsLoading');
+    const empty = document.getElementById('bookingsEmpty');
+    const list = document.getElementById('bookingsList');
+
+    loading.classList.add('hidden');
+
+    if (!bookings || bookings.length === 0) {
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        return;
+    }
+
+    empty.classList.add('hidden');
+    list.classList.remove('hidden');
+
+    list.innerHTML = bookings.map(b => `
+        <div class="booking-card">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-white font-medium truncate">${b.playground_name}</h4>
+                    <p class="text-gray-400 text-sm mt-1"><i class="fas fa-futbol mr-1"></i>${b.sport}</p>
+                    <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400">
+                        <span><i class="far fa-calendar mr-1"></i>${b.date}</span>
+                        <span><i class="far fa-clock mr-1"></i>${b.time}</span>
+                    </div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                    <span class="status-badge status-${b.status.toLowerCase()}">${b.status}</span>
+                    <p class="text-white font-semibold mt-2">৳${b.amount.toLocaleString()}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== Update Playgrounds =====
+function updatePlaygrounds(playgrounds) {
+    const container = document.getElementById('playgroundsContainer');
+
+    if (!playgrounds || playgrounds.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-2 text-center py-8 text-gray-400">
+                <i class="fas fa-map-marker-alt text-3xl mb-3 opacity-50"></i>
+                <p>No playgrounds found</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = playgrounds.slice(0, 4).map(p => `
+        <a href="/playgrounds/details/${p.id}/" class="booking-card group">
+            <div class="flex items-start gap-3">
+                <div class="w-14 h-14 rounded-lg bg-gray-700 flex-shrink-0 overflow-hidden">
+                    ${p.image 
+                        ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">`
+                        : `<div class="w-full h-full flex items-center justify-center text-gray-500"><i class="fas fa-image"></i></div>`
+                    }
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-white font-medium truncate group-hover:text-emerald-400 transition-colors">${p.name}</h4>
+                    <p class="text-gray-400 text-xs truncate">${p.sport}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-yellow-400 text-xs"><i class="fas fa-star"></i> ${p.rating}</span>
+                        <span class="text-gray-500 text-xs">(${p.reviews})</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    `).join('');
+}
+
+// ===== Update Sports Preferences =====
+function updateSportsPreferences(preferences) {
+    const container = document.getElementById('sportsPreferences');
+
+    if (!preferences || preferences.length === 0 || (preferences.length === 1 && preferences[0].name === 'No Data')) {
+        container.innerHTML = `<p class="text-gray-400 text-sm text-center py-4">No activity data yet</p>`;
+        return;
+    }
+
+    container.innerHTML = preferences.map(s => `
+        <div>
+            <div class="flex justify-between text-sm mb-2">
+                <span class="text-white">${s.name}</span>
+                <span class="text-gray-400">${s.percentage}%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${s.percentage}%"></div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== Load Notifications =====
+async function loadNotifications() {
+    try {
+        const response = await fetch(API.notifications, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            updateNotifications(result.notifications);
+        }
+    } catch (error) {
+        console.error('Notifications error:', error);
+        updateNotifications([]);
+    }
+}
+
+// ===== Load User Stats =====
+async function loadUserStats() {
+    try {
+        const response = await fetch(API.userStats, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const result = await response.json();
+
+        if (result.success && result.stats) {
+            updateBadges(result.stats);
+        }
+    } catch (error) {
+        console.error('Stats error:', error);
+    }
+}
+
+// ===== Update Badges =====
+function updateBadges(stats) {
+    const notifCount = stats.notifications || 0;
+    const bookingsCount = stats.bookings || 0;
+
+    // Notification badges
+    ['notifBadge', 'mobileNotifBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (notifCount > 0) {
+                el.textContent = notifCount > 99 ? '99+' : notifCount;
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+    });
+
+    // Bookings badge
+    const bookingsBadge = document.getElementById('bookingsBadge');
+    if (bookingsBadge) {
+        if (bookingsCount > 0) {
+            bookingsBadge.textContent = bookingsCount;
+            bookingsBadge.classList.remove('hidden');
+        } else {
+            bookingsBadge.classList.add('hidden');
+        }
+    }
+}
+
+// ===== Load Messaging Count =====
+async function loadMessagingCount() {
+    try {
+        const response = await fetch(API.messagingCount, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            updateMessagingBadge(result.unread_count || 0);
+        }
+    } catch (error) {
+        console.error('Messaging count error:', error);
+        updateMessagingBadge(0);
+    }
+}
+
+// ===== Update Messaging Badge =====
+function updateMessagingBadge(count) {
+    ['messagesBadge', 'mobileMessagesBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (count > 0) {
+                el.textContent = count > 99 ? '99+' : count;
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+    });
+}
+
+// ===== Update Notifications Display =====
+function updateNotifications(notifications) {
+    const container = document.getElementById('notificationsContainer');
+
+    if (!notifications || notifications.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-6 text-gray-400">
+                <i class="fas fa-bell-slash text-2xl mb-2 opacity-50"></i>
+                <p class="text-sm">No new notifications</p>
+            </div>
+        `;
+        return;
+    }
+
+    const iconClasses = {
+        info: 'bg-blue-500/20 text-blue-400',
+        warning: 'bg-yellow-500/20 text-yellow-400',
+        success: 'bg-emerald-500/20 text-emerald-400',
+        error: 'bg-red-500/20 text-red-400'
+    };
+
+    const icons = {
+        info: 'fas fa-info-circle',
+        warning: 'fas fa-exclamation-triangle',
+        success: 'fas fa-check-circle',
+        error: 'fas fa-times-circle'
+    };
+
+    container.innerHTML = notifications.slice(0, 3).map(n => `
+        <div class="notification-item">
+            <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${iconClasses[n.type] || iconClasses.info}">
+                <i class="${icons[n.type] || icons.info} text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-white text-sm leading-tight">${n.message}</p>
+                <p class="text-gray-500 text-xs mt-1">${n.time}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== Initialize Chart =====
+function initChart() {
+    const ctx = document.getElementById('activityChart');
+    if (!ctx) return;
+
+    State.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Bookings',
+                data: [],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: '#10b981',
+                pointBorderColor: '#1e293b',
+                pointBorderWidth: 2,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                    titleColor: '#fff',
+                    bodyColor: '#94a3b8',
+                    borderColor: '#334155',
+                    borderWidth: 1,
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(51, 65, 85, 0.3)', drawBorder: false },
+                    ticks: { color: '#94a3b8', stepSize: 1, padding: 8 }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8', padding: 8 }
+                }
+            },
+            interaction: { intersect: false, mode: 'index' }
+        }
+    });
+
+    loadActivityChart(State.chartPeriod);
+}
+
+// ===== Load Activity Chart Data =====
+async function loadActivityChart(days) {
+    try {
+        const response = await fetch(API.activity(days), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const result = await response.json();
+
+        if (result.success && State.chart) {
+            State.chart.data.labels = result.labels;
+            State.chart.data.datasets[0].data = result.values;
+            State.chart.update('active');
+        }
+    } catch (error) {
+        console.error('Chart error:', error);
+        if (State.chart) {
+            State.chart.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            State.chart.data.datasets[0].data = [0, 0, 0, 0, 0, 0, 0];
+            State.chart.update('active');
+        }
+    }
+}
+
+// ===== Refresh Dashboard =====
+function refreshDashboard() {
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    loadDashboardData().finally(() => {
+        loadActivityChart(State.chartPeriod);
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        showToast('Dashboard refreshed', 'success');
+    });
+}
+
+// ===== Toast Notification =====
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-times-circle',
+        info: 'fas fa-info-circle'
+    };
+
+    toast.innerHTML = `
+        <i class="${icons[type] || icons.info}"></i>
+        <span class="text-sm font-medium">${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

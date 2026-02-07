@@ -1,0 +1,110 @@
+/* Professional Form Modal Enhancements */
+
+/* Ensure modal is above everything */
+#professionalCreatePlaygroundModal {
+    z-index: 9999 !important;
+    position: fixed !important;
+}
+
+#professionalCreatePlaygroundModal > div {
+    z-index: 10000 !important;
+}
+
+/* Drag and drop visual feedback */
+.border-dashed.border-emerald-500 {
+    border-color: #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Cover image slider styles */
+#cover-slider-container {
+    width: 100%;
+}
+
+#cover-slider-container > div {
+    min-width: 100%;
+}
+
+/* Gallery image hover effects */
+.gallery-item {
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+}
+
+/* Upload zone hover effects */
+.upload-zone:hover {
+    border-color: #6ee7b7 !important;
+    background-color: rgba(110, 231, 183, 0.1) !important;
+}
+
+/* Video preview styles */
+#video-preview video {
+    max-height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Notification container positioning */
+#professionalNotificationContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    max-width: 400px;
+}
+
+/* Button hover effects */
+.btn-emerald:hover {
+    background-color: #059669 !important;
+    transform: translateY(-1px);
+}
+
+/* Form step transitions */
+.form-step {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.form-step.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.form-step:not(.active) {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+/* Progress indicator animations */
+.step-indicator {
+    transition: all 0.5s ease;
+}
+
+.step-indicator.active {
+    box-shadow: 0 0 10px rgba(110, 231, 183, 0.5);
+}
+
+/* File input styling */
+input[type="file"] {
+    cursor: pointer;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    #professionalCreatePlaygroundModal > div {
+        margin: 1rem;
+        max-height: 90vh;
+    }
+    
+    #gallery-preview {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    #gallery-preview {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}

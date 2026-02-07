@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}My Playgrounds | PlayGround Booking{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gradient">My Playgrounds</h1>
+            <a href="{% url 'playgrounds:add_playground' %}" class="btn btn-primary">
+                <i class="fas fa-plus mr-2"></i>Add New Playground
+            </a>
+        </div>
+        
+        <!-- Existing Playgrounds List -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {% for playground in playgrounds %}
+            <div class="card-dark p-6 hover:shadow-xl transition-all duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="font-bold text-lg text-white">{{ playground.name }}</h3>
+                    <span class="px-3 py-1 text-xs rounded-full 
+                        {% if playground.status == 'active' %}status-active{% else %}status-pending{% endif %}">
+                        {% if playground.status == 'active' %}Active{% else %}{{ playground.get_status_display }}{% endif %}
+                    </span>
+                </div>
+                
+                <p class="text-secondary mb-4">{{ playground.description|truncatewords:15 }}</p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <span class="text-sm text-muted">Price per hour</span>
+                        <div class="font-bold text-primary">${{ playground.price_per_hour }}</div>
+                    </div>
+                    <div>
+                        <span class="text-sm text-muted">Total Bookings</span>
+                        <div class="font-bold">{{ playground.total_bookings|default:0 }}</div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <a href="{% url 'playgrounds:playground_detail' playground.id %}" class="btn btn-sm btn-secondary">View</a>
+                    <a href="{% url 'playgrounds:edit_playground' playground.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'playgrounds:manage_playground' playground.id %}" class="btn btn-sm btn-accent">Manage</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-2 text-center py-12">
+                <div class="card-dark p-8">
+                    <i class="fas fa-map-marked-alt text-6xl text-primary mb-4"></i>
+                    <h3 class="text-xl font-bold mb-4">No Playgrounds Yet</h3>
+                    <p class="text-gray-400 mb-6">Start by adding your first playground to begin accepting bookings and earning money!</p>
+                    <a href="{% url 'playgrounds:add_playground' %}" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i>Create Your First Playground
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Success/Error Notifications -->
+    <div id="notification" class="hidden fixed top-4 right-4 z-50"></div>
+</div>
+
+<!-- Simple Notification System -->
+<script>
+// Show notification function for any feedback needed
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const colors = {
+        'success': 'bg-green-600',
+        'error': 'bg-red-600',
+        'info': 'bg-blue-600',
+        'warning': 'bg-yellow-600'
+    };
+    
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${colors[type]} text-white`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'info' ? 'info' : 'exclamation'} mr-2"></i>
+            ${message}
+        </div>
+    `;
+    notification.classList.remove('hidden');
+    
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 5000);
+}
+</script>
+{% endblock %}

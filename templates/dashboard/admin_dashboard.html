@@ -1,0 +1,1137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Platform Overview{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Enhanced Admin Dashboard with Professional Design */
+    .dashboard-container {
+        min-height: 100vh;
+        background: var(--primary-bg);
+        padding: 2rem 0;
+    }
+    
+    .dashboard-header {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), #8b5cf6);
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .metric-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #f39c12, #e74c3c);
+        background-size: 500% 500%;
+        animation: gradientFlow 5s ease infinite;
+    }
+    
+    .data-table {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .table-header {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .table-row {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .table-row:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+    
+    .status-active { background: #27ae60; }
+    .status-pending { background: #f39c12; }
+    .status-inactive { background: #e74c3c; }
+    
+    .action-panel {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .admin-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .admin-button.danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+    
+    .admin-button.success {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+    }
+    
+    .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .mini-chart {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 250px;
+    }
+    
+    .notification-center {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .alert-item {
+        background: rgba(231, 76, 60, 0.1);
+        border-left: 4px solid #e74c3c;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        animation: alertPulse 2s infinite;
+    }
+    
+    .alert-item.warning {
+        background: rgba(243, 156, 18, 0.1);
+        border-left-color: #f39c12;
+    }
+    
+    .alert-item.info {
+        background: rgba(52, 152, 219, 0.1);
+        border-left-color: #3498db;
+    }
+    
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    @keyframes alertPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+    
+    .live-indicator {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .live-indicator::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #27ae60;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: livePulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes livePulse {
+        0%, 100% { 
+            opacity: 1; 
+            transform: scale(1); 
+        }
+        50% { 
+            opacity: 0.6; 
+            transform: scale(1.2); 
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="container mx-auto px-4">
+        
+        <!-- Admin Header -->
+        <div class="admin-header text-center">
+            <h1 class="text-4xl font-bold text-white mb-2">
+                <i class="fas fa-crown mr-3 text-yellow-300"></i>
+                Admin Dashboard
+            </h1>
+            <p class="text-gray-200 text-lg mb-4">Platform Overview & Management</p>
+            <div class="live-indicator text-green-300 font-semibold">
+                LIVE MONITORING
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card">
+                <div class="text-4xl font-bold text-white mb-2" id="totalUsersCount">1,247</div>
+                <div class="text-gray-200 text-sm uppercase tracking-wide">Total Users</div>
+                <i class="fas fa-users text-3xl text-blue-300 mt-4"></i>
+                <div class="text-green-300 text-xs mt-2">+12% this month</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="text-4xl font-bold text-white mb-2" id="totalPlaygroundsCount">89</div>
+                <div class="text-gray-200 text-sm uppercase tracking-wide">Playgrounds</div>
+                <i class="fas fa-map-marker-alt text-3xl text-red-300 mt-4"></i>
+                <div class="text-green-300 text-xs mt-2">+5% this month</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="text-4xl font-bold text-white mb-2" id="totalBookingsCount">3,456</div>
+                <div class="text-gray-200 text-sm uppercase tracking-wide">Total Bookings</div>
+                <i class="fas fa-calendar-check text-3xl text-green-300 mt-4"></i>
+                <div class="text-green-300 text-xs mt-2">+18% this month</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="text-4xl font-bold text-white mb-2" id="totalRevenueCount">$124,567</div>
+                <div class="text-gray-200 text-sm uppercase tracking-wide">Total Revenue</div>
+                <i class="fas fa-dollar-sign text-3xl text-yellow-300 mt-4"></i>
+                <div class="text-green-300 text-xs mt-2">+22% this month</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Panel -->
+        <div class="action-panel">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                <i class="fas fa-tools mr-3 text-orange-300"></i>
+                Quick Actions
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                <button class="admin-button" onclick="manageUsers()">
+                    <i class="fas fa-users mr-2"></i>
+                    Users
+                </button>
+                <button class="admin-button" onclick="managePlaygrounds()">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    Playgrounds
+                </button>
+                <a href="{% url 'playgrounds:add_playground' %}" class="admin-button success">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Create Playground
+                </a>
+                <button class="admin-button" onclick="viewReports()">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Reports
+                </button>
+                <button class="admin-button" onclick="systemSettings()">
+                    <i class="fas fa-cog mr-2"></i>
+                    Settings
+                </button>
+                <a href="/admin-panel/partner-applications/" class="admin-button success">
+                    <i class="fas fa-check mr-2"></i>
+                    Partner Applications
+                </a>
+                <button class="admin-button danger" onclick="viewAlerts()">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Alerts
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column - Charts & Analytics -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Charts Grid -->
+                <div class="chart-grid">
+                    <div class="mini-chart">
+                        <h3 class="text-white font-bold mb-4 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-blue-300"></i>
+                            User Growth
+                        </h3>
+                        <div id="userGrowthChart" class="h-full flex items-center justify-center text-gray-400">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line text-3xl mb-2"></i>
+                                <p>User growth chart</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-chart">
+                        <h3 class="text-white font-bold mb-4 flex items-center">
+                            <i class="fas fa-chart-pie mr-2 text-green-300"></i>
+                            Revenue Distribution
+                        </h3>
+                        <div id="revenueChart" class="h-full flex items-center justify-center text-gray-400">
+                            <div class="text-center">
+                                <i class="fas fa-chart-pie text-3xl mb-2"></i>
+                                <p>Revenue breakdown</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="section-card">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <i class="fas fa-activity mr-3 text-purple-300"></i>
+                        Recent Platform Activity
+                    </h2>
+                    
+                    <div class="data-table">
+                        <div class="table-header">
+                            <div class="grid grid-cols-4 gap-4 text-gray-300 font-semibold text-sm">
+                                <div>Activity</div>
+                                <div>User</div>
+                                <div>Time</div>
+                                <div>Status</div>
+                            </div>
+                        </div>
+                        
+                        <div id="recentActivitiesList">
+                            <div class="table-row">
+                                <div class="grid grid-cols-4 gap-4 items-center">
+                                    <div class="text-white">New playground registration</div>
+                                    <div class="text-gray-300">Sarah Johnson</div>
+                                    <div class="text-gray-400 text-sm">5 min ago</div>
+                                    <div><span class="status-indicator status-pending"></span>Pending</div>
+                                </div>
+                            </div>
+                            
+                            <div class="table-row">
+                                <div class="grid grid-cols-4 gap-4 items-center">
+                                    <div class="text-white">User registration</div>
+                                    <div class="text-gray-300">Mike Chen</div>
+                                    <div class="text-gray-400 text-sm">12 min ago</div>
+                                    <div><span class="status-indicator status-active"></span>Active</div>
+                                </div>
+                            </div>
+                            
+                            <div class="table-row">
+                                <div class="grid grid-cols-4 gap-4 items-center">
+                                    <div class="text-white">Booking completed</div>
+                                    <div class="text-gray-300">Emma Davis</div>
+                                    <div class="text-gray-400 text-sm">18 min ago</div>
+                                    <div><span class="status-indicator status-active"></span>Completed</div>
+                                </div>
+                            </div>
+                            
+                            <div class="table-row">
+                                <div class="grid grid-cols-4 gap-4 items-center">
+                                    <div class="text-white">Payment dispute</div>
+                                    <div class="text-gray-300">Alex Rodriguez</div>
+                                    <div class="text-gray-400 text-sm">32 min ago</div>
+                                    <div><span class="status-indicator status-inactive"></span>Review</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Approvals -->
+                <div class="section-card">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <i class="fas fa-clock mr-3 text-yellow-300"></i>
+                        Pending Approvals
+                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-3">3</span>
+                    </h2>
+                    
+                    <div class="space-y-4" id="pendingApprovalsList">
+                        <div class="booking-card">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-white font-semibold text-lg mb-1">Downtown Sports Complex</h3>
+                                    <p class="text-gray-300 text-sm mb-2">New playground registration</p>
+                                    <div class="text-gray-400 text-sm">Owner: John Smith • Submitted: 2 hours ago</div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="admin-button success text-xs" onclick="approveItem('playground', '123')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="admin-button danger text-xs" onclick="rejectItem('playground', '123')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="booking-card">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-white font-semibold text-lg mb-1">Owner Account Verification</h3>
+                                    <p class="text-gray-300 text-sm mb-2">Business license verification</p>
+                                    <div class="text-gray-400 text-sm">User: Maria Garcia • Submitted: 4 hours ago</div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="admin-button success text-xs" onclick="approveItem('user', '456')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="admin-button danger text-xs" onclick="rejectItem('user', '456')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+                
+                <!-- System Status -->
+                <div class="section-card">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-server mr-3 text-green-300"></i>
+                        System Status
+                    </h2>
+                    
+                    <div class="space-y-3" id="systemStatusList">
+                        <div class="flex justify-between items-center p-3 bg-black bg-opacity-20 rounded-lg">
+                            <span class="text-gray-300">Database</span>
+                            <div class="flex items-center text-green-300">
+                                <span class="status-indicator status-active"></span>
+                                <span class="text-sm">Operational</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-black bg-opacity-20 rounded-lg">
+                            <span class="text-gray-300">Payment Gateway</span>
+                            <div class="flex items-center text-green-300">
+                                <span class="status-indicator status-active"></span>
+                                <span class="text-sm">Operational</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-black bg-opacity-20 rounded-lg">
+                            <span class="text-gray-300">Email Service</span>
+                            <div class="flex items-center text-yellow-300">
+                                <span class="status-indicator status-pending"></span>
+                                <span class="text-sm">Degraded</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-black bg-opacity-20 rounded-lg">
+                            <span class="text-gray-300">API Services</span>
+                            <div class="flex items-center text-green-300">
+                                <span class="status-indicator status-active"></span>
+                                <span class="text-sm">Operational</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert Center -->
+                <div class="section-card">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-3 text-red-300"></i>
+                        System Alerts
+                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-3">2</span>
+                    </h2>
+                    
+                    <div class="notification-center" id="alertsList">
+                        <div class="alert-item">
+                            <div class="font-semibold text-red-300 text-sm mb-1">High Server Load</div>
+                            <div class="text-gray-300 text-xs mb-1">CPU usage at 89%. Consider scaling resources.</div>
+                            <div class="text-gray-400 text-xs">5 minutes ago</div>
+                        </div>
+                        
+                        <div class="alert-item warning">
+                            <div class="font-semibold text-yellow-300 text-sm mb-1">Email Queue Backup</div>
+                            <div class="text-gray-300 text-xs mb-1">Email service experiencing delays.</div>
+                            <div class="text-gray-400 text-xs">12 minutes ago</div>
+                        </div>
+                        
+                        <div class="alert-item info">
+                            <div class="font-semibold text-blue-300 text-sm mb-1">System Update Available</div>
+                            <div class="text-gray-300 text-xs mb-1">New security patches available for deployment.</div>
+                            <div class="text-gray-400 text-xs">1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="section-card">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-tachometer-alt mr-3 text-blue-300"></i>
+                        Live Statistics
+                    </h2>
+                    
+                    <div class="space-y-4" id="liveStatsList">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Active Users</span>
+                            <span class="text-white font-bold" id="activeUsersCount">127</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Today's Bookings</span>
+                            <span class="text-white font-bold" id="todayBookingsCount">45</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Revenue Today</span>
+                            <span class="text-white font-bold" id="todayRevenueCount">$2,350</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">New Registrations</span>
+                            <span class="text-white font-bold" id="newRegistrationsCount">8</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Support Tickets</span>
+                            <span class="text-white font-bold" id="supportTicketsCount">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Advanced TypeScript-like JavaScript for Admin Dashboard
+class AdminDashboardManager {
+    constructor() {
+        this.refreshInterval = null;
+        this.realTimeInterval = null;
+        this.websocket = null;
+        this.charts = new Map();
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.animateMetrics();
+        this.setupRealTimeUpdates();
+        this.initializeCharts();
+        // this.setupSystemMonitoring(); // Removed: function does not exist
+        this.loadDashboardData();
+    }
+    
+    setupEventListeners() {
+        // Metric cards click handlers
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('click', (e) => this.handleMetricClick(e));
+        });
+        
+        // Quick action buttons
+        document.querySelectorAll('.admin-button').forEach(button => {
+            button.addEventListener('click', (e) => this.handleQuickAction(e));
+        });
+        
+        // Table row interactions
+        document.querySelectorAll('.table-row').forEach(row => {
+            row.addEventListener('click', (e) => this.handleActivityClick(e));
+        });
+        
+        // Real-time updates toggle
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                this.toggleRealTimeMode();
+            }
+        });
+        
+        // System status checks
+        document.getElementById('systemStatusList')?.addEventListener('click', (e) => {
+            this.showSystemDetails(e);
+        });
+        
+        // Alert management
+        document.querySelectorAll('.alert-item').forEach(alert => {
+            alert.addEventListener('click', (e) => this.handleAlertClick(e));
+        });
+    }
+    
+    animateMetrics() {
+        const metrics = [
+            { element: document.getElementById('totalUsersCount'), target: 1247, prefix: '' },
+            { element: document.getElementById('totalPlaygroundsCount'), target: 89, prefix: '' },
+            { element: document.getElementById('totalBookingsCount'), target: 3456, prefix: '' },
+            { element: document.getElementById('totalRevenueCount'), target: 124567, prefix: '$' },
+            { element: document.getElementById('activeUsersCount'), target: 127, prefix: '' },
+            { element: document.getElementById('todayBookingsCount'), target: 45, prefix: '' },
+            { element: document.getElementById('todayRevenueCount'), target: 2350, prefix: '$' },
+            { element: document.getElementById('newRegistrationsCount'), target: 8, prefix: '' },
+            { element: document.getElementById('supportTicketsCount'), target: 3, prefix: '' }
+        ];
+        
+        metrics.forEach((metric, index) => {
+            if (metric.element) {
+                setTimeout(() => {
+                    this.animateCounter(metric);
+                }, index * 200);
+            }
+        });
+    }
+    
+    animateCounter(metricData) {
+        const { element, target, prefix = '' } = metricData;
+        const duration = 2000;
+        const startTime = Date.now();
+        const startValue = 0;
+        
+        const updateCounter = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Advanced easing function
+            const easedProgress = 1 - Math.pow(1 - progress, 4);
+            const currentValue = Math.floor(startValue + (target - startValue) * easedProgress);
+            
+            if (prefix === '$') {
+                element.textContent = prefix + currentValue.toLocaleString();
+            } else {
+                element.textContent = currentValue.toLocaleString() + prefix;
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        };
+        
+        updateCounter();
+    }
+    
+    setupRealTimeUpdates() {
+        // Update live statistics every 5 seconds
+        this.realTimeInterval = setInterval(() => {
+            this.updateLiveStatistics();
+        }, 5000);
+        
+        // Update main dashboard every 30 seconds
+        this.refreshInterval = setInterval(() => {
+            this.updateDashboardData();
+        }, 30000);
+        
+        // Initialize WebSocket for real-time notifications
+        this.initializeWebSocket();
+    }
+    
+    updateLiveStatistics() {
+        const stats = [
+            { id: 'activeUsersCount', variance: 10 },
+            { id: 'todayBookingsCount', variance: 3 },
+            { id: 'todayRevenueCount', variance: 200 },
+            { id: 'newRegistrationsCount', variance: 2 },
+            { id: 'supportTicketsCount', variance: 1 }
+        ];
+        
+        stats.forEach(stat => {
+            const element = document.getElementById(stat.id);
+            if (element) {
+                const currentValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
+                const change = Math.floor(Math.random() * stat.variance * 2) - stat.variance;
+                const newValue = Math.max(0, currentValue + change);
+                
+                // Animate the change
+                this.animateValueChange(element, currentValue, newValue, stat.id.includes('Revenue') ? '$' : '');
+            }
+        });
+    }
+    
+    animateValueChange(element, oldValue, newValue, prefix = '') {
+        const duration = 1000;
+        const startTime = Date.now();
+        
+        const updateValue = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            const currentValue = Math.floor(oldValue + (newValue - oldValue) * easedProgress);
+            
+            element.textContent = prefix + currentValue.toLocaleString();
+            
+            // Add visual feedback for changes
+            if (newValue > oldValue) {
+                element.style.color = '#27ae60';
+            } else if (newValue < oldValue) {
+                element.style.color = '#e74c3c';
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateValue);
+            } else {
+                // Reset color after animation
+                setTimeout(() => {
+                    element.style.color = '';
+                }, 1000);
+            }
+        };
+        
+        updateValue();
+    }
+    
+    initializeWebSocket() {
+        // Simulate WebSocket connection for real-time alerts
+        console.log('WebSocket connection initialized for admin dashboard');
+        
+        // Simulate incoming alerts
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                this.addRealTimeAlert({
+                    type: 'warning',
+                    title: 'New User Registration',
+                    message: 'A new user has registered on the platform.',
+                    timestamp: new Date()
+                });
+            }
+        }, 10000);
+        
+        // Simulate system status changes
+        setInterval(() => {
+            this.updateSystemStatus();
+        }, 15000);
+    }
+    
+    addRealTimeAlert(alertData) {
+        const alertsList = document.getElementById('alertsList');
+        if (!alertsList) return;
+        
+        const alertElement = document.createElement('div');
+        alertElement.className = `alert-item ${alertData.type}`;
+        alertElement.innerHTML = `
+            <div class="font-semibold text-${this.getAlertColor(alertData.type)}-300 text-sm mb-1">${alertData.title}</div>
+            <div class="text-gray-300 text-xs mb-1">${alertData.message}</div>
+            <div class="text-gray-400 text-xs">Just now</div>
+        `;
+        
+        alertsList.insertBefore(alertElement, alertsList.firstChild);
+        
+        // Add entrance animation
+        alertElement.style.transform = 'translateX(-100%)';
+        alertElement.style.opacity = '0';
+        
+        setTimeout(() => {
+            alertElement.style.transition = 'all 0.5s ease';
+            alertElement.style.transform = 'translateX(0)';
+            alertElement.style.opacity = '1';
+        }, 100);
+        
+        // Update alert count
+        this.updateAlertCount();
+        
+        // Show toast notification
+        this.showToastNotification(alertData);
+    }
+    
+    getAlertColor(type) {
+        switch (type) {
+            case 'warning': return 'yellow';
+            case 'error': return 'red';
+            case 'info': return 'blue';
+            default: return 'gray';
+        }
+    }
+    
+    updateSystemStatus() {
+        const services = ['Database', 'Payment Gateway', 'Email Service', 'API Services'];
+        const statusTypes = ['active', 'pending', 'inactive'];
+        const statusLabels = ['Operational', 'Degraded', 'Down'];
+        
+        // Randomly update one service status
+        const randomService = services[Math.floor(Math.random() * services.length)];
+        const randomStatus = Math.floor(Math.random() * 3);
+        
+        const statusElements = document.querySelectorAll('#systemStatusList .flex');
+        statusElements.forEach(element => {
+            const serviceName = element.querySelector('span').textContent;
+            if (serviceName === randomService) {
+                const statusIndicator = element.querySelector('.status-indicator');
+                const statusText = element.querySelector('.text-sm');
+                
+                statusIndicator.className = `status-indicator status-${statusTypes[randomStatus]}`;
+                statusText.textContent = statusLabels[randomStatus];
+                
+                // Add animation for status change
+                element.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+    }
+    
+    initializeCharts() {
+        this.createUserGrowthChart();
+        this.createRevenueChart();
+    }
+    
+    createUserGrowthChart() {
+        const chartContainer = document.getElementById('userGrowthChart');
+        if (!chartContainer) return;
+        
+        // Simulate user growth chart
+        chartContainer.innerHTML = `
+            <div class="w-full h-full">
+                <svg width="100%" height="100%" viewBox="0 0 300 200">
+                    <defs>
+                        <linearGradient id="userGrowthGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#3498db;stop-opacity:0.1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 0 180 Q 75 120 150 100 Q 225 80 300 60 L 300 200 L 0 200 Z" 
+                          fill="url(#userGrowthGradient)" 
+                          stroke="#3498db" 
+                          stroke-width="2">
+                        <animate attributeName="d" 
+                                 values="M 0 180 Q 75 180 150 180 Q 225 180 300 180 L 300 200 L 0 200 Z;
+                                         M 0 180 Q 75 120 150 100 Q 225 80 300 60 L 300 200 L 0 200 Z" 
+                                 dur="2s" 
+                                 fill="freeze"/>
+                    </path>
+                </svg>
+            </div>
+        `;
+    }
+    
+    createRevenueChart() {
+        const chartContainer = document.getElementById('revenueChart');
+        if (!chartContainer) return;
+        
+        // Simulate revenue pie chart
+        chartContainer.innerHTML = `
+            <div class="w-full h-full flex items-center justify-center">
+                <svg width="150" height="150" viewBox="0 0 42 42">
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#e74c3c" 
+                            stroke-width="3" stroke-dasharray="40 60" stroke-dashoffset="25">
+                        <animate attributeName="stroke-dasharray" values="0 100;40 60" dur="2s" fill="freeze"/>
+                    </circle>
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#27ae60" 
+                            stroke-width="3" stroke-dasharray="30 70" stroke-dashoffset="65">
+                        <animate attributeName="stroke-dasharray" values="0 100;30 70" dur="2s" begin="0.5s" fill="freeze"/>
+                    </circle>
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f39c12" 
+                            stroke-width="3" stroke-dasharray="20 80" stroke-dashoffset="95">
+                        <animate attributeName="stroke-dasharray" values="0 100;20 80" dur="2s" begin="1s" fill="freeze"/>
+                    </circle>
+                </svg>
+            </div>
+        `;
+    }
+    
+    updateDashboardData() {
+        console.log('Updating admin dashboard data...');
+        
+        // Simulate data refresh
+        this.animateMetrics();
+        this.updateCharts();
+        this.refreshActivitiesList();
+    }
+    
+    updateCharts() {
+        // Recreate charts with new data
+        this.createUserGrowthChart();
+        this.createRevenueChart();
+    }
+    
+    refreshActivitiesList() {
+        const activitiesList = document.getElementById('recentActivitiesList');
+        if (activitiesList) {
+            activitiesList.style.opacity = '0.6';
+            setTimeout(() => {
+                activitiesList.style.opacity = '1';
+            }, 500);
+        }
+    }
+    
+    handleMetricClick(event) {
+        const card = event.target.closest('.metric-card');
+        const metricType = card.querySelector('.text-gray-200').textContent;
+        
+        console.log(`Viewing detailed analytics for: ${metricType}`);
+        
+        // Add click animation
+        card.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            card.style.transform = 'scale(1)';
+        }, 150);
+        
+        this.showDetailedMetrics(metricType);
+    }
+    
+    handleQuickAction(event) {
+        const button = event.target.closest('.admin-button');
+        const action = button.textContent.trim();
+        
+        console.log(`Admin action: ${action}`);
+        
+        // Add click effect
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 150);
+        
+        this.executeAdminAction(action);
+    }
+    
+    handleActivityClick(event) {
+        const row = event.target.closest('.table-row');
+        const activity = row.querySelector('.text-white').textContent;
+        
+        console.log(`Viewing activity details: ${activity}`);
+        this.showActivityDetails(activity);
+    }
+    
+    handleAlertClick(event) {
+        const alert = event.target.closest('.alert-item');
+        const alertTitle = alert.querySelector('.font-semibold').textContent;
+        
+        console.log(`Viewing alert: ${alertTitle}`);
+        
+        // Mark as read
+        alert.style.opacity = '0.6';
+        alert.style.borderLeftWidth = '2px';
+        
+        this.showAlertDetails(alertTitle);
+    }
+    
+    updateAlertCount() {
+        const alertBadges = document.querySelectorAll('.bg-red-500');
+        alertBadges.forEach(badge => {
+            const currentCount = parseInt(badge.textContent) || 0;
+            badge.textContent = currentCount + 1;
+            
+            // Add pulse animation
+            badge.style.animation = 'pulse 0.5s ease-in-out';
+            setTimeout(() => {
+                badge.style.animation = '';
+            }, 500);
+        });
+    }
+    
+    showToastNotification(alertData) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-black bg-opacity-80 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+        toast.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-bell mr-3 text-yellow-300"></i>
+                <div>
+                    <div class="font-bold">${alertData.title}</div>
+                    <div class="text-sm text-gray-300">${alertData.message}</div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+        
+        setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+    
+    toggleRealTimeMode() {
+        console.log('Toggling real-time monitoring mode');
+        // Implementation for toggling real-time updates
+    }
+    
+    showSystemDetails(event) {
+        const serviceRow = event.target.closest('.flex');
+        const serviceName = serviceRow.querySelector('span').textContent;
+        console.log(`Showing system details for: ${serviceName}`);
+    }
+    
+    showDetailedMetrics(metricType) {
+        console.log(`Showing detailed metrics for: ${metricType}`);
+        // Implementation for detailed metrics modal
+    }
+    
+    executeAdminAction(action) {
+        switch (action.toLowerCase()) {
+            case 'users':
+                window.location.href = '/admin/users/';
+                break;
+            case 'playgrounds':
+                window.location.href = '/admin/playgrounds/';
+                break;
+            case 'reports':
+                window.location.href = '/admin/reports/';
+                break;
+            case 'settings':
+                window.location.href = '/admin/settings/';
+                break;
+            case 'approve':
+                this.showApprovalsModal();
+                break;
+            case 'alerts':
+                this.showAlertsModal();
+                break;
+            default:
+                console.log(`Executing: ${action}`);
+        }
+    }
+    
+    showActivityDetails(activity) {
+        console.log(`Showing activity details: ${activity}`);
+        // Implementation for activity details modal
+    }
+    
+    showAlertDetails(alertTitle) {
+        console.log(`Showing alert details: ${alertTitle}`);
+        // Implementation for alert details modal
+    }
+    
+    showApprovalsModal() {
+        console.log('Showing approvals modal');
+        // Implementation for approvals modal
+    }
+    
+    showAlertsModal() {
+        console.log('Showing alerts modal');
+        // Implementation for alerts modal
+    }
+    
+    loadDashboardData() {
+        console.log('Loading admin dashboard data...');
+        // Implementation for initial data loading
+    }
+    
+    // Cleanup
+    destroy() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
+        
+        if (this.realTimeInterval) {
+            clearInterval(this.realTimeInterval);
+        }
+        
+        if (this.websocket) {
+            this.websocket.close();
+        }
+        
+        this.charts.forEach(chart => {
+            if (chart.destroy) {
+                chart.destroy();
+            }
+        });
+    }
+}
+
+// Global functions for template onclick handlers
+function manageUsers() {
+    window.location.href = '/admin/users/';
+}
+
+function managePlaygrounds() {
+    window.location.href = '/admin/playgrounds/';
+}
+
+function viewReports() {
+    window.location.href = '/admin/reports/';
+}
+
+function systemSettings() {
+    window.location.href = '/admin/settings/';
+}
+
+function approvePlaygrounds() {
+    // Show the partner application modal
+    var modal = document.getElementById('partnerAppModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function viewAlerts() {
+    console.log('Showing system alerts');
+}
+
+function approveItem(type, id) {
+    console.log(`Approving ${type} with ID: ${id}`);
+    // Implementation for approval action
+}
+
+function rejectItem(type, id) {
+    console.log(`Rejecting ${type} with ID: ${id}`);
+    // Implementation for rejection action
+}
+
+// Initialize dashboard when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    const dashboard = new AdminDashboardManager();
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        dashboard.destroy();
+    });
+});
+</script>
+{% endblock %}

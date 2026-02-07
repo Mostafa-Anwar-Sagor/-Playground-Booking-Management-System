@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage {{ playground.name }} | PlayGround Booking{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="card mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gradient">{{ playground.name }}</h1>
+                    <p class="text-gray-600">Manage bookings and availability</p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{% url 'playgrounds:edit_playground' playground.id %}" class="btn btn-secondary">Edit Details</a>
+                    <a href="{% url 'playgrounds:playground_detail' playground.id %}" class="btn btn-primary">View Public Page</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Overview -->
+        <div class="grid grid-4 gap-6 mb-8">
+            <div class="card-dark p-6 text-center">
+                <h3 class="text-2xl font-bold text-primary">{{ total_bookings|default:0 }}</h3>
+                <p class="text-gray-600">Total Bookings</p>
+            </div>
+            <div class="card-dark p-6 text-center">
+                <h3 class="text-2xl font-bold text-success">{{ this_month_bookings|default:0 }}</h3>
+                <p class="text-gray-600">This Month</p>
+            </div>
+            <div class="card-dark p-6 text-center">
+                <h3 class="text-2xl font-bold text-warning">${{ total_earnings|default:0 }}</h3>
+                <p class="text-gray-600">Total Earnings</p>
+            </div>
+            <div class="card-dark p-6 text-center">
+                <h3 class="text-2xl font-bold text-info">{{ avg_rating|default:0 }}</h3>
+                <p class="text-gray-600">Average Rating</p>
+            </div>
+        </div>
+        
+        <!-- Recent Bookings -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-bold mb-6">Recent Bookings</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3">Date</th>
+                            <th class="text-left py-3">Time</th>
+                            <th class="text-left py-3">Customer</th>
+                            <th class="text-left py-3">Amount</th>
+                            <th class="text-left py-3">Status</th>
+                            <th class="text-left py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings %}
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3">{{ booking.date }}</td>
+                            <td class="py-3">{{ booking.start_time }} - {{ booking.end_time }}</td>
+                            <td class="py-3">{{ booking.user.first_name }} {{ booking.user.last_name }}</td>
+                            <td class="py-3">${{ booking.total_amount }}</td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 text-xs rounded-full 
+                                    {% if booking.status == 'confirmed' %}bg-green-100 text-green-800
+                                    {% elif booking.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif booking.status == 'cancelled' %}bg-red-100 text-red-800
+                                    {% endif %}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                <div class="flex gap-2">
+                                    <button class="btn btn-xs btn-secondary">View</button>
+                                    {% if booking.status == 'pending' %}
+                                    <button class="btn btn-xs btn-success">Confirm</button>
+                                    <button class="btn btn-xs btn-danger">Decline</button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-gray-600">No bookings yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Availability Calendar -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-6">Manage Availability</h2>
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <p class="text-gray-600 text-center">Calendar component will be implemented here</p>
+                <p class="text-gray-500 text-sm text-center mt-2">Click on dates to manage availability and blocked times</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,160 @@
+<!-- Cancel Booking Modal -->
+<div id="cancelModal" class="modal">
+    <div class="modal-content">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">Cancel Booking</h3>
+            <button onclick="closeCancelModal()" class="text-gray-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mb-6">
+            <p class="text-gray-300 mb-4">Are you sure you want to cancel this booking? This action cannot be undone.</p>
+            
+            <div class="form-group">
+                <label class="block text-sm font-medium text-gray-300 mb-2" for="cancelReason">Reason for Cancellation</label>
+                <textarea id="cancelReason" 
+                          class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                          rows="3" 
+                          placeholder="Please provide a reason for cancellation..."></textarea>
+            </div>
+        </div>
+        
+        <div class="flex gap-3">
+            <button onclick="closeCancelModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                Keep Booking
+            </button>
+            <button onclick="confirmCancelBooking()" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                <i class="fas fa-times mr-2"></i>
+                Cancel Booking
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: #1e293b;
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+</style>
+
+<script>
+function showCancelModal() {
+    document.getElementById('cancelModal').classList.add('show');
+}
+
+function closeCancelModal() {
+    document.getElementById('cancelModal').classList.remove('show');
+    document.getElementById('cancelReason').value = '';
+}
+
+function confirmCancelBooking() {
+    const reason = document.getElementById('cancelReason').value.trim();
+    
+    if (!reason) {
+        alert('Please provide a reason for cancellation.');
+        return;
+    }
+    
+    // Get booking ID from URL or data attribute
+    const bookingId = window.location.pathname.split('/').slice(-2, -1)[0];
+    
+    if (!bookingId) {
+        alert('Error: Unable to identify booking.');
+        return;
+    }
+    
+    // Show loading state
+    const cancelBtn = document.querySelector('[onclick="confirmCancelBooking()"]');
+    const originalText = cancelBtn.innerHTML;
+    cancelBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+    cancelBtn.disabled = true;
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}';
+    
+    // Submit cancellation
+    fetch(`/bookings/cancel/${bookingId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken
+        },
+        body: `cancellation_reason=${encodeURIComponent(reason)}`
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Network response was not ok');
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Booking cancelled successfully.');
+            location.reload();
+        } else {
+            alert(data.error || 'Failed to cancel booking.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while cancelling the booking.');
+    })
+    .finally(() => {
+        // Restore button state
+        cancelBtn.innerHTML = originalText;
+        cancelBtn.disabled = false;
+        closeCancelModal();
+    });
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('cancelModal');
+    if (event.target === modal) {
+        closeCancelModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeCancelModal();
+    }
+});
+</script>

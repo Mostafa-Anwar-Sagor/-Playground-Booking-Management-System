@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Booking Confirmation | PlayGround Booking{% endblock %}
+
+{% block extra_head %}
+<style>
+    .confirmation-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .success-card {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+    
+    .booking-details-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+    
+    .detail-value {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), #2563eb);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0.5rem;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        text-decoration: none;
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0.5rem;
+    }
+    
+    .btn-secondary:hover {
+        background: #4b5563;
+        text-decoration: none;
+        color: white;
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .status-confirmed {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .next-steps {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .step-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .step-item:last-child {
+        border-bottom: none;
+    }
+    
+    .step-number {
+        background: var(--primary-color);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <!-- Success Header -->
+    <div class="success-card">
+        <div class="text-6xl mb-4">✅</div>
+        <h1 class="text-3xl font-bold mb-2">Booking Confirmed!</h1>
+        <p class="text-xl opacity-90">Your playground reservation has been successfully created</p>
+        <div class="mt-4">
+            <span class="text-2xl font-bold">Booking ID: {{ booking.booking_id }}</span>
+        </div>
+    </div>
+
+    <!-- Booking Details -->
+    <div class="booking-details-card">
+        <h2 class="text-2xl font-bold mb-4">📋 Booking Details</h2>
+        
+        <div class="detail-row">
+            <span class="detail-label">Playground</span>
+            <span class="detail-value">{{ booking.playground.name }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">{{ booking.playground.address }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">{{ booking.booking_date|date:"F d, Y" }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Time</span>
+            <span class="detail-value">{{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Duration</span>
+            <span class="detail-value">{{ booking.duration_hours }} hour{{ booking.duration_hours|pluralize }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Number of Players</span>
+            <span class="detail-value">{{ booking.number_of_players }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Total Amount</span>
+            <span class="detail-value">${{ booking.final_amount }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Payment Method</span>
+            <span class="detail-value">{{ booking.get_payment_method_display }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+                <span class="status-badge {% if booking.status == 'pending' %}status-pending{% elif booking.status == 'confirmed' %}status-confirmed{% endif %}">
+                    {{ booking.get_status_display }}
+                </span>
+            </span>
+        </div>
+        
+        {% if booking.special_requests %}
+        <div class="detail-row">
+            <span class="detail-label">Special Requests</span>
+            <span class="detail-value">{{ booking.special_requests }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Contact Information -->
+    <div class="booking-details-card">
+        <h2 class="text-2xl font-bold mb-4">👤 Contact Information</h2>
+        
+        <div class="detail-row">
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ booking.customer_name }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ booking.customer_email }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ booking.customer_phone }}</span>
+        </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="next-steps">
+        <h3 class="text-lg font-bold mb-4">📋 What's Next?</h3>
+        
+        <div class="step-item">
+            <div class="step-number">1</div>
+            <div>
+                <h4 class="font-semibold">Confirmation Email</h4>
+                <p class="text-sm text-gray-600">You'll receive a confirmation email with all booking details</p>
+            </div>
+        </div>
+        
+        {% if booking.payment_method == 'cash' %}
+        <div class="step-item">
+            <div class="step-number">2</div>
+            <div>
+                <h4 class="font-semibold">Payment at Venue</h4>
+                <p class="text-sm text-gray-600">Please bring ${{ booking.final_amount }} in cash to pay at the venue</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="step-item">
+            <div class="step-number">2</div>
+            <div>
+                <h4 class="font-semibold">Payment Processing</h4>
+                <p class="text-sm text-gray-600">Your payment will be processed and you'll receive confirmation</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="step-item">
+            <div class="step-number">3</div>
+            <div>
+                <h4 class="font-semibold">Enjoy Your Game!</h4>
+                <p class="text-sm text-gray-600">Arrive 10 minutes early and have a great time playing</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center mt-6">
+        <a href="{% url 'bookings:booking_detail' booking.booking_id %}" class="btn-primary">
+            View Full Details
+        </a>
+        <a href="{% url 'bookings:booking_dashboard' %}" class="btn-secondary">
+            My Bookings
+        </a>
+        <a href="{% url 'playgrounds:playground_search' %}" class="btn-secondary">
+            Browse Playgrounds
+        </a>
+    </div>
+
+    <!-- Important Notes -->
+    <div class="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h4 class="font-bold text-blue-800 mb-2">⚠️ Important Notes:</h4>
+        <ul class="text-sm text-blue-700 space-y-1">
+            <li>• Please arrive 10 minutes before your scheduled time</li>
+            <li>• Bring valid ID and confirmation details</li>
+            <li>• Cancellations must be made 24 hours in advance for full refund</li>
+            <li>• Contact us if you need to reschedule or have questions</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,151 @@
+<footer class="bg-gray-900 text-white py-12 mt-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Company Info -->
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-futbol text-2xl text-primary"></i>
+                    <span class="text-xl font-bold">PlayGround</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    Your trusted platform for booking sports playgrounds. Find, book, and play at the best facilities near you.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold">Quick Links</h4>
+                <div class="space-y-2">
+                    <a href="{% url 'accounts:home' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Home</a>
+                    <a href="{% url 'playgrounds:playground_search' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Find Playgrounds</a>
+                    <a href="{% url 'accounts:become_partner' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Become Partner</a>
+                    <a href="{% url 'accounts:about' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">About Us</a>
+                    <a href="{% url 'accounts:contact' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Contact</a>
+                </div>
+            </div>
+            
+            <!-- Support -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold">Support</h4>
+                <div class="space-y-2">
+                    <a href="{% url 'accounts:help' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Help Center</a>
+                    <a href="{% url 'accounts:faq' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">FAQ</a>
+                    <a href="{% url 'accounts:privacy' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Privacy Policy</a>
+                    <a href="{% url 'accounts:terms' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Terms of Service</a>
+                    <a href="{% url 'accounts:refund_policy' %}" class="block text-gray-400 hover:text-white transition-colors text-sm">Refund Policy</a>
+                </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold">Contact Info</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-map-marker-alt text-primary"></i>
+                        <span class="text-gray-400 text-sm">123 Sports Street, City, Country</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-phone text-primary"></i>
+                        <span class="text-gray-400 text-sm">+1 (555) 123-4567</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-envelope text-primary"></i>
+                        <span class="text-gray-400 text-sm">support@playground.com</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-clock text-primary"></i>
+                        <span class="text-gray-400 text-sm">24/7 Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Newsletter Signup -->
+        <div class="mt-12 pt-8 border-t border-gray-700">
+            <div class="text-center">
+                <h4 class="text-lg font-semibold mb-4">Stay Updated</h4>
+                <p class="text-gray-400 text-sm mb-6">Subscribe to our newsletter for the latest updates and special offers.</p>
+                <form class="flex max-w-md mx-auto" onsubmit="subscribeNewsletter(event)">
+                    <input 
+                        type="email" 
+                        placeholder="Enter your email" 
+                        required
+                        class="flex-1 px-4 py-2 bg-gray-800 border border-gray-600 rounded-l-lg focus:outline-none focus:border-primary text-white"
+                    >
+                    <button 
+                        type="submit"
+                        class="px-6 py-2 bg-primary text-white rounded-r-lg hover:bg-blue-600 transition-colors"
+                    >
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="mt-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-400 text-sm">
+                © {{ current_year }} PlayGround Booking. All rights reserved.
+            </p>
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-shield-alt text-primary"></i>
+                    <span class="text-gray-400 text-sm">Secure Payments</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-headset text-primary"></i>
+                    <span class="text-gray-400 text-sm">24/7 Support</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-star text-primary"></i>
+                    <span class="text-gray-400 text-sm">5-Star Rated</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function subscribeNewsletter(event) {
+    event.preventDefault();
+    const form = event.target;
+    const email = form.querySelector('input[type="email"]').value;
+    
+    showLoading();
+    
+    fetch('/api/newsletter/subscribe/', {
+        method: 'POST',
+        headers: setupAjax(),
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            alert('Thank you for subscribing to our newsletter!');
+            form.reset();
+        } else {
+            alert(data.message || 'Failed to subscribe. Please try again.');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Newsletter subscription error:', error);
+        alert('Failed to subscribe. Please try again.');
+    });
+}
+</script>

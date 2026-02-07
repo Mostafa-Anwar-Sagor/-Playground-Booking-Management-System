@@ -1,0 +1,308 @@
+/* Enhanced Operating Hours Professional Styling Fix */
+
+/* Override any white text issues in the operating hours section */
+#createPlaygroundModal .operating-hours-section * {
+    color: #e2e8f0 !important; /* Light gray text instead of white */
+}
+
+#createPlaygroundModal .operating-hours-section h3 {
+    color: #ffffff !important; /* Keep headers white for contrast */
+}
+
+#createPlaygroundModal .operating-hours-section label {
+    color: #cbd5e1 !important; /* Slightly darker for labels */
+    font-weight: 600 !important;
+}
+
+/* Professional Time Input Styling */
+#createPlaygroundModal input[type="time"] {
+    background: rgba(30, 41, 59, 0.9) !important;
+    border: 2px solid rgba(71, 85, 105, 0.6) !important;
+    color: #f1f5f9 !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(8px) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+#createPlaygroundModal input[type="time"]:focus {
+    background: rgba(30, 41, 59, 0.95) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    outline: none !important;
+}
+
+#createPlaygroundModal input[type="time"]:hover {
+    border-color: rgba(71, 85, 105, 0.8) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Enhanced Toggle Switch */
+#createPlaygroundModal .toggle-switch {
+    position: relative !important;
+    display: inline-block !important;
+    width: 60px !important;
+    height: 30px !important;
+}
+
+#createPlaygroundModal .toggle-switch input {
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+#createPlaygroundModal .toggle-slider {
+    position: absolute !important;
+    cursor: pointer !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    transition: .4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 30px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+#createPlaygroundModal .toggle-slider:before {
+    position: absolute !important;
+    content: "" !important;
+    height: 22px !important;
+    width: 22px !important;
+    left: 4px !important;
+    bottom: 4px !important;
+    background: linear-gradient(135deg, #ffffff, #f8fafc) !important;
+    transition: .4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+#createPlaygroundModal input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 20px rgba(16, 185, 129, 0.4) !important;
+}
+
+#createPlaygroundModal input:checked + .toggle-slider:before {
+    transform: translateX(30px) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4) !important;
+}
+
+/* Professional Day Cards */
+#createPlaygroundModal .day-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6)) !important;
+    border: 2px solid rgba(71, 85, 105, 0.4) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    backdrop-filter: blur(12px) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+#createPlaygroundModal .day-card:before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent) !important;
+    transition: left 0.6s ease !important;
+}
+
+#createPlaygroundModal .day-card:hover:before {
+    left: 100% !important;
+}
+
+#createPlaygroundModal .day-card:hover {
+    border-color: rgba(59, 130, 246, 0.6) !important;
+    transform: translateY(-4px) scale(1.02) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Enhanced Day Labels */
+#createPlaygroundModal .day-label {
+    color: #f1f5f9 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+#createPlaygroundModal .day-icon {
+    font-size: 24px !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)) !important;
+}
+
+/* Professional Copy Buttons */
+#createPlaygroundModal .copy-button {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    border: none !important;
+    color: white !important;
+    padding: 12px 20px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+#createPlaygroundModal .copy-button:before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: rgba(255,255,255,0.2) !important;
+    border-radius: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    transition: width 0.6s ease, height 0.6s ease !important;
+}
+
+#createPlaygroundModal .copy-button:hover:before {
+    width: 300px !important;
+    height: 300px !important;
+}
+
+#createPlaygroundModal .copy-button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+#createPlaygroundModal .copy-button:active {
+    transform: translateY(0) !important;
+}
+
+/* Enhanced Duration Display */
+#createPlaygroundModal .duration-display {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 8px 16px !important;
+    text-align: center !important;
+}
+
+#createPlaygroundModal .duration-label {
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+
+#createPlaygroundModal .duration-value {
+    color: #10b981 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+}
+
+/* Professional Section Header */
+#createPlaygroundModal .operating-hours-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+#createPlaygroundModal .operating-hours-header:before {
+    content: '' !important;
+    position: absolute !important;
+    top: -50% !important;
+    right: -50% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%) !important;
+}
+
+#createPlaygroundModal .section-title {
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+#createPlaygroundModal .section-icon {
+    width: 48px !important;
+    height: 48px !important;
+    background: linear-gradient(135deg, #3b82f6, #10b981) !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3) !important;
+}
+
+#createPlaygroundModal .section-icon i {
+    color: white !important;
+    font-size: 20px !important;
+}
+
+/* Professional Grid Layout */
+#createPlaygroundModal .operating-hours-grid {
+    display: grid !important;
+    gap: 16px !important;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+    #createPlaygroundModal .operating-hours-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    }
+}
+
+/* Same Hours Section Styling */
+#createPlaygroundModal .same-hours-section {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.7)) !important;
+    border: 2px solid rgba(59, 130, 246, 0.3) !important;
+    border-radius: 20px !important;
+    padding: 32px !important;
+    backdrop-filter: blur(16px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+#createPlaygroundModal .same-hours-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 24px !important;
+    align-items: end !important;
+}
+
+/* Animation for state changes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#createPlaygroundModal .operating-hours-content {
+    animation: fadeInUp 0.6s ease-out !important;
+}
+
+/* Professional Notification Styling */
+.notification-toast {
+    background: rgba(30, 41, 59, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    border-radius: 16px !important;
+    color: #f1f5f9 !important;
+    font-weight: 500 !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3) !important;
+}

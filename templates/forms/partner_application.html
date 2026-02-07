@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Partner Application | PlayGround Booking{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="card max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gradient mb-6">Partner Application</h1>
+        <p class="text-secondary mb-8">Join our network of playground partners and start earning from your space.</p>
+        
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Business Name</label>
+                    <input type="text" name="business_name" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Contact Person</label>
+                    <input type="text" name="contact_person" class="form-input" required>
+                </div>
+            </div>
+            
+            <div class="grid grid-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" name="phone" class="form-input" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Business Address</label>
+                <textarea name="address" class="form-textarea" rows="3" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Business Description</label>
+                <textarea name="description" class="form-textarea" rows="4" required placeholder="Tell us about your playground facilities..."></textarea>
+            </div>
+            
+            <div class="grid grid-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Business License (PDF)</label>
+                    <input type="file" name="license" class="form-input" accept=".pdf">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Facility Images</label>
+                    <input type="file" name="images" class="form-input" accept="image/*" multiple>
+                </div>
+            </div>
+            
+            <div class="flex justify-center pt-6">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

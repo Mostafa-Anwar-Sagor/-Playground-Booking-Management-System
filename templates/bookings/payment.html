@@ -1,0 +1,765 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment - {{ booking.playground.name }} | PlayGround Booking{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+    :root {
+        --primary-color: #10b981;
+        --primary-hover: #059669;
+        --primary-light: #d1fae5;
+        --secondary-color: #3b82f6;
+        --secondary-hover: #2563eb;
+        --accent-color: #f59e0b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --card-bg: #ffffff;
+        --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --border-color: #e5e7eb;
+        --border-radius: 16px;
+        --border-radius-sm: 8px;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --text-light: #9ca3af;
+        --bg-primary: #f8fafc;
+        --bg-secondary: #f1f5f9;
+        --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg-gradient);
+        min-height: 100vh;
+        line-height: 1.6;
+    }
+    
+    .payment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: var(--border-radius);
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .payment-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .payment-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    }
+    
+    .payment-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .payment-card h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .payment-card h2 i {
+        color: var(--primary-color);
+        font-size: 1.25rem;
+    }
+    
+    /* Header Styling */
+    .payment-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: white;
+    }
+    
+    .payment-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #ffffff, #f0f8ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .payment-header p {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+    
+    /* QR Code Styling */
+    .qr-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: var(--border-radius);
+        margin: 2rem 0;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .qr-code {
+        padding: 1rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+    }
+    
+    .qr-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        text-align: center;
+    }
+    
+    /* Bank Details Styling */
+    .bank-details {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin: 2rem 0;
+        backdrop-filter: blur(20px);
+    }
+    
+    .bank-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+        letter-spacing: 2px;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: rgba(16, 185, 129, 0.2);
+        border-radius: var(--border-radius-sm);
+        border: 2px dashed rgba(16, 185, 129, 0.5);
+    }
+    
+    .copy-button {
+        background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem auto;
+    }
+    
+    .copy-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    
+    /* Booking Summary */
+    .booking-summary {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        backdrop-filter: blur(20px);
+        box-shadow: var(--card-shadow);
+        margin-bottom: 2rem;
+    }
+    
+    .booking-summary h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .summary-item:last-child {
+        border-bottom: none;
+        border-top: 2px solid var(--primary-color);
+        padding-top: 1.5rem;
+        margin-top: 1rem;
+        background: rgba(16, 185, 129, 0.2);
+        border-radius: var(--border-radius-sm);
+        padding: 1.5rem 1rem;
+        color: white;
+        font-weight: 600;
+        font-size: 1.125rem;
+    }
+    
+    /* Instructions */
+    .payment-instructions {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin: 2rem 0;
+        backdrop-filter: blur(10px);
+    }
+    
+    .payment-instructions h3 {
+        color: #3b82f6;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .payment-instructions ol {
+        color: rgba(255, 255, 255, 0.9);
+        margin-left: 1.5rem;
+    }
+    
+    .payment-instructions li {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+    }
+    
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1.125rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    }
+    
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1.125rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    /* Grid Layout */
+    .grid {
+        display: grid;
+    }
+    
+    .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    
+    .gap-8 {
+        gap: 2rem;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    .text-sm {
+        font-size: 0.875rem;
+    }
+    
+    .text-lg {
+        font-size: 1.125rem;
+    }
+    
+    .font-bold {
+        font-weight: 700;
+    }
+    
+    /* Step Indicator Styles */
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 2rem 0;
+    }
+    
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-radius: 12px;
+        min-width: 120px;
+        text-align: center;
+        transition: var(--transition);
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .step.completed {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .step.active {
+        background: rgba(16, 185, 129, 0.3);
+        border-color: var(--primary-color);
+        color: white;
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    
+    .step i {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .step span {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .step.completed span,
+    .step.active span {
+        color: white;
+    }
+    
+    .step-arrow {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.25rem;
+    }
+    
+    .step.completed + .step-arrow {
+        color: var(--primary-color);
+    }
+    
+    .font-medium {
+        font-weight: 500;
+    }
+    
+    /* Responsive */
+    @media (min-width: 768px) {
+        .md\:grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .lg\:grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    
+    /* Success Animation */
+    .payment-pending {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    /* Alert styling */
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: var(--border-radius-sm);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .alert-warning {
+        background: rgba(245, 158, 11, 0.2);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: #fbbf24;
+    }
+    
+    .alert-info {
+        background: rgba(59, 130, 246, 0.2);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        color: #60a5fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <!-- Payment Header -->
+    <div class="payment-header">
+        <h1><i class="fas fa-credit-card"></i> Complete Your Payment</h1>
+        <p>{{ booking.playground.name }} - Booking ID: {{ booking.booking_id }}</p>
+        
+        <!-- Step Indicator -->
+        <div class="step-indicator" style="margin-top: 2rem;">
+            <div class="step completed">
+                <i class="fas fa-check"></i>
+                <span>Slot Selection</span>
+            </div>
+            <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="step completed">
+                <i class="fas fa-check"></i>
+                <span>Booking Details</span>
+            </div>
+            <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="step active">
+                <i class="fas fa-credit-card"></i>
+                <span>Payment</span>
+            </div>
+            <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="step">
+                <i class="fas fa-check-circle"></i>
+                <span>Confirmation</span>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{ error }}</span>
+    </div>
+    {% else %}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Payment Methods -->
+        <div>
+            <!-- QR Code Section -->
+            <div class="payment-card">
+                <h2><i class="fas fa-qrcode"></i> Scan QR Code</h2>
+                <div class="qr-container">
+                    <div class="qr-code">
+                        <canvas id="qrcode"></canvas>
+                    </div>
+                    <p class="qr-label">Scan with your mobile banking app</p>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Section -->
+            <div class="payment-card">
+                <h2><i class="fas fa-university"></i> Bank Transfer</h2>
+                <div class="bank-details">
+                    <h3 class="text-center font-bold text-lg" style="color: white;">Bank Account Details</h3>
+                    <div class="bank-info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0;">
+                        <div>
+                            <label style="color: rgba(255, 255, 255, 0.7); font-size: 0.875rem;">Account Number</label>
+                            <div class="bank-number" id="bankNumber">{{ bank_number }}</div>
+                        </div>
+                        <div>
+                            <label style="color: rgba(255, 255, 255, 0.7); font-size: 0.875rem;">Amount</label>
+                            <div style="font-family: monospace; font-size: 1.25rem; font-weight: bold; color: var(--primary-color);">
+                                {{ booking.playground.currency }} {{ booking.final_amount }}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="copy-button" onclick="copyBankNumber()">
+                        <i class="fas fa-copy"></i>
+                        Copy Account Number
+                    </button>
+                </div>
+            </div>
+
+            <!-- Payment Instructions -->
+            <div class="payment-instructions">
+                <h3><i class="fas fa-info-circle"></i> Payment Instructions</h3>
+                <ol>
+                    <li>Transfer the exact amount to the bank account number above</li>
+                    <li>Use your booking ID <strong>{{ booking.booking_id }}</strong> as the transfer reference</li>
+                    <li>Take a screenshot of the payment confirmation</li>
+                    <li>Upload the payment receipt using the button below</li>
+                    <li>Your booking will be confirmed once payment is verified</li>
+                </ol>
+            </div>
+
+            <!-- Upload Receipt Section -->
+            <div class="payment-card">
+                <h2><i class="fas fa-upload"></i> Upload Payment Receipt</h2>
+                <form id="receiptForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div style="margin-bottom: 1rem;">
+                        <label style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                            <i class="fas fa-file-image"></i> Payment Receipt/Screenshot
+                        </label>
+                        <input type="file" name="receipt" accept="image/*" required 
+                               style="width: 100%; padding: 1rem; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                            <i class="fas fa-hashtag"></i> Transaction Reference (Optional)
+                        </label>
+                        <input type="text" name="reference" placeholder="Enter transaction reference if available"
+                               style="width: 100%; padding: 1rem; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white;">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Upload Receipt
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Booking Summary -->
+        <div>
+            <div class="booking-summary">
+                <h3><i class="fas fa-clipboard-list"></i> Booking Summary</h3>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-map-marker-alt"></i> Playground</span>
+                    <span class="font-medium">{{ booking.playground.name }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-calendar"></i> Date</span>
+                    <span>{{ booking.booking_date|date:"F j, Y" }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-clock"></i> Time</span>
+                    <span>{{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-hourglass-half"></i> Duration</span>
+                    <span>{{ booking.duration_hours }} hour{{ booking.duration_hours|pluralize }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-users"></i> Players</span>
+                    <span>{{ booking.number_of_players }} player{{ booking.number_of_players|pluralize }}</span>
+                </div>
+                
+                {% if booking.special_requests %}
+                <div class="summary-item">
+                    <span><i class="fas fa-sticky-note"></i> Special Requests</span>
+                    <span>{{ booking.special_requests }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-credit-card"></i> Payment Method</span>
+                    <span>{{ booking.payment_method|capfirst }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-dollar-sign"></i> Price per Hour</span>
+                    <span>{{ booking.playground.currency }} {{ booking.price_per_hour }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span><i class="fas fa-calculator"></i> Subtotal</span>
+                    <span>{{ booking.playground.currency }} {{ booking.total_amount }}</span>
+                </div>
+                
+                {% if booking.discount_amount > 0 %}
+                <div class="summary-item">
+                    <span><i class="fas fa-tag"></i> Discount</span>
+                    <span>-{{ booking.playground.currency }} {{ booking.discount_amount }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="summary-item" style="border-top: 2px solid var(--primary-color); margin-top: 1rem; padding-top: 1rem;">
+                    <span class="font-bold" style="color: var(--primary-color);"><i class="fas fa-money-check-alt"></i> Total Amount</span>
+                    <span class="font-bold text-xl" style="color: var(--primary-color);">{{ booking.playground.currency }} {{ booking.final_amount }}</span>
+                </div>
+            </div>
+
+            <!-- Status Alert -->
+            <div class="alert alert-info payment-pending">
+                <i class="fas fa-clock"></i>
+                <span>Payment pending - Please complete the payment above</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="margin-top: 2rem; display: grid; gap: 1rem;">
+                <a href="{% url 'bookings:booking_detail' booking.booking_id %}" class="btn-secondary">
+                    <i class="fas fa-eye"></i>
+                    View Booking Details
+                </a>
+                <a href="{% url 'bookings:checkout' booking.playground.id %}" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Checkout
+                </a>
+                <a href="{% url 'playgrounds:playground_detail' booking.playground.id %}" class="btn-secondary">
+                    <i class="fas fa-home"></i>
+                    Back to Playground
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Generate QR Code
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('qrcode');
+    const paymentText = `Bank Transfer
+Account: {{ bank_number }}
+Amount: {{ booking.playground.currency }} {{ booking.final_amount }}
+Reference: {{ booking.booking_id }}
+Playground: {{ booking.playground.name }}
+Date: {{ booking.booking_date|date:"Y-m-d" }}
+Time: {{ booking.start_time|time:"H:i" }}-{{ booking.end_time|time:"H:i" }}`;
+    
+    QRCode.toCanvas(canvas, paymentText, {
+        width: 200,
+        height: 200,
+        color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+        }
+    }, function (error) {
+        if (error) console.error(error);
+        console.log('QR Code generated successfully!');
+    });
+});
+
+// Copy bank number function
+function copyBankNumber() {
+    const bankNumber = document.getElementById('bankNumber').textContent;
+    navigator.clipboard.writeText(bankNumber).then(function() {
+        // Show success feedback
+        const button = document.querySelector('.copy-button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        
+        setTimeout(function() {
+            button.innerHTML = originalText;
+            button.style.background = 'linear-gradient(135deg, var(--primary-color), var(--success-color))';
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Could not copy text: ', err);
+        alert('Bank Number: ' + bankNumber);
+    });
+}
+
+// Handle receipt upload
+document.getElementById('receiptForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
+    
+    // Show loading state
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    submitButton.disabled = true;
+    
+    // Submit the form
+    fetch("{% url 'bookings:upload_receipt' booking.booking_id %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            submitButton.innerHTML = '<i class="fas fa-check-circle"></i> Receipt Uploaded!';
+            submitButton.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            
+            // Update status
+            const statusAlert = document.querySelector('.alert-info');
+            statusAlert.className = 'alert alert-warning';
+            statusAlert.innerHTML = '<i class="fas fa-clock"></i><span>Receipt uploaded - Awaiting verification</span>';
+            
+            // Redirect after 3 seconds
+            setTimeout(function() {
+                window.location.href = "{% url 'bookings:booking_detail' booking.booking_id %}";
+            }, 3000);
+        } else {
+            throw new Error(data.message || 'Upload failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error uploading receipt: ' + error.message);
+        
+        // Reset button
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - PlayGround Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-hero {
+        background: linear-gradient(135deg, #1f2937 0%, #374151 25%, #4b5563 50%, #374151 75%, #1f2937 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23374151" opacity="0.4"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    }
+    
+    .contact-card {
+        background: rgba(55, 65, 81, 0.3);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(156, 163, 175, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .contact-card:hover {
+        background: rgba(55, 65, 81, 0.5);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(16, 185, 129, 0.1);
+    }
+    
+    .form-input {
+        background: rgba(17, 24, 39, 0.8) !important;
+        border: 1px solid rgba(34, 197, 94, 0.3) !important;
+        color: #ffffff !important;
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+        background: rgba(17, 24, 39, 0.95) !important;
+        border-color: #22c55e !important;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2) !important;
+        outline: none !important;
+    }
+    
+    .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    /* Select specific styling */
+    .form-input option {
+        background: #111827 !important;
+        color: #ffffff !important;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #111827 0%, #1f2937 25%, #374151 50%, #1f2937 75%, #111827 100%);
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="contact-hero py-20">
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl lg:text-6xl font-bold text-white mb-6">
+                Get In <span class="text-emerald-400">Touch</span>
+            </h1>
+            <p class="text-xl text-gray-300 leading-relaxed mb-8">
+                Have questions? Need support? Want to partner with us? 
+                We'd love to hear from you. Our team is here to help 24/7.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Information & Form -->
+<section class="py-20 bg-gray-900">
+    <div class="container mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-12">
+            <!-- Contact Information -->
+            <div>
+                <h2 class="text-3xl font-bold text-white mb-8">Contact Information</h2>
+                <div class="space-y-6">
+                    <!-- Office Address -->
+                    <div class="contact-card rounded-2xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-2">Office Address</h3>
+                                <p class="text-gray-300 leading-relaxed">
+                                    123 Sports Avenue<br>
+                                    Tech District, Digital City<br>
+                                    State 12345, Country
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Numbers -->
+                    <div class="contact-card rounded-2xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-2">Phone Numbers</h3>
+                                <p class="text-gray-300 leading-relaxed">
+                                    Support: +1 (555) 123-4567<br>
+                                    Business: +1 (555) 987-6543<br>
+                                    Emergency: +1 (555) 911-HELP
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Email Addresses -->
+                    <div class="contact-card rounded-2xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-2">Email Addresses</h3>
+                                <p class="text-gray-300 leading-relaxed">
+                                    General: info@playgroundbooking.com<br>
+                                    Support: support@playgroundbooking.com<br>
+                                    Partners: partners@playgroundbooking.com
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Business Hours -->
+                    <div class="contact-card rounded-2xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-clock text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-2">Business Hours</h3>
+                                <p class="text-gray-300 leading-relaxed">
+                                    Monday - Friday: 9:00 AM - 6:00 PM<br>
+                                    Saturday: 10:00 AM - 4:00 PM<br>
+                                    Sunday: Emergency Support Only
+                                </p>
+                                <p class="text-emerald-400 text-sm mt-2">
+                                    Platform available 24/7
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Social Media -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-bold text-white mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-xl flex items-center justify-center transition-colors duration-300">
+                            <i class="fab fa-facebook-f text-white"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-blue-400 hover:bg-blue-500 rounded-xl flex items-center justify-center transition-colors duration-300">
+                            <i class="fab fa-twitter text-white"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-blue-700 hover:bg-blue-800 rounded-xl flex items-center justify-center transition-colors duration-300">
+                            <i class="fab fa-linkedin-in text-white"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-pink-600 hover:bg-pink-700 rounded-xl flex items-center justify-center transition-colors duration-300">
+                            <i class="fab fa-instagram text-white"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div>
+                <h2 class="text-3xl font-bold text-white mb-8">Send Us a Message</h2>
+                <form class="space-y-6" method="post" action="">
+                    {% csrf_token %}
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-white font-medium mb-2" for="first_name">First Name</label>
+                            <input type="text" id="first_name" name="first_name" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="Enter your first name" required>
+                        </div>
+                        <div>
+                            <label class="block text-white font-medium mb-2" for="last_name">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="Enter your last name" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white font-medium mb-2" for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white font-medium mb-2" for="phone">Phone Number (Optional)</label>
+                        <input type="tel" id="phone" name="phone" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="Enter your phone number">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white font-medium mb-2" for="subject">Subject</label>
+                        <select id="subject" name="subject" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" required>
+                            <option value="">Select a subject</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="support">Technical Support</option>
+                            <option value="partnership">Partnership Opportunity</option>
+                            <option value="billing">Billing Question</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white font-medium mb-2" for="message">Message</label>
+                        <textarea id="message" name="message" rows="6" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none resize-none" placeholder="Tell us how we can help you..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-emerald-500/50">
+                        <i class="fas fa-paper-plane mr-2"></i>Send Message
+                    </button>
+                    
+                    <p class="text-gray-400 text-sm text-center">
+                        We typically respond within 24 hours during business days.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 bg-gray-800">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-100 mb-6">Frequently Asked Questions</h2>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Quick answers to common questions. If you don't find what you're looking for, 
+                feel free to reach out to us directly.
+            </p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto space-y-6">
+            <!-- FAQ Items -->
+            <div class="bg-gray-700 rounded-2xl border border-gray-600 overflow-hidden">
+                <button class="w-full px-6 py-6 text-left hover:bg-gray-600 transition-colors duration-200 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-100">How do I list my playground on the platform?</h3>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </div>
+                </button>
+                <div class="px-6 pb-6">
+                    <p class="text-gray-300">
+                        Simply click on "List Your Playground" in the navigation menu, create an account, 
+                        and follow our step-by-step guide to add your facility details, photos, and pricing.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-700 rounded-2xl border border-gray-600 overflow-hidden">
+                <button class="w-full px-6 py-6 text-left hover:bg-gray-600 transition-colors duration-200 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-100">What are the commission fees?</h3>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </div>
+                </button>
+                <div class="px-6 pb-6">
+                    <p class="text-gray-300">
+                        We charge a competitive 5% commission on successful bookings. There are no setup fees 
+                        or monthly charges - you only pay when you earn.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-700 rounded-2xl border border-gray-600 overflow-hidden">
+                <button class="w-full px-6 py-6 text-left hover:bg-gray-600 transition-colors duration-200 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-100">How do I receive payments?</h3>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </div>
+                </button>
+                <div class="px-6 pb-6">
+                    <p class="text-gray-300">
+                        Payments are processed securely and transferred to your bank account within 2-3 business days 
+                        after each booking is completed.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-700 rounded-2xl border border-gray-600 overflow-hidden">
+                <button class="w-full px-6 py-6 text-left hover:bg-gray-600 transition-colors duration-200 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-100">Do you provide customer support?</h3>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </div>
+                </button>
+                <div class="px-6 pb-6">
+                    <p class="text-gray-300">
+                        Yes! We provide 24/7 customer support via phone, email, and live chat. 
+                        Our dedicated team is here to help both playground owners and players.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

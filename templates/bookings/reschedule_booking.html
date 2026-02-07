@@ -1,0 +1,602 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reschedule Booking{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #000000 100%) !important;
+        color: #f8fafc !important;
+    }
+    
+    .reschedule-container {
+        background: transparent;
+        min-height: 100vh;
+        padding-top: 80px;
+        padding-bottom: 40px;
+    }
+    
+    .modern-card {
+        background: rgba(31, 41, 55, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        transition: all 0.3s ease;
+    }
+    
+    .modern-card:hover {
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        border-color: rgba(96, 165, 250, 0.5);
+    }
+    
+    .section-title {
+        color: #f9fafb;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(96, 165, 250, 0.3);
+    }
+    
+    .info-label {
+        color: #9ca3af;
+        font-weight: 500;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .info-value {
+        color: #f9fafb;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.75rem;
+        background: rgba(55, 65, 81, 0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(75, 85, 99, 0.3);
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: rgba(31, 41, 55, 0.8);
+        border: 2px solid rgba(75, 85, 99, 0.5);
+        border-radius: 10px;
+        color: #f9fafb;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #60a5fa;
+        background: rgba(31, 41, 55, 0.95);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+    
+    .form-input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-modern:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .btn-modern:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .slot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 1rem;
+        background: rgba(17, 24, 39, 0.5);
+        border-radius: 12px;
+        border: 1px solid rgba(75, 85, 99, 0.3);
+    }
+    
+    .slot-button {
+        padding: 0.75rem 1rem;
+        background: rgba(55, 65, 81, 0.6);
+        border: 2px solid rgba(75, 85, 99, 0.5);
+        border-radius: 8px;
+        color: #f9fafb;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .slot-button:hover:not(:disabled) {
+        background: rgba(96, 165, 250, 0.2);
+        border-color: #60a5fa;
+        transform: scale(1.05);
+    }
+    
+    .slot-button.selected {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-color: #60a5fa;
+        box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+    }
+    
+    .slot-button:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        background: rgba(55, 65, 81, 0.3);
+    }
+    
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    .alert-warning {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.5);
+        color: #fbbf24;
+    }
+    
+    .alert-success {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        color: #10b981;
+    }
+    
+    .alert-error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.5);
+        color: #ef4444;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .divider {
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(96, 165, 250, 0.3), transparent);
+        margin: 1.5rem 0;
+    }
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Scrollbar styling */
+    .slot-grid::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .slot-grid::-webkit-scrollbar-track {
+        background: rgba(17, 24, 39, 0.5);
+        border-radius: 10px;
+    }
+    
+    .slot-grid::-webkit-scrollbar-thumb {
+        background: rgba(96, 165, 250, 0.5);
+        border-radius: 10px;
+    }
+    
+    .slot-grid::-webkit-scrollbar-thumb:hover {
+        background: rgba(96, 165, 250, 0.7);
+    }
+</style>
+
+<div class="reschedule-container">
+    <div class="container mx-auto px-4 max-w-6xl">
+        
+        <!-- Header -->
+        <div class="modern-card p-8 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-4xl font-bold text-white flex items-center gap-3">
+                    <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Reschedule Booking
+                </h1>
+                <a href="{% url 'bookings:booking_detail' booking.booking_id %}" class="btn-modern bg-gray-700 text-white hover:bg-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Booking
+                </a>
+            </div>
+            
+            <div class="alert alert-warning">
+                <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <strong>Important:</strong> You can only reschedule bookings at least 2 hours before the scheduled start time. Rescheduling may be subject to availability.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6">
+            
+            <!-- Current Booking Details -->
+            <div class="modern-card p-6">
+                <h2 class="section-title">
+                    <svg class="w-6 h-6 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                    </svg>
+                    Current Booking Details
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="info-label">Playground</div>
+                        <div class="info-value">{{ booking.playground.name }}</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="info-label">Current Date</div>
+                            <div class="info-value text-orange-400">{{ booking.booking_date|date:"M d, Y" }}</div>
+                        </div>
+                        <div>
+                            <div class="info-label">Current Time</div>
+                            <div class="info-value text-orange-400">{{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="info-label">Duration</div>
+                            <div class="info-value">{{ booking.duration_hours }} hour(s)</div>
+                        </div>
+                        <div>
+                            <div class="info-label">Total Amount</div>
+                            <div class="info-value text-green-400">{{ currency_symbol|default:"$" }}{{ booking.total_amount }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Schedule Selection -->
+            <div class="modern-card p-6">
+                <h2 class="section-title">
+                    <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                    </svg>
+                    Select New Date & Time
+                </h2>
+                
+                <form id="rescheduleForm" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label class="info-label">New Date</label>
+                        <input type="date" 
+                               id="newDate" 
+                               name="new_date" 
+                               class="form-input" 
+                               min="{{ today|date:'Y-m-d' }}"
+                               required>
+                    </div>
+                    
+                    <div>
+                        <label class="info-label">Available Time Slots</label>
+                        <div id="loadingSlots" class="text-center py-8 text-gray-400" style="display: none;">
+                            <div class="loading-spinner mx-auto mb-3"></div>
+                            <p>Loading available slots...</p>
+                        </div>
+                        <div id="slotsContainer" class="slot-grid" style="display: none;">
+                            <!-- Slots will be loaded here dynamically -->
+                        </div>
+                        <div id="noSlotsMessage" class="text-center py-8 text-gray-400" style="display: none;">
+                            <svg class="w-16 h-16 mx-auto mb-3 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                            <p>Select a date to see available time slots</p>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="newStartTime" name="new_start_time">
+                    <input type="hidden" id="newEndTime" name="new_end_time">
+                    
+                    <div class="divider"></div>
+                    
+                    <div id="alertContainer"></div>
+                    
+                    <div class="flex gap-3">
+                        <button type="submit" 
+                                id="submitBtn" 
+                                class="btn-modern bg-blue-600 text-white hover:bg-blue-700 flex-1"
+                                disabled>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Confirm Reschedule
+                        </button>
+                        <a href="{% url 'bookings:booking_detail' booking.booking_id %}" 
+                           class="btn-modern bg-gray-700 text-white hover:bg-gray-600">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const PLAYGROUND_ID = {{ booking.playground.id }};
+const BOOKING_DURATION = {{ booking.duration_hours }};
+const CSRF_TOKEN = '{{ csrf_token }}';
+const CURRENCY_SYMBOL = '{{ currency_symbol|default:"$"|escapejs }}';
+let selectedSlot = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('newDate');
+    const form = document.getElementById('rescheduleForm');
+    
+    // Initialize currency symbol display
+    console.log('💰 Currency Symbol initialized:', CURRENCY_SYMBOL);
+    
+    // Load slots when date changes
+    dateInput.addEventListener('change', loadAvailableSlots);
+    
+    // Handle form submission
+    form.addEventListener('submit', handleReschedule);
+});
+
+async function loadAvailableSlots() {
+    const dateInput = document.getElementById('newDate');
+    const date = dateInput.value;
+    
+    if (!date) return;
+    
+    const loadingSlots = document.getElementById('loadingSlots');
+    const slotsContainer = document.getElementById('slotsContainer');
+    const noSlotsMessage = document.getElementById('noSlotsMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Show loading
+    loadingSlots.style.display = 'block';
+    slotsContainer.style.display = 'none';
+    noSlotsMessage.style.display = 'none';
+    submitBtn.disabled = true;
+    selectedSlot = null;
+    
+    try {
+        const response = await fetch(`/api/today-slots/${PLAYGROUND_ID}/?date=${date}`);
+        const data = await response.json();
+        
+        console.log('🔍 Slot API Response:', data);
+        
+        loadingSlots.style.display = 'none';
+        
+        // Handle different API response formats
+        let slots = [];
+        if (data.regular_slots && Array.isArray(data.regular_slots)) {
+            slots = data.regular_slots;
+        } else if (data.slots && Array.isArray(data.slots)) {
+            slots = data.slots;
+        } else if (Array.isArray(data)) {
+            slots = data;
+        } else if (data.available_slots && Array.isArray(data.available_slots)) {
+            slots = data.available_slots;
+        }
+        
+        console.log('📊 Total slots found:', slots.length);
+        
+        if (slots.length > 0) {
+            renderSlots(slots);
+            slotsContainer.style.display = 'grid';
+        } else {
+            noSlotsMessage.innerHTML = `
+                <svg class="w-16 h-16 mx-auto mb-3 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <p>No available slots for this date</p>
+            `;
+            noSlotsMessage.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error loading slots:', error);
+        loadingSlots.style.display = 'none';
+        showAlert('Failed to load available slots. Please try again.', 'error');
+    }
+}
+
+function renderSlots(slots) {
+    const container = document.getElementById('slotsContainer');
+    container.innerHTML = '';
+    
+    console.log('🎨 Rendering', slots.length, 'slots');
+    
+    slots.forEach((slot, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'slot-button';
+        
+        // Handle different slot data formats from API
+        // API returns: start_time (12hr), end_time (12hr), start_time_24h, end_time_24h, is_available
+        const startTime = slot.start_time_24h || slot.start_time || slot.start || slot.time;
+        const endTime = slot.end_time_24h || slot.end_time || slot.end;
+        const displayStart = slot.start_time || slot.start_time_24h;
+        const displayEnd = slot.end_time || slot.end_time_24h;
+        const isAvailable = slot.is_available !== undefined ? slot.is_available : !slot.is_booked;
+        
+        // Display in 12-hour format for readability
+        button.textContent = displayEnd ? `${displayStart} - ${displayEnd}` : displayStart;
+        button.disabled = !isAvailable;
+        
+        console.log(`Slot ${index + 1}:`, displayStart, '-', displayEnd, 'Available:', isAvailable);
+        
+        if (isAvailable) {
+            button.addEventListener('click', () => selectSlot(button, {
+                start_time: startTime,  // Use 24h format for form submission
+                end_time: endTime,
+                is_available: isAvailable
+            }));
+        }
+        
+        container.appendChild(button);
+    });
+    
+    console.log('✅ Rendered', container.children.length, 'slot buttons');
+}
+
+function selectSlot(button, slot) {
+    // Remove selection from all buttons
+    document.querySelectorAll('.slot-button').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Select this button
+    button.classList.add('selected');
+    selectedSlot = slot;
+    
+    // Update hidden inputs
+    document.getElementById('newStartTime').value = slot.start_time;
+    document.getElementById('newEndTime').value = slot.end_time;
+    
+    // Enable submit button
+    document.getElementById('submitBtn').disabled = false;
+}
+
+async function handleReschedule(e) {
+    e.preventDefault();
+    
+    if (!selectedSlot) {
+        showAlert('Please select a time slot', 'error');
+        return;
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+        <div class="loading-spinner"></div>
+        <span>Rescheduling...</span>
+    `;
+    
+    const formData = new FormData(document.getElementById('rescheduleForm'));
+    
+    try {
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': CSRF_TOKEN,
+            },
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        console.log('🎯 Reschedule Response:', data);
+        console.log('💰 Currency Symbol from server:', data.currency_symbol);
+        console.log('💵 Currency Code:', data.currency_code);
+        
+        if (data.success) {
+            // Store currency info in sessionStorage for consistency
+            if (data.currency_symbol) {
+                sessionStorage.setItem('booking_currency_symbol', data.currency_symbol);
+                console.log('✅ Stored currency symbol:', data.currency_symbol);
+            }
+            if (data.total_amount) {
+                sessionStorage.setItem('booking_total_amount', data.total_amount);
+            }
+            if (data.currency_code) {
+                sessionStorage.setItem('booking_currency_code', data.currency_code);
+            }
+            
+            showAlert(data.message || 'Booking rescheduled successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = '{% url "bookings:booking_detail" booking.booking_id %}';
+            }, 1500);
+        } else {
+            showAlert(data.error || 'Failed to reschedule booking', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('An error occurred. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+function showAlert(message, type = 'error') {
+    const container = document.getElementById('alertContainer');
+    const icons = {
+        success: `<svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>`,
+        error: `<svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>`,
+        warning: `<svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>`
+    };
+    
+    container.innerHTML = `
+        <div class="alert alert-${type}">
+            ${icons[type]}
+            <span>${message}</span>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        container.innerHTML = '';
+    }, 5000);
+}
+</script>
+{% endblock %}

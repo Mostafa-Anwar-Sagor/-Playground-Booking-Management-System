@@ -109,7 +109,7 @@ The **Playground Booking Management System** is a full-stack web application des
 ### ℹ️ About Page
 ![About Page](screenshots/about.png)
 
-### 👥 User Profile
+### 👥 User Management
 ![User Profile](screenshots/user.png)
 
 </div>
